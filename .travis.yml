@@ -1,0 +1,18 @@
+sudo: false
+language: python
+python:
+  - '2.7'
+install: pip install -r requirements.txt
+before_script:
+  - pip install coverage
+  - pip install python-coveralls
+  - pip install pep8
+  - npm install jshint
+  - cp travis-ci/manage.py manage.py
+script:
+  - pep8 notify/ --exclude=migrations,test
+  - jshint notify/static/js/ --verbose
+  - coverage run --source=notify/ --omit=notify/migrations/* manage.py test notify
+after_success:
+  - coveralls
+notifications:
