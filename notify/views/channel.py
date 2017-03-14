@@ -8,6 +8,7 @@ from notify.utilities import (
 from userservice.user import UserService
 from datetime import datetime
 from django.utils.timezone import utc
+import json
 
 
 class ChannelDetails(RESTDispatch):
@@ -27,7 +28,7 @@ class ChannelDetails(RESTDispatch):
 class ChannelUnsubscribe(RESTDispatch):
     def POST(self, request):
         """Unsubscribe from channel"""
-        request_data = simplejson.loads(request.raw_post_data)
+        request_data = json.loads(request.raw_post_data)
         channel_id = request_data['ChannelID']
         user_service = UserService()
         netid = user_service.get_user()
