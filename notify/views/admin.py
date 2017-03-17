@@ -1,7 +1,8 @@
-from restclients.nws import NWS
-from restclients.pws import PWS
-from restclients.exceptions import (
-    DataFailureException, InvalidUUID, InvalidRegID, InvalidNetID)
+from uw_nws import NWS
+from uw_pws import PWS
+from restclients_core.exceptions import (
+    DataFailureException, InvalidRegID, InvalidNetID)
+from uw_nws.exceptions import InvalidUUID
 from notify.views.rest_dispatch import RESTDispatch
 from notify.utilities import netid_from_eppn
 from userservice.user import UserService
@@ -44,15 +45,7 @@ class EndpointSearchAdmin(AdminRESTDispatch):
         except InvalidAdminException as ex:
             return self.error_response(status=403, message="%s" % ex)
 
-        owner = netidFromEPPN(endpoint.get_owner_net_id())
-        return self.json_response({
-            "id": endpoint.endpoint_id,
-            "owner": owner,
-            "address": endpoint.get_endpoint_address(),
-            "modified": endpoint.last_modified.isoformat() if (
-                endpoint.last_modified) else None,
-            "status": endpoint.status,
-            "active": endpoint.active})
+        return self.json_response(endpoint.json_data())
 
     def DELETE(self, request):
         endpoint_id = request.GET.get('endpoint_id', None)
@@ -88,34 +81,22 @@ class ChannelSearchAdmin(AdminRESTDispatch):
         try:
             self.user_is_admin()
             nws = NWS()
-            if len(channel_id) > 0:
+            if len(channel_id):
                 channel = nws.get_channel_by_channel_id(channel_id)
-            elif len(channel_year) > 0 and len(channel_sln) > 0:
+            elif (len(channel_year) and len(channel_sln) and
+                    len(channel_quarter)):
+                channel_type = "uw_student_courseavailable"
                 search_result = nws.get_channels_by_sln_year_quarter(
-                    "uw_student_courseavailable", channel_sln, channel_year,
-                    channel_quarter)
-                if len(search_result) < 1:
+                    channel_type, channel_sln, channel_year, channel_quarter)
+                if not len(search_result):
                     return self.error_response(
-                        status=400, message="No channel found")
-                channel = nws.get_channel_by_channel_id(
-                    search_result.pop().channel_id)
+                        status=400, message="No channels found")
+                channel = search_result[0]
+            else:
+                return self.error_response(
+                    status=400, message="Invalid search")
 
-            response_json = {
-                "id": channel.channel_id,
-                "type": channel.type,
-                "name": channel.name,
-                "created": channel.created.isoformat() if (
-                    channel.created) else None,
-                "expires": channel.expires.isoformat() if (
-                    channel.expires) else None,
-                "description": channel.description
-            }
-            tags = channel.get_tags()
-            if tags is not None:
-                for tag in tags:
-                    response_json[tag.name] = tag.value
-
-            return self.json_response(response_json)
+            return self.json_response(channel.json_data())
 
         except DataFailureException:
             return self.error_response(status=404, message="No channels found")
@@ -157,34 +138,7 @@ class UserSearchAdmin(AdminRESTDispatch):
         if person is None:
             return self.error_response(status=404, message="No person found")
 
-        response_json = {
-            'PersonID': person.person_id,
-            'SurrogateID': person.surrogate_id,
-            'Created': person.created.isoformat() if (
-                person.created) else None,
-            'LastModified': person.last_modified.isoformat() if (
-                person.last_modified) else None,
-            'ModifiedBy': person.modified_by
-        }
-
-        # Get person attributes
-        attribs = person.get_attributes()
-        if attribs is not None:
-            attrib_dict = {}
-            for attrib in attribs:
-                attrib_dict[attrib.name] = attrib.value
-            response_json['Attributes'] = attrib_dict
-
-        # Get links to endpoint resources
-        endpoints = person.get_endpoints()
-        if endpoints is not None:
-            endpoint_dict = {}
-            for endpoint in endpoints:
-                address = endpoint.get_endpoint_address()
-                endpoint_dict[address] = endpoint.endpoint_id
-            response_json["Endpoints"] = endpoint_dict
-
-        return self.json_response(response_json)
+        return self.json_response(person.json_data())
 
 
 class SubscriptionSearchAdmin(AdminRESTDispatch):
@@ -197,18 +151,7 @@ class SubscriptionSearchAdmin(AdminRESTDispatch):
             subscriptions = NWS().get_subscriptions_by_subscriber_id(
                 user_id, '1000')
             for subscription in subscriptions:
-                response_json['Subscriptions'].append({
-                    "SubscriptionID": subscription.subscription_id,
-                    "LastModified": subscription.last_modified.isoformat() if (
-                        subscription.last_modified) else None,
-                    "ChannelID": subscription.channel.channel_id,
-                    "Name": subscription.channel.name,
-                    "Expires": subscription.channel.expires.isoformat() if (
-                        subscription.channel.expires) else None,
-                    "EndpointID": subscription.endpoint.endpoint_id,
-                    "EndpointAddress": (
-                        subscription.endpoint.get_endpoint_address())
-                })
+                response_json['Subscriptions'].append(subscription.json_data())
         except DataFailureException as ex:
             return self.error_response(
                 status=400, message=("User does not exist or has not signed "

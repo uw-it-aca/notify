@@ -1,4 +1,4 @@
-from restclients.cache_implementation import TimedCache
+from restclients_core.cache_implementation import TimedCache
 import re
 
 

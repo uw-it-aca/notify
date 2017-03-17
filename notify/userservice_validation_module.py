@@ -1,5 +1,5 @@
-from restclients.pws import PWS
-from restclients.exceptions import InvalidNetID, DataFailureException
+from uw_pws import PWS
+from restclients_core.exceptions import InvalidNetID, DataFailureException
 from notify.utilities import netid_from_eppn
 import re
 

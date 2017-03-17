@@ -1,8 +1,8 @@
-from restclients.nws import NWS
-from restclients.sws import SWS
-from restclients.pws import PWS
-from restclients.exceptions import DataFailureException
-from django.core.exceptions import PermissionDenied
+from uw_nws import NWS
+from uw_pws import PWS
+from uw_sws.section import get_section_by_label, get_section_status_by_label
+from uw_sws.term import get_current_term, get_term_after
+from restclients_core.exceptions import DataFailureException
 from datetime import datetime
 import json
 import logging
@@ -13,12 +13,7 @@ logger = logging.getLogger(__name__)
 
 
 def get_channel_details_by_channel_id(channel_id):
-    nws = NWS()
-    try:
-        channel = nws.get_channel_by_channel_id(channel_id)
-    except Exception:
-        raise
-
+    channel = NWS().get_channel_by_channel_id(channel_id)
     return get_course_details_by_channel(channel)
 
 
@@ -36,11 +31,10 @@ def get_course_details_by_channel(channel):
         logger.exception(ex)
         return {'course_title': 'No Course Found'}
 
-    sws = SWS()
     section = None
     try:
-        section = sws.get_section_by_label(section_label)
-        section_status = sws.get_section_status_by_label(section_label)
+        section = get_section_by_label(section_label)
+        section_status = get_section_status_by_label(section_label)
     except DataFailureException as ex:
         return {'course_title': 'No section info found'}
     except Exception as ex:
@@ -89,19 +83,17 @@ def get_course_details_by_channel(channel):
 
 def user_has_valid_endpoints(person):
     endpoints = {'sms': False, 'email': False}
-    if person is not None:
-        for endpoint in person.endpoints.view_models:
-            endpoints[endpoint.protocol] = True
+    for endpoint in person.endpoints:
+        endpoints[endpoint.protocol.lower()] = True
     return json.dumps(endpoints)
 
 
 def get_verified_endpoints_by_protocol(user_id):
-    nws = NWS()
     verified_endpoints = {}
     try:
-        endpoints = nws.get_endpoints_by_subscriber_id(user_id)
+        endpoints = NWS().get_endpoints_by_subscriber_id(user_id)
         for endpoint in endpoints:
-            if (endpoint.status == 'verified'):
+            if (endpoint.status.lower() == 'verified'):
                 verified_endpoints[endpoint.protocol.lower()] = endpoint
     except DataFailureException as ex:
         pass
@@ -115,53 +107,48 @@ def netid_from_eppn(eppn):
     return match[0]
 
 
-def getOpenRegistrationPeriods():
-        channel_type = 'uw_student_courseavailable'
-        try:
-            nws = NWS()
-            terms = nws.get_terms_with_active_channels(channel_type)
-            terms_json = []
-            for term in terms:
-                term_json = term.json_data()
-                terms_json.append(term_json)
-            return json.dumps(terms_json)
-        except DataFailureException as ex:
-            pass
+def get_open_registration_periods(term=None):
+    # Check the passed term, and the next 3, to see if they have
+    # a channel for any course in that term.
+    # when the sws term resource provides us with a timeschedule publish
+    # date, use that instead of this.
+    channel_type = 'uw_student_courseavailable'
+    if term is None:
+        term = get_current_term()
+
+    terms = [term]
+    for i in range(3):
+        term = get_term_after(term)
+        terms.append(term)
+
+    active_terms = []
+    nws = NWS()
+    for term in terms:
+        channels = nws.get_active_channels_by_year_quarter(
+            channel_type, term.year, term.quarter)
+        if len(channels):
+            active_terms.append(term)
+
+    return active_terms
 
 
 # get person, trying the following:
-#   NWS by surrogate_id/netid
 #   PWS by netid to get uwregid
 #   NWS by uwregid
 def get_person(user_id):
-    person = None
-    pws_person = None
+    pws_person = PWS().get_person_by_netid(netid_from_eppn(user_id))
+
     nws = NWS()
-    try:
-        pws = PWS()
-        pws_person = pws.get_person_by_netid(netidFromEPPN(user_id))
-    except:
-        raise PermissionDenied
-    try:
-        person = nws.get_person_by_uwregid(pws_person.uwregid)
-        # Update surrogate ID when user changes NETID
-        if person.surrogate_id != user_id:
-            person.surrogate_id = user_id
-            nws = NWS()
-            nws.update_person(person)
-    except:
-        pass
+    person = nws.get_person_by_uwregid(pws_person.uwregid)
+    # Update surrogate ID when user changes NETID
+    if person.surrogate_id != user_id:
+        person.surrogate_id = user_id
+        nws.update_person(person)
     return person
 
 
 def user_accepted_tos(person):
-    attr_list = person.get_attributes()
-    if attr_list is None:
-        return False
-    for attribute in person.get_attributes():
-        if "AcceptedTermsOfUse" == attribute.name:
-            return attribute.value
-    return False
+    return person.attributes.get("AcceptedTermsOfUse", False)
 
 
 def get_quarter_index(quarter):
