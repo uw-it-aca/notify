@@ -1,0 +1,61 @@
+{% load templatetag_handlebars %}
+
+{% tplhandlebars "class_details" %}
+{{#if course_abbr}}
+    <div class="course_info"><span class="class_abbr">{{course_abbr}}</span><span class="class_avail">{{current_enrollment}} / {{total_seats}} <span class="txt">seats</span></span></div>
+    <h3>{{course_title}}</h3>
+    <div class="class_meta">SLN: {{section_sln}}</div>
+    <div class="class_meta container">
+            {{ #each meetings}}
+                <div>
+                    <span class="meet_time">
+                    {{#if days_tbd}}
+                        TBD
+                    {{else}}
+                        {{#if meeting_days.sunday}}
+                            Su
+                        {{/if}}
+                        {{#if meeting_days.monday}}
+                            M
+                        {{/if}}
+                        {{#if meeting_days.tuesday}}
+                            Tu
+                        {{/if}}
+                        {{#if meeting_days.wednesday}}
+                            W
+                        {{/if}}
+                        {{#if meeting_days.thursday}}
+                            Th
+                        {{/if}}
+                        {{#if meeting_days.friday}}
+                            F
+                        {{/if}}
+                        {{#if meeting_days.saturday}}
+                            Sa
+                        {{/if}}
+                        {{start_time}}-{{end_time}}
+                    {{/if}}
+                    </span>
+                    <span class="instructor">
+                    {{#if has_instructors}}
+                        {{ #each instructors}}
+                            {{surname}}, {{first_name}}
+                        {{/each}}
+                    {{else}}
+                        TBD
+                    {{/if}}
+                    </span>
+                    <span class="location">
+                    {{#if location_tbd}}
+                    TBD
+                    {{else}}
+                    {{#if building_tbd}}TBD {{else}}{{building}} {{/if}}{{#if room_tbd}}TBD{{else}}{{room}}{{/if}}
+                    {{/if}}
+                    </span>
+                </div>
+            {{/each}}
+    </div>
+    {{else}}
+    <div class="validation_error" role="alert">There was a problem retrieving the class data. Check back later for accurate information.</div>
+    {{/if}}
+{% endtplhandlebars %}

@@ -1,0 +1,108 @@
+<!doctype html>
+<html class="no-js">
+<head>
+	<title>Notify Administration</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<meta name="HandheldFriendly" content="true">
+
+    {% load staticfiles %}
+	{% load compress %}
+
+    {% compress css %}
+    <link rel="stylesheet" type="text/css" href="{% static "css/admin/bootstrap3.css" %}"/>
+    <link rel="stylesheet" type="text/less" href="{% static "css/admin/mobile.less" %}" media="screen, handheld" />
+    <link rel="stylesheet" type="text/less" href="{% static "css/admin/desktop.less" %}" media="screen and (min-width: 480px)" />
+
+    <!--[if (lt IE 9)&(!IEMobile)]>
+    <link rel="stylesheet" type="text/less" href="{% static "css/desktop.less" %}" />
+	<![endif]-->
+    {% endcompress %}
+
+    <link rel="shortcut icon" href="{% static "images/favicon.ico" %}">
+
+	{% include "handlebars/admin/endpoint_address.html" %}
+    {% include "handlebars/admin/channel_details_admin.html" %}
+    {% include "handlebars/admin/user_details.html" %}
+    {% include "handlebars/admin/user_subscriptions.html" %}
+    {% include "handlebars/admin/admin_error.html" %}
+
+</head>
+<body>
+
+    <div id="wrapper" class="container" style="position:relative;">
+
+        <div id="side-wrapper">
+
+        	<header id="header" role="banner">
+        	   <div class="app-header inner clearfix">
+                    <div class="app-logo pull-left"><span class="ir">Notify Logo</span></div>
+                    <div class="app-user pull-right"><i class="icon-user"></i> <a href="/support">Override</a></div>
+
+        	   </div>
+        	</header><!--end #header-->
+
+
+        	<div id="intro" class="inner well" role="contentinfo" style="position:relative;">
+        	   <h1>.Admin</h1>
+               <p class="lead">Admin application for managing users</p>
+               <div class="uw"><span class="ir">UW Logo</span></div>
+            </div><!--end top stuff -->
+
+            <div class="inner" style="">
+                <div><h2>Support Queries:</h2></div>
+
+                <h3>Channel Info:</h3>
+                <form id="channel_info">
+                <p>By ID:<input id="channel_id" type="text" /></p>
+                <p><strong>By Quarter/Year/SLN:</strong>
+                    Quarter:<select id="channel_quarter">
+                        <option value="winter">Winter</option>
+                        <option value="spring">Spring</option>
+                        <option value="summer">Summer</option>
+                        <option value="autumn">Autumn</option>
+                    </select>
+                    Year:<input id="channel_year" type="text" />
+                    SLN:<input id="channel_sln" type="text" />
+                <p><button class="btn btn-small" type="submit">Search</button></p>
+                </form>
+                <h3>User Info:</h3>
+                <form id="person_info">
+                    <p>By REGID: <input id="regid" type="text" /></p>
+                    <p>By NETID: <input id="netid" type="text" /></p>
+                    <button class="btn btn-small" type="submit">Search</button>
+                </form>
+                <form id="endpoint_by_address">
+                    <p>Endpoint by endpoint address:<input id="endpoint_address_input" type="text" /></p>
+                    <button class="btn btn-small" type="submit">Search</button>
+                </form>
+                <h3>Subscription Info:</h3>
+                <form id="subscription_info">
+                    <p>By NETID:<input id="sub_regid" type="text" /></p>
+                    <button class="btn btn-small" type="submit">Search</button>
+                </form>
+            </div>
+
+        </div>
+
+        <div id="main-wrapper">
+        	<div id="main" role="main">
+        	   <div class="inner">
+            	   <h2>Results:</h2>
+            	   <div id="results"></div>
+        	   </div>
+        	</div><!--end #main-->
+        </div>
+    </div>
+
+	<!-- jquery cdn -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <script type="text/javascript" src="{% static "libs/handlebars.js" %}"></script>
+
+	{% compress js %}
+    <script type="text/javascript" src="{% static "js/admin.js" %}"></script>
+	{% block javascript %}{% endblock %}
+    {% endcompress %}
+
+</body>
+</html>

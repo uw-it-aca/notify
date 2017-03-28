@@ -1,0 +1,25 @@
+{% extends "base-tos.html"%}
+{% block navigation %}
+{% endblock %}
+{% block content %}
+{% if override_user %}
+<p>The user you are overriding as has not accepted the Terms of Service.  You are not allowed to accept on their behalf.</p>
+{% else %}
+<h2>Notify.UW Terms of Service</h2>
+<div>
+<b>In order to use the Notify.UW service, you must read and agree to the following:</b>
+<ul>
+<li>Your use of the Notify.UW service does not imply eligibility for course enrollment nor guarantee successful registration in courses.</li>
+<li>The Notify.UW service is an opt-in service. Your use of the service is strictly voluntary and is subject to the University's <a href="https://www.washington.edu/online/terms" target="_blank">Website Terms and Conditions of Use</a> and <a href="https://www.washington.edu/online/privacy" target="_blank">Online Privacy Statement</a>.</li>
+<li>You must not abuse this service, and violations may be subject to disciplinary action according to University policy and the <a href="http://apps.leg.wa.gov/WAC/default.aspx?cite=478-120"  target="_blank">UW Student Conduct Code.</a></li>
+<li>The Notify.UW service is subject to change at any time without notice.</li>
+<li>Unless you opt out of receiving SMS text messages, your use of the Notify.UW service constitutes your consent to share your phone number with a third party provider. The third party provider will use the information solely for the purpose of sending you SMS text messages from the University of Washington (read <a href="http://www.twilio.com/legal/privacy" target="_blank">Twilio's Privacy Policy</a>). If you do not agree to share your phone number, you can still sign up for email notifications and your information will not be shared with a third party provider.</li>
+<li>The third party provider is currently Twilio but may change at any time without notice.</li>
+</ul>
+</div>
+ <div class="button_container"><button id="terms_agreement" type="submit" class="flat">I Agree</button></div>
+{% if redirect_path %}
+<input type="hidden" id="redirect_path" value="{{redirect_path}}">
+{% endif %}
+{% endif %}
+{% endblock %}

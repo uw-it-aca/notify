@@ -1,0 +1,10 @@
+{% load templatetag_handlebars %}
+{% tplhandlebars "admin_error" %}
+<div>
+    <p>There was an error with your request</p>
+    <p>Status Code: {{status}}</p>
+    <p>With message: {{message}}</p>
+    
+</div>
+{% endtplhandlebars %}
+

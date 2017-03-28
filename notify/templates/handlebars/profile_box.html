@@ -1,0 +1,29 @@
+{% load templatetag_handlebars %}
+{% tplhandlebars "profile_box" %}
+    <span class="id">{{user_id}}</span>
+    <span class="edit_link">edit</span>
+    <hr/>
+    {{#if email.EndpointAddress}}
+    <span class="email">{{email.EndpointAddress}}</span>
+    {{else}}
+    <span class="email">Email: <b class="none">None</b></span>
+    {{/if}}
+    {{#if sms.EndpointAddress}}
+        {{#if sms.isBlacklisted}}
+        <span class="phone invalid">Phone #: <b>Blacklisted</b></span>
+        {{else}}
+            {{#unless sms.isConfirmed}}
+        <span class="phone invalid">Phone #: <b>Unconfirmed</b></span>
+            {{/unless}}
+        {{/if}}
+        {{#unless sms.isValid}}
+        <span class="phone invalid">Phone #: <b>Invalid</b></span>
+        {{/unless}}
+        {{#both sms.isValid sms.isConfirmed}}
+        <span class="phone">{{sms.EndpointAddress}}</span>
+        {{/both}}
+        
+    {{else}}
+    <span class="phone">Phone #: <b class="none">None</b></span>
+    {{/if}}
+{% endtplhandlebars %}

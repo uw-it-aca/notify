@@ -1,0 +1,72 @@
+{% load templatetag_handlebars %}
+{% tplhandlebars "subscription_list" %}
+<div class="registration_period accordion">
+{{ #each RegistrationPeriods }}
+<h3 class="clearfix"><span class="registration_period_header">{{RegistrationPeriod}}</span></h3>
+  <div class="clearfix accordion_content">
+  <ol class="notification_list">
+    {{ #each Channels}}
+    <li id="{{ChannelID}}" class="{{#if expired}} disabled{{/if}} clearfix">
+        <div class="class_details_container">
+            <span class="unsubscribe"><a href="javascript:void(0)" title="Unsubscribe from {{course_abbr}} notifications">X</a></span>
+            <div class="class_item">
+                <div class="class_name_container">
+                    <span class="class_name" id="class-name">{{course_abbr}}</span>
+                </div>
+                <div class="class_info clearfix">
+                    <span class="sln">SLN: {{section_sln}}</span></span>
+                    <span class="availability_count {{filled_state}}">{{current_enrollment}} / {{total_seats}}
+                        <div class="text">
+                            seats
+                        </div></span>
+                    <span class="class_details"><a href="javascript:void(0)" class="class_details" title="class details for {{course_abbr}}">...</a></span>
+                </div>
+            </div>
+            <span class="button_container" >
+                <button type="button" title="Change how you recieve {{course_abbr}} notifications." class="btn">
+                    [endpoints]
+                </button> </span>
+        </div>
+        <!-- Below is the code for the li if the Endpoint button is toggled so that you can edit endpoints -->
+        <div class="edit_endpoints_container" style="display: none;">
+            <div class="class_item">
+                <div class="class_container" >
+                    <div class="class_name_container">
+                        <span class="class_name" id="class-name">{{course_abbr}}</span>
+                    </div>
+                    <div class="class_info clearfix">
+                        <span class="sln">SLN: {{section_sln}}</span></span>
+                        <span class="availability_count {{filled_state}}">{{current_enrollment}} / {{total_seats}}
+                            <div class="text">
+                                seats
+                            </div></span>
+                    </div>
+                </div>
+
+                <form>
+                    <input type="hidden" name="channel_id" value="{{ChannelID}}" />
+                    <label class="checkbox email">
+                        <input type="checkbox" class="visuallyhidden" name="protocol" value="email">
+                        Email </label>
+                    <label class="checkbox sms">
+                        <input type="checkbox" class="visuallyhidden" name="protocol" value="sms">
+                        SMS/text </label>
+                    <div class="info_endpoint"></div>
+                </form>
+
+            </div>
+
+            <span> <span class="button_container" >
+                    <button id="subscription_submit" type="submit" class="flat">
+                        Done
+                    </button> </span> </span>
+        </div>
+    </li>
+
+    {{/each}}
+
+  </ol>
+  </div>
+{{/each}}
+</div>
+{% endtplhandlebars %}

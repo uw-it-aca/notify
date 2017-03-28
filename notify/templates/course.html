@@ -1,0 +1,21 @@
+{% extends is_mobile|yesno:"base-mobile.html,base-desktop.html" %}
+{% block navigation %}
+{% endblock %}
+{% block content %}
+<div class="page-heading" ><h2>Add class notification</h2>
+</div>
+<div id="body"></div>
+{% include "handlebars/class_details.html" %}
+{% include "handlebars/subscribe_sln.html" %}
+{% include "handlebars/find.html" %}
+{% autoescape off %}
+<script type="text/javascript">
+    var reg_periods = {{reg_periods}};
+{% if year %}
+    var year = {{year}},
+        quarter = '{{quarter}}',
+        sln = {{sln}};
+{% endif %}
+</script>
+{% endautoescape %}
+{% endblock %}

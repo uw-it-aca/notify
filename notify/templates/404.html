@@ -1,0 +1,14 @@
+{% extends is_mobile|yesno:"base-mobile.html,base-desktop.html" %}
+{% block navigation %}
+{% endblock %}
+{% block content %}
+<div class="page-heading" ><h2>404 error: That resource is not found.</h2>
+</div>
+<div id="body" class="error_page">
+You may want to:
+<ul>
+<li>check your link url to see if something was mistyped.</li>
+<li>go to <a href="/">Notify.UW</a> and attempt to find the resource you are looking for.</li>
+</ul>
+</div>
+{% endblock %}

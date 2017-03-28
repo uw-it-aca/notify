@@ -1,0 +1,10 @@
+{% extends is_mobile|yesno:"base-mobile.html,base-desktop.html" %}
+{% block navigation %}
+{% endblock %}
+{% block content %}
+<div class="page-heading" ><h2>403 error: You do not have access to this service.</h2>
+</div>
+<div id="body" class="error_page">
+This service is restricted and the ID that you have logged on with does not have access.  Make sure that you are logged into this service with the appropriate ID.
+</div>
+{% endblock %}

@@ -1,0 +1,11 @@
+{% load templatetag_handlebars %}
+{% tplhandlebars "unsubscribe" %}
+<div class="page-heading" class="visuallyhidden"></div>
+<div class="content-container">
+<form class="subscription_form unsubscribe_form">
+I no longer wish to receive notifications from {{course_abbr}}.
+<input type="hidden" id="channel_id" value="{{channel_id}}">
+<div class="button_container"><button id="confirm_unsubscribe" type="submit" class="flat" value="Confirm">Unsubscribe</button></div>
+</form>
+</div>
+{% endtplhandlebars %}

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+
+<html lang="en">
+    <head>
+        <title>Notify.UW - Mobile</title>
+        {% load staticfiles %}
+        {% load compress %}
+        <link rel="apple-touch-icon-precomposed" href="{% static "img/touch-icon-iphone-precomposed.png" %}" />
+        <link rel="apple-touch-icon-precomposed" sizes="72x72" href="{% static "img/touch-icon-ipad-precomposed.png" %}" />
+        <link rel="apple-touch-icon-precomposed" sizes="114x114" href="{% static "img/touch-icon-iphone-retina-precomposed.png" %}" />
+        <link rel="apple-touch-icon-precomposed" sizes="144x144" href="{% static "img/touch-icon-ipad-retina-precomposed.png" %}" />
+        {% compress css %}
+        <link type="text/css" rel="stylesheet" href="{% static "libs/bootstrap-custom.css" %}" charset="utf-8" />
+        <link type="text/css" rel="stylesheet" href="{% static "libs/jquery-ui-1.9.2.custom/css/ui-lightness/jquery-ui-1.9.2.custom.min.css" %}" charset="utf-8" />
+        <link type="text/css" rel="stylesheet" href="{% static "libs/jquery.selectboxit.css" %}" charset="utf-8" />
+        <link rel="stylesheet" type="text/less" href="{% static "css/mobile.less" %}" media="screen" />
+        {% endcompress %}
+
+        {% block extra_css %}{% endblock %}
+
+
+        {% if less_not_compiled %}
+        <script type="text/javascript" src="{% static "libs/less.js" %}"></script>
+        {% endif %}
+        <script type="text/javascript">
+            var can_user = '{{netid}}';
+            var is_mobile = {{is_mobile|yesno:"true,false"}};
+            var has_endpoints = {{valid_endpoints|safe}};
+        </script>
+        {% csrf_token %}
+        <meta name="viewport"  content="width=device-width, initial-scale=1, maximum-scale=1">
+        {% include "handlebars/profile_box.html"%}
+        {% if ANALYTICS_KEY %}
+        <script type="text/javascript">
+          var _gaq = _gaq || [];
+          _gaq.push(['_setAccount', '{{ ANALYTICS_KEY }}']);
+          _gaq.push(['_trackPageview']);
+
+          (function() {
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+          })();
+        </script>
+        {% endif %}
+    </head>
+     <body>
+    <div  class="body_container">
+        {% if override_user %}
+            <div class="override_alert" role="alert">You are overriding as <strong>{{override_user}}</strong>.<a href="javascript:void(0)" onclick="canui.clearOverride()">Clear override</a></div>
+        {% endif %}
+        {% block head_container %}<div class="head clearfix">{% endblock %}
+            {% block navigation %}
+        <span class="profile_box_container">
+            <h2 class="visuallyhidden">Your Profile</h2>
+            <a class="profile" href="/profile/" title="manage profile"></a>
+        </span>
+            {% endblock %}
+        <span class="title"><a href="/" title=" " aria-hidden="true"><h1><span class="visuallyhidden">Notify.UW</span></h1></a></span>
+
+        {% if system_message %}
+            <div id="message_container" class="info" role="alert">
+            {{system_message}}
+            </div>
+        {% endif %}
+
+        </div>
+        <div id="container">
+            {% block content %}
+            {% endblock %}
+        </div>
+            <div id="footer" class="clearfix">
+                <div class="copyright">Copyright &copy; 2017 <br/>UW-IT, University of Washington
+                </div>
+                <div class="global_links"><a href="http://www.washington.edu/online/privacy/" title="UW Privacy Policy" target="_blank">Privacy</a> | <a href="http://www.washington.edu/itconnect/learn/tools/notify-uw/notify-uw-frequently-asked-questions/#service" title="Terms of Service" target="_blank">Terms</a> | <a href="http://www.washington.edu/itconnect/learn/tools/notify-uw" title="About Notifications" target="_blank">About</a> | <a href="mailto:{{support_email}}" title="Contact support" target="_blank">Contact</a>
+                </div>
+            </div>
+    </div>
+
+         <!-- jQuery -->
+          <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+          <script type="text/javascript" src="{% static "libs/jquery-ui-1.9.2.custom/js/jquery-ui-1.9.2.custom.min.js" %}"></script>
+
+          {% compress js %}
+            <script type="text/javascript" src="{% static "js/global.js" %}"></script>
+            <script type="text/javascript" src="{% static "js/mobile.js" %}"></script>
+            <script type="text/javascript" src="{% static "libs/handlebars.js" %}"></script>
+            <script type="text/javascript" src="{% static "libs/jquery.selectboxit.js" %}"></script>
+            <script type="text/javascript" src="{% static "libs/jquery.placeholder.min.js" %}"></script>
+            <script type="text/javascript" src="{% static "libs/json2.js" %}"></script>
+            {% block extra_js %}{% endblock %}
+          {% endcompress %}
+    </body>
+</html>

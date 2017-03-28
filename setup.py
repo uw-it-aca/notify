@@ -6,13 +6,18 @@ See the README on `GitHub
 <https://github.com/uw-it-aca/notify>`_.
 """
 
+# The VERSION file is created by travis-ci, based on the tag name
+version_path = 'notify/VERSION'
+VERSION = open(os.path.join(os.path.dirname(__file__), version_path)).read()
+VERSION = VERSION.replace("\n", "")
+
 # allow setup.py to be run from any path
 os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 
 url = "https://github.com/uw-it-aca/notify"
 setup(
     name='Notify.UW',
-    version='1.0',
+    version=VERSION,
     packages=['notify'],
     author="UW-IT AXDD",
     author_email="aca-it@uw.edu",
@@ -24,9 +29,11 @@ setup(
         'django-userservice==1.2.1',
         'unittest2',
         'AuthZ-Group',
-        'UW-RestClients-NWS>=0.2',
-        'UW-RestClients-SWS',
-        'UW-RestClients-PWS',
+        'UW-RestClients-NWS>=0.51,<1.0',
+        'UW-RestClients-SWS>=0.5.1,<1.0',
+        'UW-RestClients-PWS>=0.5,<1.0',
+        'UW-RestClients-GWS>=0.1,<1.0',
+        'UW-RestClients-Django-Utils>=0.4,<1.0',
         'Django-SupportTools',
         'django_mobileesp',
     ],

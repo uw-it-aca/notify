@@ -1,0 +1,14 @@
+{% load templatetag_handlebars %}
+{% tplhandlebars "endpoint_address" %}
+<div>
+    <p>Endpoint ID: {{id}}</p>
+    <p>Endpoint Address: {{address}}</p>
+    <p>Endpoint Owner: {{owner}}</p>
+    {{#if status}}
+    <p>SMS Status: {{status}}</p>
+    {{/if}}
+    <p>Is Active: {{active}}</p>
+    <p>Last Modified: {{modified}}</p>
+    <button type="submit" onclick="confirmDelete('{{id}}')">Delete</button>
+</div>
+{% endtplhandlebars %}

@@ -1,0 +1,13 @@
+{% extends "base-mobile.html" %}
+{% load templatetag_handlebars %}
+{% block navigation %}
+    <a href="/" title="Back" class="back"><span class="visuallyhidden">back</span></a>
+{% endblock %}
+{% block content %}
+    <div class="page-heading"><h2 class="visuallyhidden">Class Details</h2>
+    </div>
+    <div id="class_details_container" class="content-container">
+    {% include "handlebars/class_details.html"%}
+    </div>
+{% endblock %}
+</div>

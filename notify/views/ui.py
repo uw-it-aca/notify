@@ -25,6 +25,7 @@ def build_view_context(request):
     context = {'is_mobile': request.MOBILE,
                'override_user': user_service.get_override_user(),
                'netid': None,
+               'support_email': getattr(settings, 'SUPPORT_EMAIL', ''),
                'ANALYTICS_KEY': getattr(settings, 'GOOGLE_ANALYTICS_KEY')}
 
     if hasattr(settings, 'UI_SYSTEM_MESSAGE'):

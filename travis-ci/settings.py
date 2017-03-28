@@ -38,10 +38,10 @@ INSTALLED_APPS = (
     'compressor',
     'templatetag_handlebars',
     'supporttools',
-    'restclients',
     'userservice',
     'authz_group',
     'notify',
+    'rc_django',
 )
 
 MIDDLEWARE_CLASSES = (

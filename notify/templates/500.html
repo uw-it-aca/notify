@@ -1,0 +1,10 @@
+{% extends is_mobile|yesno:"base-mobile.html,base-desktop.html" %}
+{% block navigation %}
+{% endblock %}
+{% block content %}
+<div class="page-heading" ><h2>500 error: There is a problem on our end.</h2>
+</div>
+<div id="body" class="error_page">
+Our developers have been alerted of this issue and are working to get you back on track.  Relax, give us a little time, and <a href="/">try again</a> later.</li>
+</div>
+{% endblock %}

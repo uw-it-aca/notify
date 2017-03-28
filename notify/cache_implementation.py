@@ -1,4 +1,4 @@
-from restclients_core.cache_implementation import TimedCache
+from rc_django.cache_implementation import TimedCache
 import re
 
 
@@ -7,7 +7,7 @@ class UICache(TimedCache):
 
     url_policies = {}
     url_policies["sws"] = (
-        (re.compile(r"^/student/v4/term/"), 60 * 60 * 10),
+        (re.compile(r"^/student/v5/term/"), 60 * 60 * 10),
     )
     url_policies["pws"] = (
         (re.compile(r"^/identity/v1/person/"), 60 * 60 * 24 * 7),

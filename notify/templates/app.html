@@ -1,0 +1,37 @@
+{% extends is_mobile|yesno:"base-mobile.html,base-desktop.html" %}
+{% block head_container %}<div class="head main clearfix">{% endblock %}
+{% block content %}
+{% load templatetag_handlebars %}
+<div class="page-heading"><h2>Your Notifications </h2>
+</div>
+<div class="content-container">
+
+
+{% if reg_periods %}
+    <!-- Loading message  -->
+    <div id="subscriptions_loading" class="loading" role="alert">Loading...</div>
+    <!-- Replace the following section with the commented out code that follows IF there are no class sections.  -->
+    {% include "handlebars/subscription_list.html"%}
+    <!-- <div>You are not following any class sections.</div>  -->
+    </div>
+
+
+    {% if is_mobile %}
+    <div class="add_notification"><a href="/find/">+ add new class notification</a></div>
+    {% else %}
+    {% autoescape off %}
+    {% if reg_periods %}
+        <script type="text/javascript">var reg_periods = {{reg_periods}};</script>
+    {% else %}
+        <script type="text/javascript">var reg_periods = undefined;</script>
+    {% endif %}
+    {% endautoescape %}
+    <div class="add_notification"><a href="javascript:void(0)" onclick="canui.openFindDialog()">+ add new class notification</a></div>
+    {% endif %}
+
+{% else %}
+<div class="validation_error">DUE TO A SYSTEM OUTAGE, YOU ARE UNABLE TO EDIT EXISTING SUBSCRIPTIONS AT THIS TIME. PLEASE TRY AGAIN LATER.</div>
+{% endif %}
+
+{% endblock %}
+

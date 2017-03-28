@@ -1,0 +1,19 @@
+{% load templatetag_handlebars %}
+{% tplhandlebars "tpl-subscription-form" %}
+<form name="form-subscribe" action="/subscribe/" method="POST" class="subscription_form">
+  <div class="info_text">If this class closes, notify me when seats become available:</div>
+      <div>
+          <label class="checkbox{{#if HasSubscriptionemail}} disabled{{/if}}">
+          <input type="checkbox" class="visuallyhidden" name="protocol" value="email"{{#if HasSubscriptionemail}} checked="checked" disabled="disabled"{{/if}}> Email
+          </label>
+          <label class="checkbox{{#if HasSubscriptionsms}} disabled{{/if}}">
+          <input type="checkbox" class="visuallyhidden" name="protocol" value="sms"{{#if HasSubscriptionsms}} checked="checked" disabled="disabled"{{/if}}> SMS/text
+          </label>
+         <div class="info_endpoint"></div>
+      </div>
+  <input type="hidden" name="channel_id" id="channel_id" value="{{ChannelID}}" />
+  <input type="hidden" name="sln" id="sln" value="{{SLN}}" />
+  {% csrf_token %}
+  <div><button id="subscription_submit" type="submit" class="flat">Done</button></div>
+</form>
+{% endtplhandlebars %}

@@ -1,3 +1,4 @@
+from django.conf import settings
 from uw_pws import PWS
 from uw_nws import NWS
 from uw_nws.exceptions import InvalidUUID
@@ -28,6 +29,7 @@ class EndpointView(RESTDispatch):
             return self.error_response(
                 status=404, message="Person '%s' not found" % user)
 
+        sender_address = getattr(settings, 'SENDER_ADDRESS', '')
         endpoints_json = {}
         for endpoint in person.endpoints:
             is_valid = (endpoint.status.lower() != 'invalid')
@@ -43,6 +45,7 @@ class EndpointView(RESTDispatch):
             endpoints_json[endpoint.protocol.lower()] = {
                 'EndpointID': endpoint.endpoint_id,
                 'EndpointAddress': endpoint.endpoint_address,
+                'SenderAddress': sender_address,
                 'Protocol': endpoint.protocol,
                 'isBlacklisted': is_blacklisted,
                 'isValid': is_valid,

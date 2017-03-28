@@ -1,0 +1,9 @@
+{% extends "base-mobile.html" %}
+{% block navigation %}
+    <a href="/" title="Back" class="back"><span class="visuallyhidden">back</span></a>
+{% endblock %}
+<h2 class="visuallyhidden">Unsubscribe</h2>
+{% block content %}
+<div id="body"></div>
+{% include "handlebars/unsubscribe.html" %}
+{% endblock %}
