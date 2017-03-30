@@ -22,7 +22,7 @@ urlpatterns = [
     url(r'^uiapi/unsubscribe/', ChannelUnsubscribe().run),
     url(r'^uiapi/channel_details/(?P<channel_id>[^/]+)', ChannelDetails().run),
     url(r'^uiapi/subscription/?$', SubscriptionSearch().run),
-    url(r'^uiapi/subscription_protocol/?$',SubscriptionProtocol().run),
+    url(r'^uiapi/subscription_protocol/?$', SubscriptionProtocol().run),
     url(r'^uiapi/profile/(?P<user>[^/]+)', EndpointView().run),
     url(r'^uiapi/tos/(?P<user>[^/]+)', ToSConfirmation().run),
     url(r'^uiapi/resend_sms_confirmation/', ResendSMSConfirmationView().run),
