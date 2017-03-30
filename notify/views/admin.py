@@ -112,8 +112,8 @@ class UserSearchAdmin(AdminRESTDispatch):
         regid = request.GET['regid']
         netid = request.GET['netid']
 
-    try:
-        self.user_is_admin()
+        try:
+            self.user_is_admin()
         except InvalidAdminException as ex:
             return self.error_response(status=403, message="%s" % ex)
 
