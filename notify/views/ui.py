@@ -61,7 +61,7 @@ def home_view(request):
 @login_required
 def profile_view(request):
     context = build_view_context(request)
-    if context.get('user_accepted_tos', False) isFalse:
+    if context.get('user_accepted_tos', False) is False:
         return redirect_to_terms_of_service(context)
     return render_to_response('profile.html', context, RequestContext(request))
 
