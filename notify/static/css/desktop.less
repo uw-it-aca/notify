@@ -1,0 +1,165 @@
+/* Less Variables */
+@button-hover: #61c4fe;
+@blue_bright: #22a7f4;
+@text-color: #647387;
+@menu-hover: #d7e6fa;
+
+.shadow1 () {
+-moz-box-shadow: 0 0 4px 1px @blue_bright;
+-webkit-box-shadow: 0 0 5px 1px @blue_bright;
+box-shadow: 0 0 4px 1px @blue_bright;
+}
+
+/* start overriding jquery general styles */
+.ui-dialog-titlebar {margin-bottom: 20px;}
+
+/* start overriding jquery popin styles */
+.ui-dialog { border: @blue_bright solid 4px; background-color: #fff; background-image: none;
+    .ui-dialog-titlebar { background: none; border: none; color: @text-color;
+    }
+    .ui-dialog-content {padding: 0 30px; color: @text-color;
+        a {color: @blue_bright;
+            &:hover {text-decoration:underline;}
+        }
+    }
+    .ui-dialog-titlebar-close {right:0; margin-top:-28px;
+        &:hover, &:focus {background-image: none; border-color: #228ef1; background-color: #eee;}
+        .ui-icon {background-image: url(img/ui-icons_228ef1_256x240.png); }
+        }
+
+}
+
+/* start overriding jquery menu styles */
+.dropdown-menu {
+    .active > a {background-color: @menu-hover; background-image: none; filter: none;
+        &:hover, &:focus {background-color: @menu-hover; background-image: none; cursor: pointer; color: @text-color; text-decoration: none; filter: none;}
+        &:focus {background-color: @menu-hover; background-image: none; text-decoration: none; filter: none;}
+    }
+}
+.dropdown-submenu:hover > a {background-color: @menu-hover; background-image: none;}
+
+/* start overriding the dropdown select box */
+.selectboxit-hover {
+    .selectboxit-text {text-decoration: underline;}
+}
+
+form.subscription_form label.checkbox .selectboxit-container {
+    .selectboxit:focus { outline: 1px dotted #22a7f4;
+        .selectboxit-text {text-decoration: underline;}
+    }
+}
+
+/* start overriding the accordion menu styles */
+.ui-accordion {
+    h3 { margin-left: -10px; padding: 2px 5px; width: 100%;
+        &.ui-state-default { padding: 2px 5px;
+            .ui-icon { margin-top:5px; }
+            /*&.ui-state-active { padding: 2px 6px; }*/
+        }
+        &:hover { cursor: pointer;
+            .ui-icon {outline: #228ef1 dotted 1px;}
+        }
+        &:focus {
+            .ui-icon {outline: #228ef1 dotted 1px;}
+        }
+    }
+}
+
+/* start overriding the mobile styles */
+html {background-color: #eee;}
+body{ min-width:480px; font-size: 14px;}
+h2 {line-height: 40px; }
+h3 {font-size: 140%; line-height: 30px; margin:5px 0;}
+a:hover { text-decoration: none;}
+label {
+    &:hover {cursor: pointer;}
+}
+
+.find_sln_container {margin-top: 0px; }
+
+.head {
+    span {
+        a {
+            &.profile { line-height: 18px; padding: 6px 5px 0; width:200px; height: 67px;
+                .edit_link {font-size:90%;}
+                &:hover { .shadow1;
+                    .edit_link {text-decoration: underline; color: @blue_bright;}
+                }
+            }
+        }
+        &.profile_box_container {min-width: 445px;}
+    }
+}
+
+div {
+    &#sms_text {margin-bottom:20px;}
+}
+
+#class_details_container { margin-top: 0;}
+
+#container {  margin: 20px;
+    #profile {
+        input { width: 200px;}
+    }
+    .content-container { padding: 0 3%;
+        div { font-size: 100%; }
+    }
+}
+
+.content-container {
+        div {overflow: visible;}
+}
+
+.profile_container {
+    a {
+        &.remove {color: red; padding: 6px; font-size: 120%; vertical-align: middle;}
+    }
+}
+
+.content-container {
+    .notification_list {
+        li { font-size: 100%;
+            .unsubscribe { margin-right: 3px;}
+            .class_container {margin-right: 15px;}
+            .class_info {
+                span {
+                    &.availability_count {
+                        .text {display:inline;}
+                    }
+                }
+            }
+        }
+    }
+}
+
+form    {
+    label {
+        &.checkbox {font-size: 130%; width: 70px; }
+    }
+     &.subscription_form {
+        .info_text {text-align:left;}
+        button {margin-top: 18px;}
+        label {
+            &.checkbox {padding:0 25px; }
+        }
+        &.unsubscribe_form { border: none; padding: 0; margin-top:0;
+            .button_container {text-align:center;}
+            button {margin-top: 28px;}
+        }
+     }
+}
+
+button {
+    &:hover, &:focus {background-color: @button-hover;}
+    &.active {
+        &:hover, &:focus {background-color: @button-hover;}
+    }
+    &#sln_submit {margin-left: 20px;}
+}
+
+/* Larger screens */
+
+@media screen and (min-width: 1024px) {
+    body { min-width:1004px;  overflow: none; }
+
+}

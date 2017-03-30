@@ -1,0 +1,445 @@
+/* Less Variables */
+@blue_bright: #22a7f4;
+@button-hover: #61c4fe;
+@green_bright: #25f25b;
+@alert_text: #de5050;
+@grey_light: #cccccc;
+@grey_text_light: #aaaaaa;
+@grey_med: #777777;
+@grey_dark: #333333;
+@text-color: #647387;
+.rounded-corners (@radius: 0 0 5px 0) {
+  -webkit-border-radius: @radius;
+  -moz-border-radius: @radius;
+  -ms-border-radius: @radius;
+  -o-border-radius: @radius;
+  border-radius: @radius;
+}
+
+.gradient () {
+background-color: #ffffff;
+background-image: linear-gradient(center top, rgb(237,237,237), rgb(255,255,255) 30%);
+background-image: -o-linear-gradient(center top, rgb(237,237,237), rgb(255,255,255) 30%);
+background-image: -moz-linear-gradient(center top, rgb(237,237,237), rgb(255,255,255) 30%);
+background-image: -webkit-gradient(linear, 0 0, 0 30%, from(#ededed), to(#ffffff));
+background-image: -webkit-linear-gradient(center top, rgb(237,237,237), rgb(255,255,255) 30%);
+background-image: -ms-linear-gradient(center top, rgb(237,237,237), rgb(255,255,255) 30%);
+}
+
+.shadow () {
+-moz-box-shadow: 0 0 4px 1px #BBB;
+-webkit-box-shadow: 0 0 5px 1px #BBB;
+box-shadow: 0 0 4px 1px #BBB;
+
+}
+
+.shadow1 () {
+-moz-box-shadow: 0 0 4px 1px @blue_bright;
+-webkit-box-shadow: 0 0 5px 1px @blue_bright;
+box-shadow: 0 0 4px 1px @blue_bright;
+}
+
+/* JQuery Overrides */
+.ui-widget {font-size: inherit;}
+
+.selectboxit-container {vertical-align:middle;
+    .selectboxit {width:150px; box-shadow:none; border: none; background: none; margin-left: 0px; margin-bottom: 10px;
+        .selectboxit-arrow-container {border-left: 1px solid @blue_bright; padding-left: 3px; width: 20px;
+            .selectboxit-arrow {top: 40%;}
+        }
+    }
+    .selectboxit-options {
+        .selectboxit-option.active {
+            .selectboxit-option-anchor { color: @text-color;}
+        }
+    }
+}
+
+
+
+.selectboxit-text {margin-right: 4px; color: @blue_bright; float:none; margin-left: 10px;}
+i.caret { border-top-color: @blue_bright;}
+
+.dropdown-menu {min-width: 100px;}
+
+.ui-accordion { font-size: inherit; margin-top: 4px;
+    h3 {width: 95%; max-width: 540px; padding: 2px; margin-top: 20px;
+        &.ui-state-default {background-color: #e5e5e5; border-style: solid; border-color: #ababab; padding: 8px 5px;
+            .ui-icon { margin-top:3px; }
+            &.ui-state-active { background-color: transparent; /*border-style: none none solid; padding: 2px 3px;*/ border-left-color: transparent; border-right-color: transparent; border-top-color: transparent;
+            transition:all .2s linear;
+            -o-transition:all .2s linear;
+            -moz-transition:all .2s linear;
+            -webkit-transition:all .2s linear;
+            }
+        }
+    }
+    .registration_period_header { float: left; width:80%;}
+    .ui-icon { float: right; margin-top:6px;
+        }
+    .ui-widget-content { background: none; border: none; color: inherit;}
+    .ui-state-active,.ui-widget-content.ui-state-active,.ui-widget-header.ui-state-active,.ui-state-default,.ui-widget-content.ui-state-default,.ui-widget-header.ui-state-default { border-style: none none solid; background: none;  border-color:@text-color; color: @text-color; font-size: 140%;
+        .ui-icon {background-image: url(img/ui-icons_228ef1_256x240.png);}
+    }
+    .ui-state-hover,.ui-state-focus {
+        .ui-icon {background-image: url(img/ui-icons_228ef1_256x240.png);}
+    }
+}
+
+/* General Overrides */
+html { background-color: #eee;}
+body { color: @text-color;  width: 100%; margin: 0; .gradient; padding: 0; -webkit-text-size-adjust:100%; font-size: 12px; font-family: Trebuchet MS,Tahoma,Verdana,Arial,sans-serif;}
+div {clear: both;}
+h2 {line-height: 20px;}
+h1 { font-size: 210%; font-weight: normal; padding-left: 32px; line-height: 40px; background: transparent url(img/logo.png) no-repeat left center; margin-left:10px; height:45px; }
+h2 {font-size: 180%; font-weight: 200; margin: 0;}
+h3 { font-size: 165%; margin-top: 0; line-height: 25px; margin: 20px 0 5px 0;
+    div {
+        &.info_endpoint {font-size: 75%; display: inline; font-weight:400; line-height: inherit; color: @grey_text_light;
+            &.invalid {color: red;}
+        }
+    }
+    &#phone_header {margin-top: 35px;}
+}
+ol, ul { margin: 0; list-style: none; }
+li {clear: both;}
+a {color: @blue_bright;
+    &:visited { text-decoration: none;}
+}
+hr {border-color: #bbb; margin: 2px 0; border-style: solid none none; clear: both;}
+input { background-color: #fff;}
+strong {color:red;}
+
+.find_sln_container {margin-top: 20px; }
+
+/* Specific CSS */
+.loading { background: transparent url(img/spinner.gif) no-repeat left center; padding: 15px 0 15px 40px; font-size: 120%; margin-left: 20px;
+}
+
+.clearfix {*zoom: 1;
+    &:before,&:after { display: table; content: ""; line-height: 0;}
+    &:after { clear: both;}
+}
+
+.override_alert { text-decoration: none; color: white; padding: 5px 15px; background-color: #DA3816;
+    a { text-decoration: underline; font-size: 90%; display: inline-block; margin-left: 30px; color: white;}
+    strong { color: white;}
+}
+
+div {
+    &.info_endpoint {font-size: 85%; margin: -5px auto 5px; padding-left: 2px; color: red; line-height: 10px;}
+}
+
+span {
+    &.remove {display: inline-block; width: 18px;}
+}
+
+#container { margin: 10px auto; width: 95%; overflow: hidden;
+    #profile {
+        input { color: @text-color; width: 180px;
+        }
+        #sms_text,#email_text {margin: 10px 0 28px 8px; font-size: 120%;
+        }
+        .remove {color: red; padding-left: 6px; font-size: 140%; vertical-align: middle; width: 12px; display: inline-block;}
+    }
+    .add_notification {font-size: 120%; font-weight: bold; margin: 20px;
+        a {padding: 5px;}
+    }
+}
+
+.tos_container { line-height: 18px; font-size: 13px;
+    h2 {font-size: 165%; margin-top: 0; line-height: 25px; margin: 20px 0 5px 0; font-weight: bold;}
+    ul {list-style: disc outside none; margin: 0 0 10px 25px;
+        li {line-height: 18px; margin-bottom: 8px; margin-top: 4px;}
+    }
+    .button_container {text-align: center;
+        button { width: 100px; margin-top: 33px;
+            &:hover, &:focus {background-color: @button-hover;}
+        }
+    }
+
+}
+
+.profile_container {
+    .button_container {text-align: center;
+        button { width: 100px; margin-top: 33px;
+            &.disabled {background-color: @grey_light; color: #eee; cursor: default;}
+        }
+    }
+    #sms_text,#email_text {margin: 10px 0 28px 8px; font-size: 120%; max-width: 100%;
+        span {
+            a {vertical-align: top;}
+            &.endpoint {text-overflow: ellipsis; max-width: 70%; display: inline-block; overflow: hidden; }
+        }
+    }
+}
+
+form {position: relative; margin:3px 0 0;
+    .error_text {display: none;}
+    .placeholder {color: #999;}
+    label {padding: 9px 1px 7px 20px; margin-left:5px; display: inline-block; color: @blue_bright;
+        &.checkbox {background: transparent url(img/checkbox_unchecked_sm.png) no-repeat left center; font-size: 140%; white-space:nowrap; margin-bottom: 0;
+            &.disabled {color: @grey_text_light; background-image: url(img/disabled_checkbox_unchecked.png); cursor: default;}
+            &.selected {background: transparent url(img/checkbox_checked_sm.png) no-repeat left center;
+                &.disabled {background-image: url(img/disabled_checkbox_checked.png); cursor: default; }
+            }
+        }
+    }
+    &.subscription_form {margin-top: -8px; border: 2px solid @blue_bright; .rounded-corners (8px); color: @blue_bright; text-align: center; margin-top: 20px; padding: 20px; font-size: 160%; line-height: 30px;
+        button {
+            &#confirm_unsubscribe { width: inherit;}
+         }
+        label {font-size: 90%; margin: 20px 20px 20px 0;
+            &.checkbox {font-size: 110%; }
+        }
+        div {
+            &.info_endpoint {line-height: 18px; margin-top: -18px; font-size: 75%; font-weight: 200;}
+        }
+
+    }
+    input[type="text"],input[type="email"],input[type="tel"],input[type="number"] {height: 25px; margin-bottom: 0;
+        &#sln_search {width: 70px; float:left; margin-bottom: 10px;
+        }
+        }
+    &.invalid { margin-bottom: -20px;
+        .error_text {display: block; color:red; font-weight:bold; margin-left: 25px; font-size: 90%;}
+        input[type="text"],input[type="email"],input[type="tel"],input[type="number"] {border: 2px solid red; background-color: lightyellow; padding: 2px 4px;}
+    }
+}
+
+#sms_form { margin-bottom: 20px;
+    &.invalid {margin-bottom: 0px;}
+}
+
+.validation_error {color:red; font-weight:bold; font-size: 90%; text-transform:uppercase; margin-top: 20px; line-height:15px;}
+
+.button_container { margin-top: 0;
+    button { width: 65px; padding:4px; height: 48px; color: @grey_med; text-shadow: none; border-color: @grey_light; font-weight: bold; font-size: 90%; line-height:14px;
+        &.active { background-color: @blue_bright; color: white; border-color: #888888;}
+    }
+}
+
+
+button {margin: 0 10px;background-color: @blue_bright; color: white; .rounded-corners (4px);
+    &.flat {margin-top: 8px; height:48px; padding: 0 15px; color: #fff; border: none;
+        &.add {margin-top: 0; height:38px; }
+    }
+    &#sln_submit {margin-top: -3px; float: none;}
+}
+
+
+div.body_container {width: 100%; overflow-x: hidden;}
+
+.head { white-space: nowrap;
+    span { height: 60px;
+        &.title {.rounded-corners (0); width: 100%; border: solid @grey_light 1px; background-color: white; border-style: none none solid none; float:left;
+            }
+            a { display: block;
+                &.profile { float: right; width:120px; padding: 7px 5px 0; line-height: 14px; vertical-align: middle; font-size: 90%; color: @text-color; .gradient; .shadow; .rounded-corners (0 0 8px 8px); border-bottom: 1px solid @grey_light; margin: 0 3px; height: 60px;
+                    &:focus {.shadow1;
+                        .edit_link {text-decoration: underline;}
+                    }
+                }
+                span {display: block; height: auto; text-overflow: ellipsis; font-weight: normal;
+                    &.id {float: left; font-weight: bold; line-height: 20px; color: @text-color; max-width: 150px; overflow: hidden;}
+                    &.edit_link {float:right; line-height: 20px; color: @blue_bright;}
+                    &.email {color: @text-color; font-size: 90%; display: inline-block; overflow: hidden; text-overflow: ellipsis; width: 100%;
+                        .none { color: @grey_text_light;  }
+                    }
+                    &.phone {color: @text-color; font-size: 90%; overflow: hidden; text-overflow: ellipsis; width: 100%;
+                        &.invalid {
+                            b {color: #f08e8e;
+                                &.none {color: @grey_text_light;}
+                            }
+                        }
+                        &span {float: left;}
+                    }
+
+                }
+            }
+
+    }
+    .back {background: url("img/back_arrow.png") no-repeat 0 0 transparent; width: 45px; height: 47px; margin: 6px 20px 0 0; position: absolute; right:0;}
+}
+
+.head {
+    &.main {
+        span {
+            &.title {width: 100%;}
+        }
+    }
+}
+
+.profile_box_container {position: absolute; left: 0; min-width: 315px; width: 85%;}
+
+a.edit { border-left: solid 2px @text-color; margin-left: 12px; padding-left: 5px;}
+
+.page-heading {line-height: 25px; }
+
+.content-container {
+    div { overflow: visible; text-overflow: ellipsis;}
+    .notification_list { float:left; width: 100%;
+       li { padding-top: 10px; margin-top: 10px;
+               .class_item {float: left; width: 60%; clear: none; border-left: @grey_light solid 1px; padding-left: 8px; padding-bottom: 5px; padding-right: 8px; min-width: 160px; max-width: 400px;
+                div {
+                    &.class_container { float: left; min-width:135px; }
+                    &.class_name_container {display: inline-block; margin-bottom: -5px; width:100%;}
+                }
+                }
+                span { float: left; vertical-align: middle; line-height: 25px; white-space: nowrap;
+                &.class_name {font-size: 190%; font-weight: 500; overflow: hidden; text-overflow: ellipsis; width: 100%;
+                }
+                &.unsubscribe { width: 15px; margin-top: 12px;
+                    a {color: red; font-size: 130%; margin-left: -10px; padding: 10px;}
+                }
+                }
+                .class_info { font-size: 110%; font-weight: 200; margin-top: 5px; width:100%; overflow: hidden; text-overflow: ellipsis;
+                    span {line-height: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+                        &.sln {margin:0 15px 0 0;}
+                        &.availability_count {font-weight: bold;
+                            &.full {color:@alert_text;}
+                            .text {font-weight: normal; display:none;}
+                        }
+                        &.class_details {float: right; margin-top: -2px;
+                            a {color: white; display: block; margin-top:-8px; padding: 5px; background-color: @blue_bright; font-weight: bold; font-size:16px;
+                                &:focus, &:hover {background-color: @button-hover;}
+                            }
+                        }
+                    }
+                }
+            &.edit {
+                .class_item {padding:2px 8px; border-left: 2px solid @blue_bright; border-right: 2px solid @blue_bright; .rounded-corners (8px); margin: -2px 0 10px 14px;}
+                .button_container {float: right;
+                    button {
+                        &.flat { margin-top: 0;}
+                    }
+                }
+            }
+        }
+    }
+}
+
+#class_details_container { float: left; width:100%; margin-top: 20px;
+    h3 {margin:0;}
+}
+.course_info { font-size:130%;
+    .class_avail {float: right;
+        &.full {color: red;}
+    }
+}
+.class_meta {color: #7c8899; margin-top: -4px;
+     &.container { border-top: 1px solid @grey_light; margin-top: 8px; padding: 5px; width:98%;
+        span { vertical-align: top; margin-bottom: 5px; white-space: nowrap; float: left; overflow: hidden; text-overflow: ellipsis;
+            &.meet_time { width: 40%;}
+            &.instructor {text-align: left; width: 40%;}
+            &.location { float: right; width: 20%; text-align: right;}
+        }
+    }
+}
+
+.quarter_select_container {position:relative; float: left; margin-top: 4px;}
+
+.confirmation_message {color: @alert_text; font-size: 80%; line-height: 13px; margin-bottom: 8px; margin-top: -8px;
+    a {margin-left: 5px;}
+}
+
+#footer { padding: 15px 5px 10px; font-size: 11px; line-height: 14px; background: url('img/w.png') no-repeat 10px 15px; border: solid @grey_light 1px; background-color: #eee; border-style: solid none none; float: left; width: 100%; margin-top: 30px;
+    .copyright, .global_links { margin-left: 45px; margin-bottom: 5px; }
+}
+
+.error_page {
+    li { list-style: outside; margin-left: 40px;}
+}
+
+/* Message Container for alerts (default) and info */
+#message_container { background-color: #F43C56; color: white; float: left; display: block; font-weight: bold; margin: 0; padding: 20px 8px; width: 100%; white-space: normal; position: inherit;
+    a {color: #005580; padding: 0 3px; text-decoration: underline;
+        &:hover {text-decoration: none;}
+    }
+    &.info {background-color: @button-hover; color: inherit;
+    	a { color:#096c9f; }
+    }
+}
+
+
+/* Helper for hiding elements offscreen */
+.visuallyhidden {
+    border: 0;
+    clip: rect(0 0 0 0);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: fixed;
+    width: 1px;
+}
+
+/* Target mobile landscape */
+@media only screen and (max-device-width: 700px) and (orientation : landscape) {
+    .content-container {
+        .notification_list {
+            li {
+                .class_item {width: 85%; max-width: 340px;}
+                .edit_endpoints_container {
+                    .class_info {width: 180px;}
+                }
+                .class_info {
+                    span {
+                        &.availability_count {
+                            .text {display:inline;}
+                        }
+                    }
+                }
+            }
+        }
+        button {
+            &#sln_submit {margin-left: 20px; margin-top: -3px; float: none;}
+        }
+    }
+	.head {
+    	span {
+        	a {
+            	&.profile {width:200px;}
+        	}
+    	}
+	}
+}
+
+/* Target larger phone landscape */
+@media only screen and (min-device-width : 530px) and (max-device-width : 700px) and (orientation : landscape) {
+    .content-container {
+        .notification_list {
+            li {
+                .class_item {max-width: 355px;}
+            }
+        }
+    }
+	.head {
+    	span {
+        	a {
+            	&.profile {width:200px;}
+        	}
+        	&.profile_box_container {min-width: 520px;}
+    	}
+	}
+}
+
+
+
+
+
+
+
+
+/* Target small devices */
+@media screen and (min-width: 320px) {
+
+    #container { min-height: 190px; }
+
+}
+
+/* Target larger devices */
+@media screen and (min-width: 480px) {
+
+    #container { min-height: 300px; }
+}
