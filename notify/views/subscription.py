@@ -1,3 +1,4 @@
+from django.views.decorators.csrf import csrf_exempt
 from django.utils.timezone import utc
 from uw_nws import NWS
 from uw_nws.models import Subscription
@@ -191,6 +192,7 @@ class SubscribeSLN(RESTDispatch):
         return self.json_response(status=201)
 
 
+@csrf_exempt
 class SubscriptionProtocol(RESTDispatch):
     """Enables or disables a subscription protocol (e.g. Email or Mobile)
     """

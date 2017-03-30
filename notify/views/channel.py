@@ -1,13 +1,14 @@
-from restclients.nws import NWS
-from restclients.sws import SWS
-from restclients.exceptions import DataFailureException, InvalidUUID
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.timezone import utc
+from uw_nws import NWS
+from uw_nws.exceptions import InvalidUUID
+from restclients_core.exceptions import DataFailureException
 from notify.views.rest_dispatch import RESTDispatch
 from notify.utilities import (
     get_channel_details_by_channel_id, get_course_details_by_channel,
     get_verified_endpoints_by_protocol)
 from userservice.user import UserService
 from datetime import datetime
-from django.utils.timezone import utc
 import json
 
 
@@ -64,6 +65,7 @@ class ChannelUnsubscribe(RESTDispatch):
         return self.json_response({'message': 'Unsubscription successful'})
 
 
+@csrf_exempt
 class ChannelSearch(RESTDispatch):
     def GET(self, request):
         sln = request.GET.get('sln', None)
