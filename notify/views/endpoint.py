@@ -25,7 +25,7 @@ class EndpointView(RESTDispatch):
 
         try:
             person = get_person(user)
-        except DataFailureException es ex:
+        except DataFailureException as ex:
             return self.error_response(
                 status=404, message="Person '%s' not found" % user)
 
@@ -67,7 +67,7 @@ class EndpointView(RESTDispatch):
 
         try:
             person = get_person(user)
-        except DataFailureException es ex:
+        except DataFailureException as ex:
             msg = "Endpoint addition attempted for non-existent user '%s'" % (
                 user)
             logger.warning(msg)
@@ -108,7 +108,7 @@ class EndpointView(RESTDispatch):
 
         try:
             person = get_person(user)
-        except DataFailureException es ex:
+        except DataFailureException as ex:
             msg = "Endpoint update attempted for non-existent user '%s'" % (
                 user)
             logger.warning(msg)
@@ -147,7 +147,7 @@ class EndpointView(RESTDispatch):
 
         try:
             person = get_person(user)
-        except DataFailureException es ex:
+        except DataFailureException as ex:
             msg = "Endpoint deletion attempted for non-existent user '%s'" % (
                 user)
             logger.warning(msg)
@@ -177,7 +177,7 @@ class ResendSMSConfirmationView(RESTDispatch):
         user = UserService().get_user()
         try:
             person = get_person(user)
-        except DataFailureException es ex:
+        except DataFailureException as ex:
             return self.error_response(
                 status=404, message="Person '%s' not found" % user)
 
@@ -224,7 +224,7 @@ class ToSConfirmation(RESTDispatch):
                 return self.error_response(
                     status=500, message="Update person failed: %s" % ex.msg)
 
-        except DataFailureException es ex:
+        except DataFailureException as ex:
             if ex.status != 404:
                 return self.error_response(
                     status=ex.status, message="Error: %s" % ex.msg)
