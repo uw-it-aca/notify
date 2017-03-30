@@ -24,7 +24,7 @@ class SubscriptionSearch(RESTDispatch):
 
         try:
             person = get_person(subscriber_id)
-        except DataFailureException es ex:
+        except DataFailureException as ex:
             return self.error_response(
                 status=404, message="Person '%s' not found" % user)
 
@@ -151,7 +151,7 @@ class SubscribeSLN(RESTDispatch):
 
         try:
             person = get_person(subscriber_id)
-        except DataFailureException es ex:
+        except DataFailureException as ex:
             msg = 'Error retrieving Person ' + subscriber_id
             return self.error_response(status=404, message=msg)
 
