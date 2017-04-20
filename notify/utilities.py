@@ -1,6 +1,7 @@
 from uw_nws import NWS
 from uw_pws import PWS
-from uw_sws.section import get_section_by_label, get_section_status_by_label
+from uw_sws.section import get_section_by_label
+from uw_sws.section_status import get_section_status_by_label
 from uw_sws.term import get_current_term, get_term_after
 from restclients_core.exceptions import DataFailureException
 from datetime import datetime
