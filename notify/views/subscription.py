@@ -1,3 +1,4 @@
+from django.views.decorators.csrf import csrf_exempt
 from django.utils.timezone import utc
 from uw_nws import NWS
 from uw_nws.models import Subscription
@@ -23,7 +24,7 @@ class SubscriptionSearch(RESTDispatch):
 
         try:
             person = get_person(subscriber_id)
-        except DataFailureException es ex:
+        except DataFailureException as ex:
             return self.error_response(
                 status=404, message="Person '%s' not found" % user)
 
@@ -150,7 +151,7 @@ class SubscribeSLN(RESTDispatch):
 
         try:
             person = get_person(subscriber_id)
-        except DataFailureException es ex:
+        except DataFailureException as ex:
             msg = 'Error retrieving Person ' + subscriber_id
             return self.error_response(status=404, message=msg)
 
@@ -191,6 +192,7 @@ class SubscribeSLN(RESTDispatch):
         return self.json_response(status=201)
 
 
+@csrf_exempt
 class SubscriptionProtocol(RESTDispatch):
     """Enables or disables a subscription protocol (e.g. Email or Mobile)
     """

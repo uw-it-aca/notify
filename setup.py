@@ -28,7 +28,7 @@ setup(
         'django-templatetag-handlebars',
         'django-userservice==1.2.1',
         'unittest2',
-        'AuthZ-Group',
+        'AuthZ-Group>=1.6',
         'UW-RestClients-NWS>=0.51,<1.0',
         'UW-RestClients-SWS>=0.5.1,<1.0',
         'UW-RestClients-PWS>=0.5,<1.0',
@@ -47,6 +47,6 @@ setup(
         'Operating System :: OS Independent',
         'Programming Language :: Python',
         'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3.6'
     ],
 )
-
