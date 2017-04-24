@@ -1,4 +1,5 @@
 from uw_nws import NWS
+from uw_nws.models import Person
 from uw_pws import PWS
 from uw_sws.section import get_section_by_label
 from uw_sws.section_status import get_section_status_by_label
@@ -146,6 +147,18 @@ def get_person(user_id):
         person.surrogate_id = user_id
         nws.update_person(person)
     return person
+
+
+def create_person(user_id, attributes={}):
+    pws_person = PWS().get_person_by_netid(netid_from_eppn(user_id))
+
+    person = Person()
+    person.person_id = pws_person.uwregid
+    person.surrogate_id = user_id
+    person.default_endpoint_id = None
+    person.attributes = attributes
+
+    return NWS().create_person(person)
 
 
 def user_accepted_tos(person):

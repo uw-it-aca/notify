@@ -1,11 +1,10 @@
 from django.conf import settings
-from uw_pws import PWS
 from uw_nws import NWS
 from uw_nws.exceptions import InvalidUUID
-from uw_nws.models import Endpoint, Person
+from uw_nws.models import Endpoint
 from userservice.user import UserService
 from restclients_core.exceptions import DataFailureException
-from notify.utilities import netid_from_eppn, get_person
+from notify.utilities import get_person, create_person
 from notify.views.rest_dispatch import RESTDispatch
 import json
 import logging
@@ -229,16 +228,8 @@ class ToSConfirmation(RESTDispatch):
                 return self.error_response(
                     status=ex.status, message="Error: %s" % ex.msg)
 
-            pws_person = PWS().get_person_by_netid(netid_from_eppn(user))
-
-            person = Person()
-            person.person_id = pws_person.uwregid
-            person.surrogate_id = user
-            person.default_endpoint_id = None
-            person.attributes["AcceptedTermsOfUse"] = True
-
             try:
-                nws.create_person(person)
+                create_person(user, attributes={"AcceptedTermsOfUse": True})
             except DataFailureException as ex:
                 return self.error_response(
                     status=500, message="Create person failed: %s" % ex.msg)
