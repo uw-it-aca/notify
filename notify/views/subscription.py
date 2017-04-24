@@ -10,7 +10,7 @@ from userservice.user import UserService
 from datetime import datetime
 from operator import attrgetter
 import logging
-
+import json
 
 logger = logging.getLogger(__name__)
 
@@ -198,7 +198,7 @@ class SubscriptionProtocol(RESTDispatch):
     """
     def _echo_request_data(self, request, method):
         try:
-            request_data = json.loads(request.raw_post_data)
+            request_data = json.loads(request.body)
             request_data['method'] = method
             request_data['subscriber_id'] = request.META['REMOTE_USER']
             return self.json_response(request_data)
@@ -207,7 +207,7 @@ class SubscriptionProtocol(RESTDispatch):
             return self.error_response(status=304)
 
     def PUT(self, request):
-        request_data = json.loads(request.raw_post_data)
+        request_data = json.loads(request.body)
         subscriber_id = UserService().get_user()
         protocol = request_data['Protocol']
         channel_id = request_data['ChannelID']
@@ -260,7 +260,7 @@ class SubscriptionProtocol(RESTDispatch):
             {'status': status, 'message': 'Subscription successful'})
 
     def DELETE(self, request):
-        request_data = simplejson.loads(request.raw_post_data)
+        request_data = json.loads(request.body)
         protocol = request_data['Protocol']
         channel_id = request_data['ChannelID']
         endpoint_id = request_data['EndpointID']

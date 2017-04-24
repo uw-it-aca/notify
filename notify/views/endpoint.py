@@ -9,7 +9,6 @@ from notify.views.rest_dispatch import RESTDispatch
 import json
 import logging
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -73,8 +72,7 @@ class EndpointView(RESTDispatch):
             return self.error_response(
                 status=404, message="Person '%s' not found" % user)
 
-        request_json = request.raw_post_data
-        request_obj = json.loads(request_json)
+        request_obj = json.loads(request.body)
         protocol = request_obj['Protocol']
 
         nws = NWS(UserService().get_acting_user())
@@ -114,8 +112,7 @@ class EndpointView(RESTDispatch):
             return self.error_response(
                 status=404, message="Person '%s' not found" % user)
 
-        request_json = request.raw_post_data
-        request_obj = simplejson.loads(request_json)
+        request_obj = json.loads(request.body)
         endpoint_id = request_obj['EndpointID']
         endpoint = None
         for ep in person.endpoints.view_models:
@@ -155,8 +152,7 @@ class EndpointView(RESTDispatch):
 
         nws = NWS(user_service.get_acting_user())
         try:
-            request_json = request.raw_post_data
-            request_obj = simplejson.loads(request_json)
+            request_obj = json.loads(request.body)
 
             nws.delete_endpoint(request_obj['EndpointID'])
 

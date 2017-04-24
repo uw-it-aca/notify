@@ -130,7 +130,7 @@ def unsubscribe_view(request, channel_id):
 
 @restrict_session_to_weblogin_timeout
 @login_required
-def tos_view(self, request):
+def tos_view(request):
     context = build_view_context(request)
     redirect_path = request.GET.get('next', None)
     if redirect_path is not None:
