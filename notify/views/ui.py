@@ -168,7 +168,7 @@ def shib_redirect(request):
     if not request.user:
         raise Exception("Error: no user in request")
 
-    redirect_to = request.REQUEST.get("next", '')
+    redirect_to = request.GET.get("next", '')
 
     netloc = urlparse.urlparse(redirect_to)[1]
 
