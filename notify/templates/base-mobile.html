@@ -47,8 +47,12 @@
     <div class="body_container">
         {% csrf_token %}
         {% if override_user %}
-            <div class="override_alert" role="alert">You are overriding as <strong>{{override_user}}</strong>.<a href="javascript:void(0)" onclick="canui.clearOverride()">Clear override</a></div>
-        {% endif %}
+		<form method="POST" action="{% url 'userservice_override' %}">
+		<div class="override_alert" role="alert">You are overriding as <strong>{{override_user}}</strong>. <button class="btn btn-danger btn-xs" value="Clear override" type="submit">Clear</button></div>
+		{% csrf_token %}
+		<input type="hidden" value="1" name="clear_override">
+		</form>
+		{% endif %}
         {% block head_container %}<div class="head clearfix">{% endblock %}
             {% block navigation %}
         <span class="profile_box_container">

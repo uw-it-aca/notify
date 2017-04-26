@@ -79,7 +79,7 @@ class EndpointView(RESTDispatch):
         try:
             endpoint = Endpoint()
             endpoint.owner = person.surrogate_id
-            endpoint.user = person.surrogate_id
+            endpoint.subscriber_id = person.surrogate_id
             endpoint.endpoint_address = request_obj['EndpointAddress']
             endpoint.protocol = protocol
             nws.create_endpoint(endpoint)

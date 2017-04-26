@@ -1092,19 +1092,6 @@
         });
     };
 
-    canui.clearOverride = function clearOverride(){
-        $.ajax({
-                url: "/support?_=" + jQuery.now(),
-                contentType: "application/json",
-                dataType: "json",
-                type: "POST",
-                data:{"clear_override": 1},
-                complete: function() {
-                    location.reload();
-                }
-            });
-    };
-
     canui.sortEndpointsButtonText = function sortEndpointsButtonText(a, b) {
         return a.toUpperCase().localeCompare(b.toUpperCase());
     };
