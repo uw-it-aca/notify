@@ -1,23 +1,11 @@
 $(document).ready(function() {
-    canui.ajaxSetup();
+    // prep for api post/put
+	$.ajaxSetup({
+		headers: { "X-CSRFToken": $('input[name="csrfmiddlewaretoken"]').val() }
+	});
 
     // set the container heights
     sizeContent();
-
-    //Helper for looping over JSON objects
-    Handlebars.registerHelper("key_value", function(obj, options) {
-        var buffer = "",
-            key;
-
-        for (key in obj) {
-            if (obj.hasOwnProperty(key)) {
-                // buffer += function({key: key, value: obj[key]});
-                buffer += options.fn({key: key, value:obj[key]});
-            }
-        }
-
-        return buffer;
-    });
 
     window.loadEndpoint = function loadEndpoint(endpoint_id){
         $.ajax({
