@@ -1,7 +1,7 @@
 $(document).ready(function() {
+    canui.ajaxSetup();
 
     // set the container heights
-
     sizeContent();
 
     //Helper for looping over JSON objects
@@ -148,7 +148,6 @@ $(document).ready(function() {
                 dataType: "json",
                 type: "DELETE",
                 accepts: {json: "application/json"},
-                headers: {"X-CSRFToken" : getCookie("csrftoken")},
                 success: function(data) {
                     $("#results").html("Endpoint deleted");
                 },

@@ -9,6 +9,13 @@
 
     canui.MSG_INVALID_SLN = 'Invalid SLN. SLN must be five digits.';
 
+    canui.ajaxSetup = function ajaxSetup() {
+        // prep for api post/put
+        $.ajaxSetup({
+            headers: { "X-CSRFToken": $('input[name="csrfmiddlewaretoken"]').val() }
+        });
+    };
+
     canui.loadSubscriptions = function loadSubscriptions() {
         $.ajax({
             url: "/uiapi/subscription?subscriber_id=" + can_user + "&_=" + jQuery.now(),
@@ -56,7 +63,6 @@
           dataType: "json",
           type: method,
           accepts: {json: "application/json"},
-          headers: {"X-CSRFToken" : canui.getCookie("csrftoken")},
           data: JSON.stringify(subscription),
           success: function(data, textStatus, jqXHR) {
             switch(jqXHR.status) {
@@ -150,7 +156,6 @@
                 dataType: "json",
                 type: "GET",
                 accepts: {json: "application/json"},
-                headers: {"X-CSRFToken" : canui.getCookie("csrftoken")},
                 success: function(data) {
                     //Success
                     canui.populateSubscriptionForm(data);
@@ -264,7 +269,6 @@
             dataType: "json",
             type: request_type,
             data: JSON.stringify(request_body),
-            headers: {"X-CSRFToken" : canui.getCookie("csrftoken")},
             accepts: {json: "application/json"},
             success: function(data) {
                 protocol = request_body.Protocol.toLowerCase();
@@ -332,7 +336,6 @@
             dataType: "json",
             type: "POST",
             data: JSON.stringify(params),
-              headers: {"X-CSRFToken" : canui.getCookie("csrftoken")},
               accepts: {json: "application/json"},
               success: function(data) {
                   $btn.removeProp('disabled');
@@ -541,7 +544,6 @@
         $.ajax({
             url: "/uiapi/resend_sms_confirmation/"  + "?_=" + jQuery.now(),
             type: "POST",
-            headers: {"X-CSRFToken" : canui.getCookie("csrftoken")},
             success: function(data) {
                 return true;
             },
@@ -947,7 +949,6 @@
             url: "/uiapi/subscription_protocol"  + "?_=" + jQuery.now(),
             type: "POST",
             data: params,
-            headers: {"X-CSRFToken" : canui.getCookie("csrftoken")},
             success: function(data) {
                 if (data.subscribed_protocols) {
                     if (data.subscribed_protocols.length > 0) {
@@ -1083,7 +1084,6 @@
                 contentType: "application/json",
                 dataType: "json",
                 type: "POST",
-                headers: {"X-CSRFToken" : canui.getCookie("csrftoken")},
                 data:"",
                 success: function() {
                     window.location.href = redirect_path;
@@ -1098,7 +1098,6 @@
                 contentType: "application/json",
                 dataType: "json",
                 type: "POST",
-                headers: {"X-CSRFToken" : canui.getCookie("csrftoken")},
                 data:{"clear_override": 1},
                 complete: function() {
                     location.reload();

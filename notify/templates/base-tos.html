@@ -26,8 +26,6 @@
 
         <meta name="viewport"  content="width=device-width, initial-scale=1, maximum-scale=1">
 
-        {% csrf_token %}
-
         <script type="text/javascript">
            var _gaq = _gaq || [];
            _gaq.push(['_setAccount', 'UA-39396869-1']);
@@ -41,7 +39,8 @@
         </script>
     </head>
     <body>
-   <div  class="body_container">
+    <div class="body_container">
+        {% csrf_token %}
         {% if override_user %}
              <div class="override_alert" role="alert">You are overriding as <strong>{{override_user}}</strong>.<a href="javascript:void(0)" onclick="canui.clearOverride()">Clear override</a></div>
         {% endif %}

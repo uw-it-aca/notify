@@ -27,7 +27,6 @@
             var is_mobile = {{is_mobile|yesno:"true,false"}};
             var has_endpoints = {{valid_endpoints|safe}};
         </script>
-        {% csrf_token %}
         <meta name="viewport"  content="width=device-width, initial-scale=1, maximum-scale=1">
         {% include "handlebars/profile_box.html"%}
         {% if ANALYTICS_KEY %}
@@ -44,8 +43,9 @@
         </script>
         {% endif %}
     </head>
-     <body>
-    <div  class="body_container">
+    <body>
+    <div class="body_container">
+        {% csrf_token %}
         {% if override_user %}
             <div class="override_alert" role="alert">You are overriding as <strong>{{override_user}}</strong>.<a href="javascript:void(0)" onclick="canui.clearOverride()">Clear override</a></div>
         {% endif %}

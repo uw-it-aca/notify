@@ -2,6 +2,7 @@
     $(document).ready(function() {
         var href = document.location.href,
             parts;
+        canui.ajaxSetup();
         if (href.match(/\/find/)) {
             canui.requireProfileSetup();
             canui.populateFindPage();

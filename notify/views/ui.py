@@ -1,6 +1,5 @@
-from django.shortcuts import render_to_response
+from django.shortcuts import render
 from django.http import HttpResponseRedirect
-from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
 from django.contrib import auth
 from django.conf import settings
@@ -54,7 +53,7 @@ def home_view(request):
     if context.get('user_accepted_tos', False) is False:
         return redirect_to_terms_of_service(context)
     context['reg_periods'] = get_open_registration_periods()
-    return render_to_response('app.html', context, RequestContext(request))
+    return render(request, 'app.html', context)
 
 
 @restrict_session_to_weblogin_timeout
@@ -63,7 +62,7 @@ def profile_view(request):
     context = build_view_context(request)
     if context.get('user_accepted_tos', False) is False:
         return redirect_to_terms_of_service(context)
-    return render_to_response('profile.html', context, RequestContext(request))
+    return render(request, 'profile.html', context)
 
 
 @restrict_session_to_weblogin_timeout
@@ -73,7 +72,7 @@ def find_view(request):
     if context.get('user_accepted_tos', False) is False:
         return redirect_to_terms_of_service(context)
     context['reg_periods'] = getOpenRegistrationPeriods()
-    return render_to_response('find.html', context, RequestContext(request))
+    return render(request, 'find.html', context)
 
 
 @restrict_session_to_weblogin_timeout
@@ -86,7 +85,7 @@ def course_view(request, year, quarter, sln):
     context['year'] = year
     context['quarter'] = quarter
     context['sln'] = sln
-    return render_to_response('course.html', context, RequestContext(request))
+    return render(request, 'course.html', context)
 
 
 @restrict_session_to_weblogin_timeout
@@ -104,8 +103,7 @@ def detail_view(request, channel_id):
         context['class_name'] = 'No class found'
         context['description'] = 'Invalid channel id {0}'.format(channel_id)
 
-    return render_to_response(
-        'class_details.html', context, RequestContext(request))
+    return render(request, 'class_details.html', context)
 
 
 @restrict_session_to_weblogin_timeout
@@ -114,8 +112,7 @@ def confirm_view(request):
     context = build_view_context(request)
     if context.get('user_accepted_tos', False) is False:
         return redirect_to_terms_of_service(context)
-    return render_to_response(
-        'confirm_subscription.html', context, RequestContext(request))
+    return render(request, 'confirm_subscription.html', context)
 
 
 @restrict_session_to_weblogin_timeout
@@ -124,8 +121,7 @@ def unsubscribe_view(request, channel_id):
     context = build_view_context(request)
     if context.get('user_accepted_tos', False) is False:
         return redirect_to_terms_of_service(context)
-    return render_to_response(
-        'confirm_unsubscribe.html', context, RequestContext(request))
+    return render(request, 'confirm_unsubscribe.html', context)
 
 
 @restrict_session_to_weblogin_timeout
@@ -135,8 +131,7 @@ def tos_view(request):
     redirect_path = request.GET.get('next', None)
     if redirect_path is not None:
         context['redirect_path'] = redirect_path
-    return render_to_response(
-        'terms_of_service.html', context, RequestContext(request))
+    return render(request, 'terms_of_service.html', context)
 
 
 @restrict_session_to_weblogin_timeout
@@ -150,8 +145,7 @@ def admin(request):
     if is_admin is False:
         return HttpResponseRedirect("/")
 
-    return render_to_response(
-        'admin/menu.html', {}, RequestContext(request))
+    return render(request, 'admin/menu.html', {})
 
 
 # Based on django.contrib.auth.views.login
