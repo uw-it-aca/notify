@@ -95,7 +95,7 @@ $(document).ready(function() {
             accepts: {json: "application/json"},
             success: function(data) {
                 displayResult("user_details", data);
-                if(data.Attributes.SubscriptionCount > 0){
+                if(data.Person.Attributes.SubscriptionCount > 0){
                     contents = $("#SubscriptionCount").html();
                 }
             },
