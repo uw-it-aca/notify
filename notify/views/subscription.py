@@ -60,7 +60,8 @@ class SubscriptionSearch(RESTDispatch):
                 continue
 
             # for reg_period grouping on subscriptions list
-            (year, quarter) = channel.surrogate_id.split(",")
+            (year, quarter, curr_abbr,
+                course_no, section_id) = channel.surrogate_id.split(",")
             reg_period_idx = "{0}{1}".format(year, get_quarter_index(quarter))
             if reg_period_idx not in channels_by_reg_period:
                 channels_by_reg_period[reg_period_idx] = {
@@ -175,7 +176,7 @@ class SubscribeSLN(RESTDispatch):
             subscription.owner_id = subscriber_id
 
             try:
-                status = nws.create_new_subscription(subscription)
+                status = nws.create_subscription(subscription)
             except DataFailureException as ex:
                 if channel.expires <= datetime.utcnow().replace(tzinfo=utc):
                     content = {
