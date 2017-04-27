@@ -1,5 +1,6 @@
 (function(canui, $, undefined){
     $(document).ready(function() {
+        canui.ajaxSetup();
         if (document.location.href.match(/\/tos/)) {
             canui.loadToS();
         } else if (document.location.href.match(/[^=]\/course/)) {
@@ -9,7 +10,6 @@
                 canui.checkForToSRedirect(canui.loadSubscriptions);
             }
         }
-
         canui.registerHandlebarHelpers();
     });
 

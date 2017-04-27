@@ -1,23 +1,11 @@
 $(document).ready(function() {
+    // prep for api post/put
+	$.ajaxSetup({
+		headers: { "X-CSRFToken": $('input[name="csrfmiddlewaretoken"]').val() }
+	});
 
     // set the container heights
-
     sizeContent();
-
-    //Helper for looping over JSON objects
-    Handlebars.registerHelper("key_value", function(obj, options) {
-        var buffer = "",
-            key;
-
-        for (key in obj) {
-            if (obj.hasOwnProperty(key)) {
-                // buffer += function({key: key, value: obj[key]});
-                buffer += options.fn({key: key, value:obj[key]});
-            }
-        }
-
-        return buffer;
-    });
 
     window.loadEndpoint = function loadEndpoint(endpoint_id){
         $.ajax({
@@ -107,7 +95,7 @@ $(document).ready(function() {
             accepts: {json: "application/json"},
             success: function(data) {
                 displayResult("user_details", data);
-                if(data.Attributes.SubscriptionCount > 0){
+                if(data.Person.Attributes.SubscriptionCount > 0){
                     contents = $("#SubscriptionCount").html();
                 }
             },
@@ -129,14 +117,17 @@ $(document).ready(function() {
         template = Handlebars.compile(template_source);
         html_output = $(template(data));
         $("#results").html(html_output);
-        //Clear search fields after displaying results, CAN-1045
+
+        // Clear search fields after displaying results
         $("input").each(function() {
             $(this).val("");
         });
     }
 
     function displayError(data){
-        displayResult("admin_error", JSON.parse(data.responseText));
+        template_source = $("#admin_error").html();
+        template = Handlebars.compile(template_source);
+        $("#results").html($(template(data)));
     }
 
     window.confirmDelete = function confirmDelete(endpoint_id){
@@ -148,7 +139,6 @@ $(document).ready(function() {
                 dataType: "json",
                 type: "DELETE",
                 accepts: {json: "application/json"},
-                headers: {"X-CSRFToken" : getCookie("csrftoken")},
                 success: function(data) {
                     $("#results").html("Endpoint deleted");
                 },

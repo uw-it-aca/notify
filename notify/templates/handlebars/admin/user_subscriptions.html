@@ -6,17 +6,20 @@
     {{/unless}}
     {{#each Subscriptions}}
     <div>
-        <p>Subscription ID: {{SubscriptionID}}</p>
-        <p>Subscription Last Modified: {{LastModified}}</p>
+        <p>Subscription ID: {{Subscription.SubscriptionID}}</p>
+        <p>Subscription Last Modified: {{Subscription.LastModified}}</p>
+        {{#with Subscription.Channel}}
         <p>Channel ID: <a href="javascript:void(0)" onclick="loadChannel('{{ChannelID}}')">{{ChannelID}}</a></p>
         <p>Channel Name: {{Name}}</p>
         <p>Channel Expires: {{Expires}}</p>
+        {{/with}}
+        {{#with Subscription.Endpoint}}
         <p>Subscribed Endpoint: {{EndpointID}}</p>
         <p>Endpoint Address: <a href="javascript:void(0)" onclick="loadEndpoint('{{EndpointID}}')">{{EndpointAddress}}</a></p>
+        {{/with}}
+         <br />
         <br />
-        <br />
-    {{/each}}        
+    {{/each}}
     </div>
 </div>
 {% endtplhandlebars %}
-

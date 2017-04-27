@@ -10,7 +10,7 @@ from userservice.user import UserService
 from datetime import datetime
 from operator import attrgetter
 import logging
-
+import json
 
 logger = logging.getLogger(__name__)
 
@@ -60,7 +60,8 @@ class SubscriptionSearch(RESTDispatch):
                 continue
 
             # for reg_period grouping on subscriptions list
-            (year, quarter) = channel.surrogate_id.split(",")
+            (year, quarter, curr_abbr,
+                course_no, section_id) = channel.surrogate_id.split(",")
             reg_period_idx = "{0}{1}".format(year, get_quarter_index(quarter))
             if reg_period_idx not in channels_by_reg_period:
                 channels_by_reg_period[reg_period_idx] = {
@@ -175,7 +176,7 @@ class SubscribeSLN(RESTDispatch):
             subscription.owner_id = subscriber_id
 
             try:
-                status = nws.create_new_subscription(subscription)
+                status = nws.create_subscription(subscription)
             except DataFailureException as ex:
                 if channel.expires <= datetime.utcnow().replace(tzinfo=utc):
                     content = {
@@ -198,7 +199,7 @@ class SubscriptionProtocol(RESTDispatch):
     """
     def _echo_request_data(self, request, method):
         try:
-            request_data = json.loads(request.raw_post_data)
+            request_data = json.loads(request.body)
             request_data['method'] = method
             request_data['subscriber_id'] = request.META['REMOTE_USER']
             return self.json_response(request_data)
@@ -207,7 +208,7 @@ class SubscriptionProtocol(RESTDispatch):
             return self.error_response(status=304)
 
     def PUT(self, request):
-        request_data = json.loads(request.raw_post_data)
+        request_data = json.loads(request.body)
         subscriber_id = UserService().get_user()
         protocol = request_data['Protocol']
         channel_id = request_data['ChannelID']
@@ -260,7 +261,7 @@ class SubscriptionProtocol(RESTDispatch):
             {'status': status, 'message': 'Subscription successful'})
 
     def DELETE(self, request):
-        request_data = simplejson.loads(request.raw_post_data)
+        request_data = json.loads(request.body)
         protocol = request_data['Protocol']
         channel_id = request_data['ChannelID']
         endpoint_id = request_data['EndpointID']

@@ -1,36 +1,34 @@
 {% load templatetag_handlebars %}
 {% tplhandlebars "user_details" %}
 <div>
-    <p>Person ID (REGID): {{PersonID}}</p>
-    <p>Surrogate ID: {{SurrogateID}}</p>
-    <p>Date Created: {{Created}}</p>
-    <p>Date Modified: {{LastModified}}</p>
-    <p>Modified By: {{ModifiedBy}}</p>
+    <p>Person ID (UWRegID): {{Person.PersonID}}</p>
+    <p>Surrogate ID: {{Person.SurrogateID}}</p>
+    <p>Date Created: {{Person.Created}}</p>
+    <p>Date Modified: {{Person.LastModified}}</p>
+    <p>Modified By: {{Person.ModifiedBy}}</p>
     <p>Attributes</p>
     <ul>
-        {{#with Attributes}}
+        {{#with Person.Attributes}}
         <li>Dispatched Text Message Count: {{DispatchedTextMessageCount}}</li>
         <li>Accepted Terms Of Use: {{AcceptedTermsOfUse}}</li>
         <li>Dispatched Email Count: {{DispatchedEmailCount}}</li>
         <li>Sent Text Message Count: {{SentTextMessageCount}}</li>
-        
+
         <li>
-            Subscription Count: 
+            Subscription Count:
             {{#if SubscriptionCount}}
-            <a href="javascript:void(0)" onclick="loadSubscriptions('{{../../PersonID}}')">{{SubscriptionCount}} (view subscriptions)</a>
+            <a href="javascript:void(0)" onclick="loadSubscriptions('{{../Person.PersonID}}')">{{SubscriptionCount}} (view subscriptions)</a>
             {{else}}
             {{SubscriptionCount}}
             {{/if}}
             </li>
-        
         {{/with}}
     </ul>
     <p>Endpoints</p>
     <ul>
-    {{#key_value Endpoints}}
-        <li><a href="javascript:void(0)" title="manage profile" onclick="loadEndpoint('{{value}}')">{{key}}</a></li>
-    {{/key_value}}
+    {{#each Person.Endpoints}}
+    <li><a href="javascript:void(0)" title="manage profile" onclick="loadEndpoint('{{Endpoint.EndpointID}}')">{{Endpoint.EndpointAddress}}</a></li>
+    {{/each}}
     </ul>
 </div>
 {% endtplhandlebars %}
-

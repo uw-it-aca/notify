@@ -29,7 +29,7 @@ class ChannelDetails(RESTDispatch):
 class ChannelUnsubscribe(RESTDispatch):
     def POST(self, request):
         """Unsubscribe from channel"""
-        request_data = json.loads(request.raw_post_data)
+        request_data = json.loads(request.body)
         channel_id = request_data['ChannelID']
         user_service = UserService()
         netid = user_service.get_user()
