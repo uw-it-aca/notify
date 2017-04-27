@@ -69,26 +69,26 @@ class SubscriptionSearch(RESTDispatch):
                         quarter.capitalize(), year),
                     "Channels": []}
 
-                current_enrollment = channel_details.get('current_enrollment',
-                                                         0)
-                total_seats = channel_details.get('total_seats', 0)
-                filled_state = 'full' if (
-                    current_enrollment >= total_seats) else 'open'
+            current_enrollment = channel_details.get('current_enrollment',
+                                                     0)
+            total_seats = channel_details.get('total_seats', 0)
+            filled_state = 'full' if (
+                current_enrollment >= total_seats) else 'open'
 
-                channels_by_reg_period[reg_period_idx]["Channels"].append({
-                    "ChannelID": channel.channel_id,
-                    "SurrogateID": channel.surrogate_id,
-                    "Name": channel.name,
-                    "course_abbr": channel_details.get(
-                        'course_abbr', channel.name),
-                    "Description": channel.description,
-                    "section_sln": channel_details.get(
-                        'section_sln', '(unknown)'),
-                    "current_enrollment": current_enrollment,
-                    "total_seats": total_seats,
-                    "filled_state": filled_state
-                })
-                channel_ids[channel.channel_id] = True
+            channels_by_reg_period[reg_period_idx]["Channels"].append({
+                "ChannelID": channel.channel_id,
+                "SurrogateID": channel.surrogate_id,
+                "Name": channel.name,
+                "course_abbr": channel_details.get(
+                    'course_abbr', channel.name),
+                "Description": channel.description,
+                "section_sln": channel_details.get(
+                    'section_sln', '(unknown)'),
+                "current_enrollment": current_enrollment,
+                "total_seats": total_seats,
+                "filled_state": filled_state
+            })
+            channel_ids[channel.channel_id] = True
 
             data["Subscriptions"].append({
                 "Subscription": {
