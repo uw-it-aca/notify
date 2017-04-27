@@ -15,7 +15,7 @@ from notify.views.ui import (
 
 urlpatterns = [
     url(r'^$', home_view),
-    url(r'^login/$', shib_redirect),
+    url(r'^login/?$', shib_redirect),
     url(r'^profile/', profile_view),
     url(r'^find/', find_view),
     url(r'^tos/', tos_view),
