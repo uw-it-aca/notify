@@ -1,12 +1,14 @@
 {% load templatetag_handlebars %}
 {% tplhandlebars "channel_details_admin" %}
 <div>
-    <p>Channel ID: {{id}}</p>
-    <p>Channel Type: {{type}}</p>
-    <p>Channel Name: {{name}}</p>
+    <p>Channel ID: {{Channel.ChannelID}}</p>
+    <p>Channel Type: {{Channel.Type}}</p>
+    <p>Channel Name: {{Channel.Name}}</p>
+    {{#with Channel.Tags}}
     <p>Quarter/Year/SLN: {{quarter}}/{{year}}/{{sln}}</p>
-    <p>Created Date: {{created}}</p>
-    <p>Expires Date: {{expires}}</p>
-    <p>Expires Description: {{description}}</p>
+    {{/with}}
+    <p>Created Date: {{Channel.Created}}</p>
+    <p>Expires Date: {{Channel.Expires}}</p>
+    <p>Expires Description: {{Channel.Tags.expires_desc}}</p>
 </div>
 {% endtplhandlebars %}
