@@ -129,7 +129,7 @@ def get_open_registration_periods(term=None):
         channels = nws.get_active_channels_by_year_quarter(
             channel_type, term.year, term.quarter)
         if len(channels):
-            active_terms.append(term)
+            active_terms.append(term.json_data())
 
     return active_terms
 

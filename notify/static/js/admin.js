@@ -117,14 +117,17 @@ $(document).ready(function() {
         template = Handlebars.compile(template_source);
         html_output = $(template(data));
         $("#results").html(html_output);
-        //Clear search fields after displaying results, CAN-1045
+
+        // Clear search fields after displaying results
         $("input").each(function() {
             $(this).val("");
         });
     }
 
     function displayError(data){
-        displayResult("admin_error", JSON.parse(data.responseText));
+        template_source = $("#admin_error").html();
+        template = Handlebars.compile(template_source);
+        $("#results").html($(template(data)));
     }
 
     window.confirmDelete = function confirmDelete(endpoint_id){

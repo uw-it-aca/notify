@@ -71,7 +71,7 @@ def find_view(request):
     context = build_view_context(request)
     if context.get('user_accepted_tos', False) is False:
         return redirect_to_terms_of_service(context)
-    context['reg_periods'] = getOpenRegistrationPeriods()
+    context['reg_periods'] = get_open_registration_periods()
     return render(request, 'find.html', context)
 
 
