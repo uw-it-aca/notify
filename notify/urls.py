@@ -15,6 +15,7 @@ from notify.views.ui import (
 
 urlpatterns = [
     url(r'^$', home_view),
+    url(r'^accounts/login/?$', shib_redirect),
     url(r'^profile/', profile_view),
     url(r'^find/', find_view),
     url(r'^tos/', tos_view),
@@ -29,7 +30,6 @@ urlpatterns = [
     url(r'^uiapi/tos/(?P<user>[^/]+)', ToSConfirmation().run),
     url(r'^uiapi/resend_sms_confirmation/', ResendSMSConfirmationView().run),
     url(r'^uiapi/channel_search/', ChannelSearch().run),
-    url(r'^accounts/login/$', shib_redirect),
     url(r'^admin/endpoint_search/', EndpointSearchAdmin().run),
     url(r'^admin/channel_search/', ChannelSearchAdmin().run),
     url(r'^admin/user_search/', UserSearchAdmin().run),

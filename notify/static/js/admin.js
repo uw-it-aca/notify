@@ -112,11 +112,11 @@ $(document).ready(function() {
         return false;
     });
 
-    function displayResult(template, data){
-        template_source = $("#" + template).html();
-        template = Handlebars.compile(template_source);
-        html_output = $(template(data));
-        $("#results").html(html_output);
+    function displayResult(template_name, data){
+        var template_source = $("#" + template_name).html(),
+            template = Handlebars.compile(template_source);
+
+        $("#results").html($(template(data)));
 
         // Clear search fields after displaying results
         $("input").each(function() {
@@ -124,9 +124,11 @@ $(document).ready(function() {
         });
     }
 
-    function displayError(data){
-        template_source = $("#admin_error").html();
-        template = Handlebars.compile(template_source);
+    function displayError(xhr){
+        var template_source = $("#admin_error").html(),
+            template = Handlebars.compile(template_source),
+            data = JSON.parse(xhr.responseText);
+
         $("#results").html($(template(data)));
     }
 
