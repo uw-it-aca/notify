@@ -27,7 +27,7 @@ setup(
         'django-compressor',
         'django-templatetag-handlebars',
         'django-userservice==1.2.1',
-        'django-aws-message>=0.1,<1.0',
+        'django-aws-message>=0.2,<1.0',
         'unittest2',
         'AuthZ-Group>=1.6',
         'UW-RestClients-NWS>=0.77,<1.0',
