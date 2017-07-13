@@ -36,8 +36,7 @@ class Enrollment(EventBase):
                     section_data['SectionID'].lower()])
 
                 channel_id = '|'.join([
-                    'uw_student_courseavailable',
-                    surrogate_id]);
+                    'uw_student_courseavailable', surrogate_id])
 
                 # Unsubscribe reg_id from channel_id
                 nws = NWS()
