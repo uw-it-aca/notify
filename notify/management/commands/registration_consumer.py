@@ -3,9 +3,9 @@ This command reads UW registration events, and removes CAN subscriptions for
 users who have signed up for a course.
 """
 
-from django.core.management.base import BaseCommand
+from django.core.management.base import BaseCommand, CommandError
 from aws_message.gather import Gather, GatherException
-from notify.events import Enrollment
+from notify.events.enrollment import Enrollment
 
 
 class Command(BaseCommand):

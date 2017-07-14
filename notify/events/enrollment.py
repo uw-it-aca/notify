@@ -2,7 +2,7 @@
 #  UW Course Availabilty Unsubscriber
 #
 
-from notify.events import EventBase
+from notify.events import EventBase, EventException
 from restclients_core.exceptions import DataFailureException
 from uw_nws import NWS
 
@@ -45,12 +45,12 @@ class Enrollment(EventBase):
                         channel_id, reg_id)
                     for sub in subs:
                         nws.delete_subscription(sub.subscription_id)
-                        self._log.info('DELSUB to %s for %s', % (
+                        self._log.info('DELSUB to %s for %s' % (
                             sub.subscription_id, reg_id))
 
                 except DataFailureException as err:
                     if err.status == 400 or err.status == 404:
-                        self._log.info('NOSUB to %s for %s', % (
+                        self._log.info('NOSUB to %s for %s' % (
                             channel_id, reg_id))
                     else:
                         self._log.error('%s' % err)
