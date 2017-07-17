@@ -88,7 +88,11 @@ class EndpointView(RESTDispatch):
             if ex.status == 403:
                 return self.error_response(
                     status=403, message="Unauthorized")
+            elif ex.status == 400:
+                return self.error_response(
+                    status=400, message="Invalid endpoint")
 
+            logger.warning(ex.msg)
             return self.error_response(
                 status=500, message="Error creating endpoint")
 
@@ -115,7 +119,7 @@ class EndpointView(RESTDispatch):
         request_obj = json.loads(request.body)
         endpoint_id = request_obj['EndpointID']
         endpoint = None
-        for ep in person.endpoints.view_models:
+        for ep in person.endpoints:
             if ep.endpoint_id == endpoint_id:
                 endpoint = ep
 
@@ -131,6 +135,7 @@ class EndpointView(RESTDispatch):
             if ex.status == 403:
                 return self.error_response(status=403, message="%s" % ex.msg)
 
+            logger.warning(ex.msg)
             return self.error_response(
                 status=500, message="Error creating endpoint")
 
@@ -161,6 +166,7 @@ class EndpointView(RESTDispatch):
 
         except DataFailureException as ex:
             if ex.status != 410:
+                logger.warning(ex.msg)
                 return self.error_response(
                     status=500, message="Delete endpoint failed: %s" % ex.msg)
 
@@ -196,6 +202,7 @@ class ResendSMSConfirmationView(RESTDispatch):
                     endpoint.endpoint_id)
                 msg = "OK" if (status_code == 202) else "unknown condition"
             except DataFailureException as ex:
+                logger.warning(ex.msg)
                 msg = "Failed to request verification resend: %s" % ex.msg
                 status_code = 500
 
@@ -216,6 +223,7 @@ class ToSConfirmation(RESTDispatch):
             try:
                 NWS().update_person(person)
             except DataFailureException as ex:
+                logger.warning(ex.msg)
                 return self.error_response(
                     status=500, message="Update person failed: %s" % ex.msg)
 
@@ -227,6 +235,7 @@ class ToSConfirmation(RESTDispatch):
             try:
                 create_person(user, attributes={"AcceptedTermsOfUse": True})
             except DataFailureException as ex:
+                logger.warning(ex.msg)
                 return self.error_response(
                     status=500, message="Create person failed: %s" % ex.msg)
 

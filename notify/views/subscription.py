@@ -33,6 +33,7 @@ class SubscriptionSearch(RESTDispatch):
             subscriptions = nws.get_subscriptions_by_subscriber_id(
                 subscriber_id, max_results=100)
         except DataFailureException as ex:
+            logger.warning(ex.msg)
             return self.error_response(
                 status=500, message="Search error: %s" % ex.msg)
 
@@ -186,6 +187,7 @@ class SubscribeSLN(RESTDispatch):
                     return self.error_response(
                         status=403, message="Channel expired", content=content)
                 else:
+                    logger.warning(ex.msg)
                     return self.error_response(
                         status=500,
                         message="Error subscribing to channel: %s" % ex.msg)
@@ -254,6 +256,7 @@ class SubscriptionProtocol(RESTDispatch):
         try:
             status = nws.create_new_subscription(subscription)
         except DataFailureException as ex:
+            logger.warning(ex.msg)
             return self.error_response(
                 status=500, message='Subscription creation failed')
 
