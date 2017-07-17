@@ -141,7 +141,15 @@ def get_person(user_id):
     pws_person = PWS().get_person_by_netid(netid_from_eppn(user_id))
 
     nws = NWS()
-    person = nws.get_person_by_uwregid(pws_person.uwregid)
+    try:
+        person = nws.get_person_by_uwregid(pws_person.uwregid)
+    except DataFailureException as err:
+        if err.status == 404:
+            status = create_person(user_id)
+            person = nws.get_person_by_uwregid(pws_person.uwregid)
+        else:
+            raise
+
     # Update surrogate ID when user changes NETID
     if person.surrogate_id != user_id:
         person.surrogate_id = user_id
