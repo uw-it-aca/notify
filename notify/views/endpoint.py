@@ -88,6 +88,9 @@ class EndpointView(RESTDispatch):
             if ex.status == 403:
                 return self.error_response(
                     status=403, message="Unauthorized")
+            elif ex.status == 400:
+                return self.error_response(
+                    status=400, message="Invalid endpoint")
 
             logger.warning(ex.msg)
             return self.error_response(
