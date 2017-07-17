@@ -9,7 +9,10 @@ from notify.utilities import (
     get_verified_endpoints_by_protocol)
 from userservice.user import UserService
 from datetime import datetime
+import logging
 import json
+
+logger = logging.getLogger(__name__)
 
 
 class ChannelDetails(RESTDispatch):
@@ -52,7 +55,8 @@ class ChannelUnsubscribe(RESTDispatch):
             subscription_id = subscription.subscription_id
             try:
                 nws.delete_subscription(subscription_id)
-            except DataFailureException:
+            except DataFailureException as ex:
+                logger.warning(ex.msg)
                 failed_deletions.append(subscription_id)
 
         n_failed = len(failed_deletions)
