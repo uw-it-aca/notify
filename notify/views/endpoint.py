@@ -115,7 +115,7 @@ class EndpointView(RESTDispatch):
         request_obj = json.loads(request.body)
         endpoint_id = request_obj['EndpointID']
         endpoint = None
-        for ep in person.endpoints.view_models:
+        for ep in person.endpoints:
             if ep.endpoint_id == endpoint_id:
                 endpoint = ep
 
