@@ -8,6 +8,7 @@ from notify.utilities import (
     get_open_registration_periods, get_person, user_accepted_tos,
     user_has_valid_endpoints)
 from notify.decorators import restrict_session_to_weblogin_timeout
+from notify.exceptions import InvalidUser
 from userservice.user import UserService
 from authz_group import Group
 from uw_nws import NWS
@@ -24,6 +25,7 @@ def build_view_context(request):
     context = {'is_mobile': request.is_mobile,
                'override_user': user_service.get_override_user(),
                'netid': None,
+               'valid_login': True,
                'support_email': getattr(settings, 'SUPPORT_EMAIL', ''),
                'ANALYTICS_KEY': getattr(settings, 'GOOGLE_ANALYTICS_KEY', '')}
 
@@ -32,7 +34,13 @@ def build_view_context(request):
 
     netid = user_service.get_user()
     if netid:
-        person = get_person(netid)
+        person = None
+        try:
+            person = get_person(netid)
+        except InvalidUser:
+            context['valid_login'] = False
+            return context
+
         context['user_accepted_tos'] = True
         if person is None or user_accepted_tos(person) is False:
             context['user_accepted_tos'] = False
