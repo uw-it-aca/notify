@@ -1,4 +1,7 @@
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
 from django.utils.timezone import utc
 from uw_nws import NWS
 from uw_nws.models import Subscription
@@ -15,8 +18,10 @@ import json
 logger = logging.getLogger(__name__)
 
 
+@method_decorator(login_required, name='dispatch')
+@method_decorator(never_cache, name='dispatch')
 class SubscriptionSearch(RESTDispatch):
-    def GET(self, request):
+    def get(self, request, *args, **kwargs):
         subscriber_id = UserService().get_user()
         if subscriber_id is None:
             return self.error_response(
@@ -129,13 +134,14 @@ class SubscriptionSearch(RESTDispatch):
         return self.json_response(data)
 
 
+@method_decorator(login_required, name='dispatch')
+@method_decorator(never_cache, name='dispatch')
 class SubscribeSLN(RESTDispatch):
-    def POST(self, request):
+    def post(self, request, *args, **kwargs):
         sln = request.POST.get('sln')
         channel_id = request.POST.get('channel_id')
         protocols = request.POST.getlist('protocol')
-        user_service = UserService()
-        subscriber_id = user_service.get_user()
+        subscriber_id = UserService().get_user()
 
         data = {
             "subscriber_id": subscriber_id,
@@ -144,7 +150,7 @@ class SubscribeSLN(RESTDispatch):
             "protocols": protocols
         }
 
-        nws = NWS(user_service.get_acting_user())
+        nws = NWS(UserService().get_acting_user())
         try:
             channel = nws.get_channel_by_channel_id(channel_id)
         except DataFailureException as ex:
@@ -195,7 +201,9 @@ class SubscribeSLN(RESTDispatch):
         return self.json_response(status=201)
 
 
-@csrf_exempt
+@method_decorator(login_required, name='dispatch')
+@method_decorator(never_cache, name='dispatch')
+@method_decorator(csrf_exempt, name='dispatch')
 class SubscriptionProtocol(RESTDispatch):
     """Enables or disables a subscription protocol (e.g. Email or Mobile)
     """
@@ -209,14 +217,13 @@ class SubscriptionProtocol(RESTDispatch):
             logger.exception(ex)
             return self.error_response(status=304)
 
-    def PUT(self, request):
+    def put(self, request, *args, **kwargs):
         request_data = json.loads(request.body)
         subscriber_id = UserService().get_user()
         protocol = request_data['Protocol']
         channel_id = request_data['ChannelID']
-        user_service = UserService()
 
-        nws = NWS(user_service.get_acting_user())
+        nws = NWS(UserService().get_acting_user())
         try:
             channel = nws.get_channel_by_channel_id(channel_id)
         except Exception as ex:
@@ -263,15 +270,14 @@ class SubscriptionProtocol(RESTDispatch):
         return self.json_response(
             {'status': status, 'message': 'Subscription successful'})
 
-    def DELETE(self, request):
+    def delete(self, request, *args, **kwargs):
         request_data = json.loads(request.body)
         protocol = request_data['Protocol']
         channel_id = request_data['ChannelID']
         endpoint_id = request_data['EndpointID']
-        user_service = UserService()
-        user = user_service.get_user()
+        user = UserService().get_user()
 
-        nws = NWS(user_service.get_acting_user())
+        nws = NWS(UserService().get_acting_user())
         # confirm endpoint belongs to subscriber
         try:
             endpoint = nws.get_endpoint_by_endpoint_id(endpoint_id)
@@ -303,17 +309,16 @@ class SubscriptionProtocol(RESTDispatch):
         return self.json_response(
             {'status': status, 'message': 'Subscription deleted'})
 
-    def POST(self, request):
+    def post(self, request, *args, **kwargs):
         channel_id = request.POST.get('channel_id')
         protocols = request.POST.getlist('protocol')
-        user_service = UserService()
-        subscriber_id = user_service.get_user()
+        subscriber_id = UserService().get_user()
         status = 500
         subscriptions = []
         subscribed_protocols = []
         n_unsubscribed = 0
 
-        nws = NWS(user_service.get_acting_user())
+        nws = NWS(UserService().get_acting_user())
         try:
             channel = nws.get_channel_by_channel_id(channel_id)
         except DataFailureException as ex:

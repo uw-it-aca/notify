@@ -1,3 +1,7 @@
+from django.conf import settings
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.cache import never_cache
+from django.utils.decorators import method_decorator
 from uw_nws import NWS
 from uw_pws import PWS
 from restclients_core.exceptions import (
@@ -7,7 +11,6 @@ from notify.views.rest_dispatch import RESTDispatch
 from notify.utilities import netid_from_eppn
 from userservice.user import UserService
 from authz_group import Group
-from django.conf import settings
 from urllib import quote
 
 
@@ -16,6 +19,8 @@ class InvalidAdminException(Exception):
         return "User is not authorized for administrator activity"
 
 
+@method_decorator(login_required, name='dispatch')
+@method_decorator(never_cache, name='dispatch')
 class AdminRESTDispatch(RESTDispatch):
     def user_is_admin(self):
         actual_user = UserService().get_original_user()
@@ -25,7 +30,7 @@ class AdminRESTDispatch(RESTDispatch):
 
 
 class EndpointSearchAdmin(AdminRESTDispatch):
-    def GET(self, request):
+    def get(self, request, *args, **kwargs):
         endpoint_address = request.GET.get('endpoint_address', None)
         endpoint_id = request.GET.get('endpoint_id', None)
 
@@ -47,7 +52,7 @@ class EndpointSearchAdmin(AdminRESTDispatch):
 
         return self.json_response(endpoint.json_data())
 
-    def DELETE(self, request):
+    def delete(self, request, *args, **kwargs):
         endpoint_id = request.GET.get('endpoint_id', None)
 
         try:
@@ -72,11 +77,11 @@ class EndpointSearchAdmin(AdminRESTDispatch):
 
 
 class ChannelSearchAdmin(AdminRESTDispatch):
-    def GET(self, request):
-        channel_id = request.GET['channel_id']
-        channel_year = request.GET['channel_year']
-        channel_quarter = request.GET['channel_quarter']
-        channel_sln = request.GET['channel_sln']
+    def get(self, request, *args, **kwargs):
+        channel_id = request.GET.get('channel_id', '').strip()
+        channel_year = request.GET.get('channel_year', '').strip()
+        channel_quarter = request.GET.get('channel_quarter', '').strip()
+        channel_sln = request.GET.get('channel_sln', '').strip()
 
         try:
             self.user_is_admin()
@@ -108,9 +113,9 @@ class ChannelSearchAdmin(AdminRESTDispatch):
 
 
 class UserSearchAdmin(AdminRESTDispatch):
-    def GET(self, request):
-        regid = request.GET['regid']
-        netid = request.GET['netid']
+    def get(self, request, *args, **kwargs):
+        regid = request.GET.get('regid', '').strip()
+        netid = request.GET.get('netid', '').strip()
 
         try:
             self.user_is_admin()
@@ -142,8 +147,8 @@ class UserSearchAdmin(AdminRESTDispatch):
 
 
 class SubscriptionSearchAdmin(AdminRESTDispatch):
-    def GET(self, request):
-        user_id = request.GET['person_id']
+    def get(self, request, *args, **kwargs):
+        user_id = request.GET.get('person_id')
 
         response_json = {'Subscriptions': []}
         try:

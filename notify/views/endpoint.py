@@ -1,4 +1,6 @@
 from django.conf import settings
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.cache import never_cache
 from uw_nws import NWS
 from uw_nws.exceptions import InvalidUUID
 from uw_nws.models import Endpoint
@@ -12,15 +14,11 @@ import logging
 logger = logging.getLogger(__name__)
 
 
+@method_decorator(login_required, name='dispatch')
+@method_decorator(never_cache, name='dispatch')
 class EndpointView(RESTDispatch):
-    def valid_user(self, user):
-        return UserService().get_user() == user
-
-    def GET(self, request, user):
-        if not self.valid_user(user):
-            return self.error_response(
-                status=401, message="User not authenticated")
-
+    def get(self, request, *args, **kwargs):
+        user = UserService().get_user()
         try:
             person = get_person(user)
         except DataFailureException as ex:
@@ -58,11 +56,8 @@ class EndpointView(RESTDispatch):
 
         return self.json_response(endpoints_json)
 
-    def POST(self, request, user):
-        if not self.valid_user(user):
-            return self.error_response(
-                status=401, message="User not authenticated")
-
+    def post(self, request, *args, **kwargs):
+        user = UserService().get_user()
         try:
             person = get_person(user)
         except DataFailureException as ex:
@@ -99,11 +94,8 @@ class EndpointView(RESTDispatch):
 
         return self.json_response(endpoint.json_data())
 
-    def PUT(self, request, user):
-        if not self.valid_user(user):
-            return self.error_response(
-                status=401, message="User not authenticated")
-
+    def put(self, request, *args, **kwargs):
+        user = UserService().get_user()
         try:
             person = get_person(user)
         except DataFailureException as ex:
@@ -124,7 +116,7 @@ class EndpointView(RESTDispatch):
             return self.error_response(
                 status=404, message="Endpoint '%s' not found" % endpoint_id)
 
-        nws = NWS(user_service.get_acting_user())
+        nws = NWS(UserService().get_acting_user())
         try:
             endpoint.endpoint_address = request_obj['EndpointAddress']
             response = nws.update_endpoint(endpoint)
@@ -138,11 +130,8 @@ class EndpointView(RESTDispatch):
 
         return self.json_response(endpoint.json_data())
 
-    def DELETE(self, request, user):
-        if not self.valid_user(user):
-            return self.error_response(
-                status=401, message="User not authenticated")
-
+    def delete(self, request, *args, **kwargs):
+        user = UserService().get_user()
         try:
             person = get_person(user)
         except DataFailureException as ex:
@@ -152,7 +141,7 @@ class EndpointView(RESTDispatch):
             return self.error_response(
                 status=404, message="Person '%s' not found" % user)
 
-        nws = NWS(user_service.get_acting_user())
+        nws = NWS(UserService().get_acting_user())
         try:
             request_obj = json.loads(request.body)
 
@@ -170,8 +159,10 @@ class EndpointView(RESTDispatch):
         return self.json_response({"message": "success"})
 
 
+@method_decorator(login_required, name='dispatch')
+@method_decorator(never_cache, name='dispatch')
 class ResendSMSConfirmationView(RESTDispatch):
-    def POST(self, request):
+    def post(self, request, *args, **kwargs):
         user = UserService().get_user()
         try:
             person = get_person(user)
@@ -206,13 +197,11 @@ class ResendSMSConfirmationView(RESTDispatch):
         return self.json_response({"status": status_code, "message": msg})
 
 
+@method_decorator(login_required, name='dispatch')
+@method_decorator(never_cache, name='dispatch')
 class ToSConfirmation(RESTDispatch):
-    def POST(self, request, user):
-        user_service = UserService()
-        if UserService().get_user() != user:
-            return self.error_response(
-                status=401, message="User not authenticated")
-
+    def post(self, request, *args, **kwargs):
+        user = UserService().get_user()
         try:
             person = get_person(user)
             person.attributes["AcceptedTermsOfUse"] = True

@@ -1,3 +1,6 @@
+from django.utils.decorators import method_decorator
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.timezone import utc
 from uw_nws import NWS
@@ -15,8 +18,11 @@ import json
 logger = logging.getLogger(__name__)
 
 
+@method_decorator(login_required, name='dispatch')
+@method_decorator(never_cache, name='dispatch')
 class ChannelDetails(RESTDispatch):
-    def GET(self, request, channel_id):
+    def get(self, request, *args, **kwargs):
+        channel_id = kwargs.get('channel_id')
         try:
             data = get_channel_details_by_channel_id(channel_id)
             data['channel_id'] = channel_id
@@ -29,16 +35,17 @@ class ChannelDetails(RESTDispatch):
         return self.json_response(data)
 
 
+@method_decorator(login_required, name='dispatch')
+@method_decorator(never_cache, name='dispatch')
 class ChannelUnsubscribe(RESTDispatch):
-    def POST(self, request):
+    def post(self, request, *args, **kwargs):
         """Unsubscribe from channel"""
         request_data = json.loads(request.body)
         channel_id = request_data['ChannelID']
-        user_service = UserService()
-        netid = user_service.get_user()
+        netid = UserService().get_user()
 
         subs = []
-        nws = NWS(user_service.get_acting_user())
+        nws = NWS(UserService().get_acting_user())
         try:
             subs = nws.get_subscriptions_by_channel_id_and_subscriber_id(
                 channel_id, netid)
@@ -69,9 +76,11 @@ class ChannelUnsubscribe(RESTDispatch):
         return self.json_response({'message': 'Unsubscription successful'})
 
 
-@csrf_exempt
+@method_decorator(login_required, name='dispatch')
+@method_decorator(never_cache, name='dispatch')
+@method_decorator(csrf_exempt, name='dispatch')
 class ChannelSearch(RESTDispatch):
-    def GET(self, request):
+    def get(self, request, *args, **kwargs):
         sln = request.GET.get('sln', None)
         quarter = request.GET.get('quarter', None)
         year = request.GET.get('year', None)
