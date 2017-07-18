@@ -85,8 +85,9 @@ def get_course_details_by_channel(channel):
 
 def user_has_valid_endpoints(person):
     endpoints = {'sms': False, 'email': False}
-    for endpoint in person.endpoints:
-        endpoints[endpoint.protocol.lower()] = True
+    if person is not None:
+        for endpoint in person.endpoints:
+            endpoints[endpoint.protocol.lower()] = True
     return json.dumps(endpoints)
 
 
