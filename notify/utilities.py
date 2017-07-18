@@ -138,22 +138,22 @@ def get_open_registration_periods(term=None):
 #   PWS by netid to get uwregid
 #   NWS by uwregid
 def get_person(user_id):
-    pws_person = PWS().get_person_by_netid(netid_from_eppn(user_id))
+    person = None
+
+    try:
+        pws_person = PWS().get_person_by_netid(netid_from_eppn(user_id))
+    except DataFailureException as err:
+        raise
 
     nws = NWS()
     try:
         person = nws.get_person_by_uwregid(pws_person.uwregid)
+        # Update surrogate ID when user changes NETID
+        if person.surrogate_id != user_id:
+            person.surrogate_id = user_id
+            nws.update_person(person)
     except DataFailureException as err:
-        if err.status == 404:
-            status = create_person(user_id)
-            person = nws.get_person_by_uwregid(pws_person.uwregid)
-        else:
-            raise
-
-    # Update surrogate ID when user changes NETID
-    if person.surrogate_id != user_id:
-        person.surrogate_id = user_id
-        nws.update_person(person)
+        pass
     return person
 
 
