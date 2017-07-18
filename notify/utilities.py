@@ -5,6 +5,7 @@ from uw_sws.section import get_section_by_label
 from uw_sws.section_status import get_section_status_by_label
 from uw_sws.term import get_current_term, get_term_after
 from restclients_core.exceptions import DataFailureException
+from notify.exceptions import InvalidUser
 from datetime import datetime
 import json
 import logging
@@ -139,13 +140,13 @@ def get_open_registration_periods(term=None):
 #   PWS by netid to get uwregid
 #   NWS by uwregid
 def get_person(user_id):
-    person = None
-
     try:
         pws_person = PWS().get_person_by_netid(netid_from_eppn(user_id))
-    except DataFailureException as err:
-        raise
+    except DataFailureException as ex:
+        if ex.status == 400 or ex.status == 404:
+            raise InvalidUser(user_id)
 
+    person = None
     nws = NWS()
     try:
         person = nws.get_person_by_uwregid(pws_person.uwregid)
