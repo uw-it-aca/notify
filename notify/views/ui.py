@@ -148,34 +148,8 @@ def admin(request):
     return render(request, 'admin/menu.html', {})
 
 
-# Based on django.contrib.auth.views.login
 def shib_redirect(request):
-    if not request.user or not request.user.is_authenticated():
-        if settings.DEBUG:
-            user = auth.authenticate(remote_user="javerage@washington.edu")
-            if user:
-                # User is valid.  Set request.user and persist user in the
-                # session by logging the user in.
-                request.user = user
-                auth.login(request, user)
-
-    if not request.user:
-        raise Exception("Error: no user in request")
-
-    redirect_to = request.GET.get("next", '')
-
-    netloc = urlparse.urlparse(redirect_to)[1]
-
-    # Use default setting if redirect_to is empty
-    if not redirect_to:
-        redirect_to = "/"
-
-    # Heavier security check -- don't allow redirection to a different
-    # host.
-    elif netloc and netloc != request.get_host():
-        redirect_to = "/"
-
-    return HttpResponseRedirect(redirect_to)
+    return HttpResponseRedirect(request.GET.get('next', '/'))
 
 
 def redirect_to_terms_of_service(context):
