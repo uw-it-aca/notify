@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
+from django.utils.decorators import method_decorator
 from uw_nws import NWS
 from uw_nws.exceptions import InvalidUUID
 from uw_nws.models import Endpoint
