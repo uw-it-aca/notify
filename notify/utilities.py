@@ -145,6 +145,8 @@ def get_person(user_id):
     except DataFailureException as ex:
         if ex.status == 400 or ex.status == 404:
             raise InvalidUser(user_id)
+        else:
+            raise
 
     person = None
     nws = NWS()

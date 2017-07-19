@@ -9,6 +9,7 @@ from userservice.user import UserService
 from restclients_core.exceptions import DataFailureException
 from notify.utilities import get_person, create_person
 from notify.views.rest_dispatch import RESTDispatch
+from notify.exceptions import InvalidUser
 import json
 import logging
 
@@ -19,10 +20,13 @@ logger = logging.getLogger(__name__)
 @method_decorator(never_cache, name='dispatch')
 class EndpointView(RESTDispatch):
     def get(self, request, *args, **kwargs):
-        user = UserService().get_user()
+        user = kwargs.get('user')
         try:
             person = get_person(user)
         except DataFailureException as ex:
+            return self.error_response(
+                status=500, message="Service unavailable" % user)
+        except InvalidUser:
             return self.error_response(
                 status=404, message="Person '%s' not found" % user)
 
@@ -205,23 +209,26 @@ class ResendSMSConfirmationView(RESTDispatch):
 @method_decorator(never_cache, name='dispatch')
 class ToSConfirmation(RESTDispatch):
     def post(self, request, *args, **kwargs):
-        user = UserService().get_user()
+        user = kwargs.get('user')
         try:
             person = get_person(user)
+
+            # Catch AttributeError below if person is None
             person.attributes["AcceptedTermsOfUse"] = True
 
+            nws = NWS(UserService().get_acting_user())
             try:
-                NWS().update_person(person)
+                nws.update_person(person)
             except DataFailureException as ex:
                 logger.warning(ex.msg)
                 return self.error_response(
                     status=500, message="Update person failed: %s" % ex.msg)
 
-        except DataFailureException as ex:
-            if ex.status != 404:
-                return self.error_response(
-                    status=ex.status, message="Error: %s" % ex.msg)
+        except InvalidUser:
+            return self.error_response(
+                status=404, message="Person '%s' not found" % user)
 
+        except (AttributeError, DataFailureException) as ex:
             try:
                 create_person(user, attributes={"AcceptedTermsOfUse": True})
             except DataFailureException as ex:
