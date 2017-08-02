@@ -4,6 +4,7 @@ from uw_pws import PWS
 from uw_sws.section import get_section_by_label
 from uw_sws.section_status import get_section_status_by_label
 from uw_sws.term import get_current_term, get_term_after
+from uw_sws.exceptions import InvalidSectionID
 from restclients_core.exceptions import DataFailureException
 from notify.exceptions import InvalidUser
 from datetime import datetime
@@ -40,6 +41,8 @@ def get_course_details_by_channel(channel):
         section_status = get_section_status_by_label(section_label)
     except DataFailureException as ex:
         return {'course_title': 'No section info found'}
+    except InvalidSectionID as ex:
+        return {'course_title': 'Invalid section'}
     except Exception as ex:
         logger.exception(ex)
         return {'course_title': 'No section info found'}

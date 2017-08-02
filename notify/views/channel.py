@@ -51,7 +51,7 @@ class ChannelUnsubscribe(RESTDispatch):
                 channel_id, netid)
         except DataFailureException as ex:
             return self.error_response(
-                status=404, message="unable to retrieve subscriptions")
+                status=404, message="Unable to retrieve subscriptions")
 
         if len(subs) == 0:
             return self.error_response(
@@ -62,6 +62,7 @@ class ChannelUnsubscribe(RESTDispatch):
             subscription_id = subscription.subscription_id
             try:
                 nws.delete_subscription(subscription_id)
+                logger.info("DELETE subscription %s" % subscription_id)
             except DataFailureException as ex:
                 logger.warning(ex.msg)
                 failed_deletions.append(subscription_id)

@@ -184,6 +184,8 @@ class SubscribeSLN(RESTDispatch):
 
             try:
                 status = nws.create_subscription(subscription)
+                logger.info("CREATE subscription for channel %s" % (
+                    channel.channel_id))
             except DataFailureException as ex:
                 if channel.expires <= datetime.utcnow().replace(tzinfo=utc):
                     content = {
@@ -261,7 +263,9 @@ class SubscriptionProtocol(RESTDispatch):
 
         status = None
         try:
-            status = nws.create_new_subscription(subscription)
+            status = nws.create_subscription(subscription)
+            logger.info("CREATE subscription for channel %s" % (
+                channel.channel_id))
         except DataFailureException as ex:
             logger.warning(ex.msg)
             return self.error_response(
@@ -302,6 +306,7 @@ class SubscriptionProtocol(RESTDispatch):
         subscription_id = subscription.subscription_id
         try:
             status = nws.delete_subscription(subscription_id)
+            logger.info("DELETE subscription %s" % subscription_id)
         except self.error_response as ex:
             msg = 'Failed to delete subscription {0}'.format(subscription_id)
             return self.error_response(status=500, message=msg)
@@ -336,9 +341,10 @@ class SubscriptionProtocol(RESTDispatch):
                 sub_protocol = subscription.endpoint.protocol.lower()
                 if sub_protocol not in protocols:
                     # unsubscribe
+                    subscription_id = subscription.subscription_id
                     try:
-                        status = nws.delete_subscription(
-                            subscription.subscription_id)
+                        status = nws.delete_subscription(subscription_id)
+                        logger.info("DELETE subscription %s" % subscription_id)
                         n_unsubscribed += 1
                     except DataFailureException as ex:
                         pass
@@ -375,7 +381,9 @@ class SubscriptionProtocol(RESTDispatch):
                 subscription.owner = subscriber_id
 
                 try:
-                    status = nws.create_new_subscription(subscription)
+                    status = nws.create_subscription(subscription)
+                    logger.info("CREATE subscription for channel %s" % (
+                        channel.channel_id))
                     subscribed_protocols.append(ep.protocol.lower())
                 except DataFailureException as ex:
                     pass
