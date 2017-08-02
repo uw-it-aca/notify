@@ -83,6 +83,7 @@ class EndpointView(RESTDispatch):
             endpoint.endpoint_address = request_obj['EndpointAddress']
             endpoint.protocol = protocol
             nws.create_endpoint(endpoint)
+            logger.info("CREATE endpoint %s" % endpoint.endpoint_address)
 
         except DataFailureException as ex:
             if ex.status == 403:
@@ -128,6 +129,7 @@ class EndpointView(RESTDispatch):
         try:
             endpoint.endpoint_address = request_obj['EndpointAddress']
             response = nws.update_endpoint(endpoint)
+            logger.info("UPDATE endpoint %s" % endpoint.endpoint_address)
         except DataFailureException as ex:
             if ex.status == 403:
                 return self.error_response(status=403, message="%s" % ex.msg)
@@ -152,8 +154,9 @@ class EndpointView(RESTDispatch):
         nws = NWS(UserService().get_acting_user())
         try:
             request_obj = json.loads(request.body)
-
-            nws.delete_endpoint(request_obj['EndpointID'])
+            endpoint_id = request_obj['EndpointID']
+            nws.delete_endpoint(endpoint_id)
+            logger.info("DELETE endpoint %s" % endpoint_id)
 
         except InvalidUUID as ex:
             return self.error_response(status=400, message="Invalid endpoint")
@@ -196,7 +199,12 @@ class ResendSMSConfirmationView(RESTDispatch):
             try:
                 status_code = NWS().resend_sms_endpoint_verification(
                     endpoint.endpoint_id)
-                msg = "OK" if (status_code == 202) else "unknown condition"
+                if status_code == 202:
+                    logger.info("RESEND endpoint verification %s" % (
+                        endpoint.endpoint_id))
+                    msg = "OK"
+                else:
+                    msg = "unknown condition"
             except DataFailureException as ex:
                 logger.warning(ex.msg)
                 msg = "Failed to request verification resend: %s" % ex.msg
@@ -219,6 +227,7 @@ class ToSConfirmation(RESTDispatch):
             nws = NWS(UserService().get_acting_user())
             try:
                 nws.update_person(person)
+                logger.info("UPDATE person %s, accepted ToS" % user)
             except DataFailureException as ex:
                 logger.warning(ex.msg)
                 return self.error_response(
@@ -231,6 +240,7 @@ class ToSConfirmation(RESTDispatch):
         except (AttributeError, DataFailureException) as ex:
             try:
                 create_person(user, attributes={"AcceptedTermsOfUse": True})
+                logger.info("CREATE person %s, accepted ToS" % user)
             except DataFailureException as ex:
                 logger.warning(ex.msg)
                 return self.error_response(
