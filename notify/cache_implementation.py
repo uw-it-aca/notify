@@ -10,13 +10,13 @@ class UICache(TimedCache):
 
     url_policies = {}
     url_policies["sws"] = (
-        (re.compile(r"^/student/v5/term/"), 60 * 60 * 10),
+        (re.compile(r"^/student/v\d/term/"), 60 * 60 * 10),
     )
     url_policies["pws"] = (
-        (re.compile(r"^/identity/v1/person/"), 60 * 60 * 24 * 7),
+        (re.compile(r"^/identity/v\d/person/"), 60 * 60 * 24 * 7),
     )
     url_policies["nws"] = (
-        (re.compile(r"^/notification/v1/channel"), 60 * 60 * 10),
+        (re.compile(r"^/notification/v\d/channel"), 60 * 60 * 10),
     )
     url_policies["kws"] = (
         (re.compile(r"^%s" % (
