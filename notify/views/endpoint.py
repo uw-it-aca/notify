@@ -227,9 +227,10 @@ class ToSConfirmation(RESTDispatch):
             nws = NWS(UserService().get_acting_user())
             try:
                 nws.update_person(person)
-                logger.info("UPDATE person %s, accepted ToS" % user)
+                logger.info("UPDATE person '%s', accepted ToS" % user)
             except DataFailureException as ex:
-                logger.warning(ex.msg)
+                logger.warning("UPDATE person '%s' failed: %s" % (
+                    user, ex.msg))
                 return self.error_response(
                     status=500, message="Update person failed: %s" % ex.msg)
 
@@ -240,9 +241,10 @@ class ToSConfirmation(RESTDispatch):
         except (AttributeError, DataFailureException) as ex:
             try:
                 create_person(user, attributes={"AcceptedTermsOfUse": True})
-                logger.info("CREATE person %s, accepted ToS" % user)
+                logger.info("CREATE person '%s', accepted ToS" % user)
             except DataFailureException as ex:
-                logger.warning(ex.msg)
+                logger.warning("CREATE person '%s' failed: %s" % (
+                    user, ex.msg))
                 return self.error_response(
                     status=500, message="Create person failed: %s" % ex.msg)
 
