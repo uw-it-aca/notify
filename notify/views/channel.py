@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
@@ -18,20 +19,26 @@ import json
 logger = logging.getLogger(__name__)
 
 
+def valid_channel_id(channel_id):
+    if channel_id in getattr(settings, 'INVALID_UUIDS', []):
+        raise InvalidUUID(channel_id)
+
+
 @method_decorator(login_required, name='dispatch')
 @method_decorator(never_cache, name='dispatch')
 class ChannelDetails(RESTDispatch):
     def get(self, request, *args, **kwargs):
         channel_id = kwargs.get('channel_id')
         try:
+            valid_channel_id(channel_id)
             data = get_channel_details_by_channel_id(channel_id)
             data['channel_id'] = channel_id
         except DataFailureException as ex:
-            message = 'Failed to retrieve channel details'
-            return self.error_response(status=404, message=message)
+            return self.error_response(
+                status=404, message="Failed to retrieve channel details")
         except InvalidUUID:
-            message = 'Failed to retrieve channel details'
-            return self.error_response(status=400, message=message)
+            return self.error_response(
+                status=400, message="Invalid channel_id")
         return self.json_response(data)
 
 
@@ -47,11 +54,15 @@ class ChannelUnsubscribe(RESTDispatch):
         subs = []
         nws = NWS(UserService().get_acting_user())
         try:
+            valid_channel_id(channel_id)
             subs = nws.get_subscriptions_by_channel_id_and_subscriber_id(
                 channel_id, netid)
         except DataFailureException as ex:
             return self.error_response(
                 status=404, message="Unable to retrieve subscriptions")
+        except InvalidUUID:
+            return self.error_response(
+                status=400, message="Invalid ChannelID")
 
         if len(subs) == 0:
             return self.error_response(
