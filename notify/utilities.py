@@ -1,5 +1,7 @@
+from django.conf import settings
 from uw_nws import NWS
 from uw_nws.models import Person
+from uw_nws.exceptions import InvalidUUID
 from uw_pws import PWS
 from uw_sws.section import get_section_by_label
 from uw_sws.section_status import get_section_status_by_label
@@ -17,6 +19,8 @@ logger = logging.getLogger(__name__)
 
 
 def get_channel_details_by_channel_id(channel_id):
+    if channel_id in getattr(settings, 'INVALID_UUIDS', []):
+        raise InvalidUUID(channel_id)
     channel = NWS().get_channel_by_channel_id(channel_id)
     return get_course_details_by_channel(channel)
 
