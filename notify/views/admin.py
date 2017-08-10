@@ -122,6 +122,9 @@ class UserSearchAdmin(AdminRESTDispatch):
         except InvalidAdminException as ex:
             return self.error_response(status=403, message="%s" % ex)
 
+        if not len(netid) and not len(regid):
+            return self.error_response(status=400, message="Missing input")
+
         # search by netid
         if len(netid) > 0:
             try:
@@ -139,9 +142,6 @@ class UserSearchAdmin(AdminRESTDispatch):
                 return self.error_response(
                     status=400,
                     message="User has not signed up to use Notify.UW")
-
-        if person is None:
-            return self.error_response(status=404, message="No person found")
 
         return self.json_response(person.json_data())
 
