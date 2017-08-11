@@ -122,14 +122,20 @@ class UserSearchAdmin(AdminRESTDispatch):
         except InvalidAdminException as ex:
             return self.error_response(status=403, message="%s" % ex)
 
+        if not len(netid) and not len(regid):
+            return self.error_response(status=400, message="Missing input")
+
         # search by netid
         if len(netid) > 0:
             try:
                 pws_person = PWS().get_person_by_netid(netid)
                 regid = pws_person.uwregid
-            except (DataFailureException, InvalidNetID) as ex:
+            except DataFailureException as ex:
                 return self.error_response(
                     status=400, message="NETID does not exist")
+            except InvalidNetID as ex:
+                return self.error_response(
+                    status=400, message="Invalid NETID")
 
         # search by regid
         if len(regid) > 0:
@@ -139,9 +145,9 @@ class UserSearchAdmin(AdminRESTDispatch):
                 return self.error_response(
                     status=400,
                     message="User has not signed up to use Notify.UW")
-
-        if person is None:
-            return self.error_response(status=404, message="No person found")
+            except InvalidRegID as ex:
+                return self.error_response(
+                    status=400, message="Invalid REGID")
 
         return self.json_response(person.json_data())
 
