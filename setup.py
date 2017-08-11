@@ -30,7 +30,7 @@ setup(
         'django-aws-message>=0.2,<1.0',
         'unittest2',
         'AuthZ-Group>=1.6',
-        'UW-RestClients-NWS>=0.79,<1.0',
+        'UW-RestClients-NWS>=0.80,<1.0',
         'UW-RestClients-SWS>=1.0,<2.0',
         'UW-RestClients-PWS>=0.5,<1.0',
         'UW-RestClients-GWS>=0.3,<1.0',
