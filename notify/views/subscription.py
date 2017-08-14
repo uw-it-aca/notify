@@ -150,7 +150,7 @@ class SubscribeSLN(RESTDispatch):
             "protocols": protocols
         }
 
-        nws = NWS(UserService().get_acting_user())
+        nws = NWS(actas_user=UserService().get_original_user())
         try:
             channel = nws.get_channel_by_channel_id(channel_id)
         except DataFailureException as ex:
@@ -225,7 +225,7 @@ class SubscriptionProtocol(RESTDispatch):
         protocol = request_data['Protocol']
         channel_id = request_data['ChannelID']
 
-        nws = NWS(UserService().get_acting_user())
+        nws = NWS(actas_user=UserService().get_original_user())
         try:
             channel = nws.get_channel_by_channel_id(channel_id)
         except Exception as ex:
@@ -281,7 +281,7 @@ class SubscriptionProtocol(RESTDispatch):
         endpoint_id = request_data['EndpointID']
         user = UserService().get_user()
 
-        nws = NWS(UserService().get_acting_user())
+        nws = NWS(actas_user=UserService().get_original_user())
         # confirm endpoint belongs to subscriber
         try:
             endpoint = nws.get_endpoint_by_endpoint_id(endpoint_id)
@@ -323,7 +323,7 @@ class SubscriptionProtocol(RESTDispatch):
         subscribed_protocols = []
         n_unsubscribed = 0
 
-        nws = NWS(UserService().get_acting_user())
+        nws = NWS(actas_user=UserService().get_original_user())
         try:
             channel = nws.get_channel_by_channel_id(channel_id)
         except DataFailureException as ex:
