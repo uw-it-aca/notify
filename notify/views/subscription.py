@@ -51,50 +51,49 @@ class SubscriptionSearch(RESTDispatch):
             # a channel can have more than one subscription,
             # keep track of known channels
             channel_id = subscription.channel.channel_id
-            if channel_id in channel_ids:
-                continue
+            if channel_id not in channel_ids:
+                try:
+                    channel = nws.get_channel_by_channel_id(channel_id)
 
-            try:
-                channel = nws.get_channel_by_channel_id(channel_id)
+                    if (channel.expires and channel.expires <= utcnow):
+                        continue
 
-                if (channel.expires and channel.expires <= utcnow):
+                    channel_details = get_course_details_by_channel(channel)
+
+                except DataFailureException as ex:
                     continue
 
-                channel_details = get_course_details_by_channel(channel)
+                # for reg_period grouping on subscriptions list
+                (year, quarter, curr_abbr,
+                    course_no, section_id) = channel.surrogate_id.split(",")
+                reg_period_idx = "{0}{1}".format(
+                    year, get_quarter_index(quarter))
+                if reg_period_idx not in channels_by_reg_period:
+                    channels_by_reg_period[reg_period_idx] = {
+                        "RegistrationPeriod": "{0} {1}".format(
+                            quarter.capitalize(), year),
+                        "Channels": []}
 
-            except DataFailureException as ex:
-                continue
+                current_enrollment = channel_details.get(
+                    'current_enrollment', 0)
+                total_seats = channel_details.get('total_seats', 0)
+                filled_state = 'full' if (
+                    current_enrollment >= total_seats) else 'open'
 
-            # for reg_period grouping on subscriptions list
-            (year, quarter, curr_abbr,
-                course_no, section_id) = channel.surrogate_id.split(",")
-            reg_period_idx = "{0}{1}".format(year, get_quarter_index(quarter))
-            if reg_period_idx not in channels_by_reg_period:
-                channels_by_reg_period[reg_period_idx] = {
-                    "RegistrationPeriod": "{0} {1}".format(
-                        quarter.capitalize(), year),
-                    "Channels": []}
-
-            current_enrollment = channel_details.get('current_enrollment',
-                                                     0)
-            total_seats = channel_details.get('total_seats', 0)
-            filled_state = 'full' if (
-                current_enrollment >= total_seats) else 'open'
-
-            channels_by_reg_period[reg_period_idx]["Channels"].append({
-                "ChannelID": channel.channel_id,
-                "SurrogateID": channel.surrogate_id,
-                "Name": channel.name,
-                "course_abbr": channel_details.get(
-                    'course_abbr', channel.name),
-                "Description": channel.description,
-                "section_sln": channel_details.get(
-                    'section_sln', '(unknown)'),
-                "current_enrollment": current_enrollment,
-                "total_seats": total_seats,
-                "filled_state": filled_state
-            })
-            channel_ids[channel.channel_id] = True
+                channels_by_reg_period[reg_period_idx]["Channels"].append({
+                    "ChannelID": channel.channel_id,
+                    "SurrogateID": channel.surrogate_id,
+                    "Name": channel.name,
+                    "course_abbr": channel_details.get(
+                        'course_abbr', channel.name),
+                    "Description": channel.description,
+                    "section_sln": channel_details.get(
+                        'section_sln', '(unknown)'),
+                    "current_enrollment": current_enrollment,
+                    "total_seats": total_seats,
+                    "filled_state": filled_state
+                })
+                channel_ids[channel.channel_id] = True
 
             data["Subscriptions"].append({
                 "Subscription": {
