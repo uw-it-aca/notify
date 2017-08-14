@@ -52,7 +52,7 @@ class ChannelUnsubscribe(RESTDispatch):
         netid = UserService().get_user()
 
         subs = []
-        nws = NWS(UserService().get_acting_user())
+        nws = NWS(actas_user=UserService().get_original_user())
         try:
             valid_channel_id(channel_id)
             subs = nws.get_subscriptions_by_channel_id_and_subscriber_id(

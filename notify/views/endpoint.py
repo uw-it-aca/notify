@@ -75,7 +75,7 @@ class EndpointView(RESTDispatch):
         request_obj = json.loads(request.body)
         protocol = request_obj['Protocol']
 
-        nws = NWS(UserService().get_acting_user())
+        nws = NWS(actas_user=UserService().get_original_user())
         try:
             endpoint = Endpoint()
             endpoint.owner = person.surrogate_id
@@ -125,7 +125,7 @@ class EndpointView(RESTDispatch):
             return self.error_response(
                 status=404, message="Endpoint '%s' not found" % endpoint_id)
 
-        nws = NWS(UserService().get_acting_user())
+        nws = NWS(actas_user=UserService().get_original_user())
         try:
             endpoint.endpoint_address = request_obj['EndpointAddress']
             response = nws.update_endpoint(endpoint)
@@ -151,7 +151,7 @@ class EndpointView(RESTDispatch):
             return self.error_response(
                 status=404, message="Person '%s' not found" % user)
 
-        nws = NWS(UserService().get_acting_user())
+        nws = NWS(actas_user=UserService().get_original_user())
         try:
             request_obj = json.loads(request.body)
             endpoint_id = request_obj['EndpointID']
@@ -224,7 +224,7 @@ class ToSConfirmation(RESTDispatch):
             # Catch AttributeError below if person is None
             person.attributes["AcceptedTermsOfUse"] = True
 
-            nws = NWS(UserService().get_acting_user())
+            nws = NWS(actas_user=UserService().get_original_user())
             try:
                 nws.update_person(person)
                 logger.info("UPDATE person '%s', accepted ToS" % user)

@@ -61,7 +61,7 @@ class EndpointSearchAdmin(AdminRESTDispatch):
             return self.error_response(status=403, message="%s" % ex)
 
         if endpoint_id is not None:
-            nws = NWS(UserService().get_acting_user())
+            nws = NWS(actas_user=UserService().get_original_user())
             try:
                 endpoint = nws.delete_endpoint(endpoint_id)
             except DataFailureException as ex:
