@@ -8,7 +8,9 @@
     <p>SMS Status: {{Endpoint.Status}}</p>
     {{/if}}
     <p>Is Active: {{Endpoint.Active}}</p>
+    <p>Created: {{Endpoint.Created}}</p>
     <p>Last Modified: {{Endpoint.LastModified}}</p>
+    <p>Modified By: {{Endpoint.ModifiedBy}}</p>
     <button type="submit" onclick="confirmDelete('{{Endpoint.EndpointID}}')">Delete</button>
 </div>
 {% endtplhandlebars %}
