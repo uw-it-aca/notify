@@ -1,0 +1,44 @@
+<h3>Channel Info:</h3>
+<form id="channel_info">
+    <p>By Channel ID: <input id="channel_id" type="text" /></p>
+    <p>By Quarter/Year/SLN:<br/>
+	Quarter: <select id="channel_quarter">
+		<option value="winter">Winter</option>
+		<option value="spring">Spring</option>
+		<option value="summer">Summer</option>
+		<option value="autumn">Autumn</option>
+	</select>
+	Year: <input id="channel_year" type="text" />
+	SLN: <input id="channel_sln" type="text" />
+    </p>
+    <button class="btn btn-small" type="submit">Search</button>
+</form>
+
+<h3>User Info:</h3>
+<form id="person_info">
+	<p>By REGID: <input id="regid" type="text" /></p>
+	<p>By NETID: <input id="netid" type="text" /></p>
+	<button class="btn btn-small" type="submit">Search</button>
+</form>
+
+<h3>Endpoint Info:</h3>
+<form id="endpoint_by_address">
+    <p>By Endpoint address: <input id="endpoint_address_input" type="text" /></p>
+    <button class="btn btn-small" type="submit">Search</button>
+</form>
+
+<h3>Subscription Info:</h3>
+<form id="subscription_info">
+	<p>By NETID: <input id="sub_regid" type="text" /></p>
+	<button class="btn btn-small" type="submit">Search</button>
+</form>
+
+{% include "supporttools/default_sidelinks.html" %}
+
+{% include "handlebars/admin/endpoint_address.html" %}
+{% include "handlebars/admin/channel_details_admin.html" %}
+{% include "handlebars/admin/user_details.html" %}
+{% include "handlebars/admin/user_subscriptions.html" %}
+{% include "handlebars/admin/admin_error.html" %}
+
+<script type="text/javascript" src="{% static 'js/admin.js' %}"></script>
