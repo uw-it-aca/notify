@@ -1,13 +1,13 @@
 <!doctype html>
 <html class="no-js">
 <head>
-	<title>Notify Administration</title>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1" />
-	<meta name="HandheldFriendly" content="true">
+    <title>Notify Administration</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="HandheldFriendly" content="true">
 
     {% load staticfiles %}
-	{% load compress %}
+    {% load compress %}
 
     {% compress css %}
     <link rel="stylesheet" type="text/css" href="{% static "css/admin/bootstrap3.css" %}"/>
@@ -16,12 +16,12 @@
 
     <!--[if (lt IE 9)&(!IEMobile)]>
     <link rel="stylesheet" type="text/less" href="{% static "css/desktop.less" %}" />
-	<![endif]-->
+    <![endif]-->
     {% endcompress %}
 
     <link rel="shortcut icon" href="{% static "images/favicon.ico" %}">
 
-	{% include "handlebars/admin/endpoint_address.html" %}
+    {% include "handlebars/admin/endpoint_address.html" %}
     {% include "handlebars/admin/channel_details_admin.html" %}
     {% include "handlebars/admin/user_details.html" %}
     {% include "handlebars/admin/user_subscriptions.html" %}
@@ -34,19 +34,19 @@
         {% csrf_token %}
         <div id="side-wrapper">
 
-        	<header id="header" role="banner">
-        	   <div class="app-header inner clearfix">
-                    <div class="app-logo pull-left"><span class="ir">Notify Logo</span></div>
-                    <div class="app-user pull-right"><i class="icon-user"></i> <a href="/support">Override</a></div>
+            <div id="header" role="banner">
+                <div class="app-header inner clearfix">
+                   <a class="app-logo pull-left" href="{% url 'home' %}"><span class="ir">Notify Logo</span></a>
+                   <div class="app-user pull-right"><i class="icon-user"></i> <a href="{% url 'userservice_override' %}">Override</a></div>
 
-        	   </div>
-        	</header><!--end #header-->
+               </div>
+            </div><!--end #header-->
 
 
-        	<div id="intro" class="inner well" role="contentinfo" style="position:relative;">
-        	   <h1>.Admin</h1>
-               <p class="lead">Admin application for managing users</p>
-               <div class="uw"><span class="ir">UW Logo</span></div>
+            <div id="intro" class="inner well" role="contentinfo" style="position:relative;">
+                <h1>.Admin</h1>
+                <p class="lead">Admin application for managing users</p>
+                <div class="uw"><span class="ir">UW Logo</span></div>
             </div><!--end top stuff -->
 
             <div class="inner" style="">
@@ -86,22 +86,22 @@
         </div>
 
         <div id="main-wrapper">
-        	<div id="main" role="main">
-        	   <div class="inner">
-            	   <h2>Results:</h2>
-            	   <div id="results"></div>
-        	   </div>
-        	</div><!--end #main-->
+            <div id="main" role="main">
+               <div class="inner">
+                   <h2>Results:</h2>
+                   <div id="results"></div>
+               </div>
+            </div><!--end #main-->
         </div>
     </div>
 
-	<!-- jquery cdn -->
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <!-- jquery cdn -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
     <script type="text/javascript" src="{% static "libs/handlebars.js" %}"></script>
 
-	{% compress js %}
+    {% compress js %}
     <script type="text/javascript" src="{% static "js/admin.js" %}"></script>
-	{% block javascript %}{% endblock %}
+    {% block javascript %}{% endblock %}
     {% endcompress %}
 
 </body>
