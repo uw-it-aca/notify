@@ -7,7 +7,9 @@
     {{#each Subscriptions}}
     <div>
         <p>Subscription ID: {{Subscription.SubscriptionID}}</p>
-        <p>Subscription Last Modified: {{Subscription.LastModified}}</p>
+        <p>Created: {{Subscription.Created}}</p>
+        <p>Last Modified: {{Subscription.LastModified}}</p>
+        <p>Modified By: {{Subscription.ModifiedBy}}</p>
         {{#with Subscription.Channel}}
         <p>Channel ID: <a href="javascript:void(0)" onclick="loadChannel('{{ChannelID}}')">{{ChannelID}}</a></p>
         <p>Channel Name: {{Name}}</p>
