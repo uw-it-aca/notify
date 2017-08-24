@@ -48,10 +48,10 @@
 
     function channel_search_by_sln_year_quarter() {
         var params = {
-            channel_type: "uw_student_courseavailable",
-            quarter: $("#channel_quarter").val(),
-            year: $.trim($("#channel_year").val()),
-            sln: $.trim($("#channel_sln").val())
+            type: "uw_student_courseavailable",
+            tag_quarter: $("#channel_quarter").val(),
+            tag_year: $.trim($("#channel_year").val()),
+            tag_sln: $.trim($("#channel_sln").val())
         };
         if (params.year === "") {
             alert("Missing year");
@@ -90,8 +90,8 @@
         <option value="summer">Summer</option>
         <option value="autumn">Autumn</option>
     </select><br/>
-    Year: <input id="channel_year" type="text" size="5"/><br/>
-    SLN: <input id="channel_sln" type="text" size="6"/><br/>
+    Year: <input id="channel_year" type="text" size="6"/><br/>
+    SLN: <input id="channel_sln" type="text" size="6"/>
     <input value="Go" class="btn btn-primary btn-sm" type="submit"/>
 </form>
 <br/><br/>
