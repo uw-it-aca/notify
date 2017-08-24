@@ -39,7 +39,7 @@
     function channel_resource_by_channel_id() {
         var channel_id = $.trim($("#channel_id").val());
         if (channel_id === "") {
-            alert("Missing channel_id");
+            alert("Missing Channel ID");
         } else {
             window.location.href = channel_url + "/" + channel_id;
         }
@@ -80,7 +80,8 @@
     By Channel ID: <input id="channel_id" type="text"/>
     <input value="Go" class="btn btn-primary btn-sm" type="submit"/>
 </form>
-<form>
+<br/>
+<form onsubmit="return channel_search_by_sln_year_quarter()">
     <p>By Quarter/Year/SLN:</p>
     Quarter:
     <select id="channel_quarter">
@@ -88,9 +89,9 @@
         <option value="spring">Spring</option>
         <option value="summer">Summer</option>
         <option value="autumn">Autumn</option>
-    </select>
-    Year: <input id="channel_year" type="text"/>
-    SLN: <input id="channel_sln" type="text"/>
+    </select><br/>
+    Year: <input id="channel_year" type="text" size="5"/><br/>
+    SLN: <input id="channel_sln" type="text" size="6"/><br/>
     <input value="Go" class="btn btn-primary btn-sm" type="submit"/>
 </form>
 <br/><br/>
