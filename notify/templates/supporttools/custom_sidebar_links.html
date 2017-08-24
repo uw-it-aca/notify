@@ -53,9 +53,9 @@
             tag_year: $.trim($("#channel_year").val()),
             tag_sln: $.trim($("#channel_sln").val())
         };
-        if (params.year === "") {
+        if (params.tag_year === "") {
             alert("Missing year");
-        } else if (params.sln === "") {
+        } else if (params.tag_sln === "") {
             alert("Missing SLN");
         } else {
             window.location.href = channel_url + "?" + $.param(params);
