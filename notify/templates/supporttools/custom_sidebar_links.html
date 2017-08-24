@@ -31,7 +31,8 @@
         if (endpoint_addr === "") {
             alert("Missing endpoint address");
         } else {
-            window.location.href = endpoint_url + "/" + endpoint_addr;
+            window.location.href = endpoint_url + "?" +
+                $.param({endpoint_address: endpoint_addr});
         }
         return false;
     }
