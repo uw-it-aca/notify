@@ -1,0 +1,46 @@
+{% include 'supporttools/default_sidelinks.html' %}
+
+<h3>Channel Info:</h3>
+<form id="channel-id-form">
+    By Channel ID: <input id="channel_id" type="text"/>
+    <input value="Go" class="btn btn-primary btn-sm" type="submit"/>
+</form>
+<br/>
+<form id="channel-search-form">
+    <p>By Quarter/Year/SLN:</p>
+    Quarter:
+    <select id="channel_quarter">
+        <option value="winter">Winter</option>
+        <option value="spring">Spring</option>
+        <option value="summer">Summer</option>
+        <option value="autumn">Autumn</option>
+    </select><br/>
+    Year: <input id="channel_year" type="text" size="6"/><br/>
+    SLN: <input id="channel_sln" type="text" size="6"/>
+    <input value="Go" class="btn btn-primary btn-sm" type="submit"/>
+</form>
+<br/><br/>
+
+<h3>User Info:</h3>
+<form id="person-regid-form">
+    By REGID: <input id="person_regid" type="text" />
+    <input value="Go" class="btn btn-primary btn-sm" type="submit"/>
+</form>
+<form id="person-netid-form">
+    By NETID: <input id="person_netid" type="text" />
+    <input value="Go" class="btn btn-primary btn-sm" type="submit"/>
+</form>
+<br/><br/>
+
+<h3>Endpoint Info:</h3>
+<form id="endpoint-addr-form">
+    By Endpoint address: <input id="endpoint_address" type="text"/>
+    <input value="Go" class="btn btn-primary btn-sm" type="submit"/>
+</form>
+<br/><br/>
+
+<h3>Subscription Info:</h3>
+<form id="subscription-netid-form">
+    By NETID: <input id="sub_netid" type="text"/>
+    <input value="Go" class="btn btn-primary btn-sm" type="submit"/>
+</form>
