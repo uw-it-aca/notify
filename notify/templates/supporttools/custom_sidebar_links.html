@@ -1,88 +1,15 @@
-{% include "supporttools/default_sidelinks.html" %}
+{% load staticfiles %}
+{% load compress %}
 
-<script type="text/javascript">
-    var person_url = "{% url 'restclients_proxy' 'nws' 'notification/v1/person' %}",
-	    endpoint_url = "{% url 'restclients_proxy' 'nws' 'notification/v1/endpoint' %}",
-        channel_url = "{% url 'restclients_proxy' 'nws' 'notification/v1/channel' %}",
-        subscription_url = "{% url 'restclients_proxy' 'nws' 'notification/v1/subscription' %}";
-
-    function person_resource_by_regid() {
-        var regid = $.trim($("#person_regid").val());
-        if (regid === "") {
-            alert("Missing REGID");
-        } else {
-            window.location.href = person_url + "/" + regid;
-        }
-        return false;
-    }
-
-    function person_resource_by_netid() {
-        var netid = $.trim($("#person_netid").val());
-        if (netid === "") {
-            alert("Missing NETID");
-        } else {
-            window.location.href = person_url + "/" + netid + "@washington.edu";
-        }
-        return false;
-    }
-
-    function endpoint_resource_by_endpoint_addr() {
-        var endpoint_addr = $.trim($("#endpoint_address").val());
-        if (endpoint_addr === "") {
-            alert("Missing endpoint address");
-        } else {
-            window.location.href = endpoint_url + "?" +
-                $.param({endpoint_address: endpoint_addr});
-        }
-        return false;
-    }
-
-    function channel_resource_by_channel_id() {
-        var channel_id = $.trim($("#channel_id").val());
-        if (channel_id === "") {
-            alert("Missing Channel ID");
-        } else {
-            window.location.href = channel_url + "/" + channel_id;
-        }
-        return false;
-    }
-
-    function channel_search_by_sln_year_quarter() {
-        var params = {
-            type: "uw_student_courseavailable",
-            tag_quarter: $("#channel_quarter").val(),
-            tag_year: $.trim($("#channel_year").val()),
-            tag_sln: $.trim($("#channel_sln").val())
-        };
-        if (params.tag_year === "") {
-            alert("Missing year");
-        } else if (params.tag_sln === "") {
-            alert("Missing SLN");
-        } else {
-            window.location.href = channel_url + "?" + $.param(params);
-        }
-        return false;
-    }
-
-    function subscription_search_by_netid() {
-        var netid = $.trim($("#sub_netid").val());
-        if (netid === "") {
-            alert("Missing METID");
-        } else {
-            window.location.href = subscription_url + "?" +
-                $.param({subscriber_id: netid + "@washington.edu"});
-        }
-        return false;
-    }
-</script>
+{% include 'supporttools/default_sidelinks.html' %}
 
 <h3>Channel Info:</h3>
-<form onsubmit="return channel_resource_by_channel_id()">
+<form id="channel-id-form">
     By Channel ID: <input id="channel_id" type="text"/>
     <input value="Go" class="btn btn-primary btn-sm" type="submit"/>
 </form>
 <br/>
-<form onsubmit="return channel_search_by_sln_year_quarter()">
+<form id="channel-search-form">
     <p>By Quarter/Year/SLN:</p>
     Quarter:
     <select id="channel_quarter">
@@ -98,25 +25,37 @@
 <br/><br/>
 
 <h3>User Info:</h3>
-<form onsubmit="return person_resource_by_regid()">
+<form id="person-regid-form">
     By REGID: <input id="person_regid" type="text" />
     <input value="Go" class="btn btn-primary btn-sm" type="submit"/>
 </form>
-<form onsubmit="return person_resource_by_netid()">
+<form id="person-netid-form">
     By NETID: <input id="person_netid" type="text" />
     <input value="Go" class="btn btn-primary btn-sm" type="submit"/>
 </form>
 <br/><br/>
 
 <h3>Endpoint Info:</h3>
-<form onsubmit="return endpoint_resource_by_endpoint_addr()">
+<form id="endpoint-addr-form">
     By Endpoint address: <input id="endpoint_address" type="text"/>
     <input value="Go" class="btn btn-primary btn-sm" type="submit"/>
 </form>
 <br/><br/>
 
 <h3>Subscription Info:</h3>
-<form onsubmit="return subscription_search_by_netid()">
+<form id="subscription-netid-form">
     By NETID: <input id="sub_netid" type="text"/>
     <input value="Go" class="btn btn-primary btn-sm" type="submit"/>
 </form>
+
+<script type="text/javascript">
+    window.notify = {
+        person_url: "{% url 'restclients_proxy' 'nws' 'notification/v1/person' %}",
+        endpoint_url: "{% url 'restclients_proxy' 'nws' 'notification/v1/endpoint' %}",
+        channel_url: "{% url 'restclients_proxy' 'nws' 'notification/v1/channel' %}",
+        subscription_url: "{% url 'restclients_proxy' 'nws' 'notification/v1/subscription' %}"
+    };
+</script>
+{% compress js %}
+<script type="text/javascript" src="{% static 'js/support.js' %}"></script>
+{% endcompress %}
