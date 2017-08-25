@@ -1,6 +1,3 @@
-{% load staticfiles %}
-{% load compress %}
-
 {% include 'supporttools/default_sidelinks.html' %}
 
 <h3>Channel Info:</h3>
@@ -47,15 +44,3 @@
     By NETID: <input id="sub_netid" type="text"/>
     <input value="Go" class="btn btn-primary btn-sm" type="submit"/>
 </form>
-
-<script type="text/javascript">
-    window.notify = {
-        person_url: "{% url 'restclients_proxy' 'nws' 'notification/v1/person' %}",
-        endpoint_url: "{% url 'restclients_proxy' 'nws' 'notification/v1/endpoint' %}",
-        channel_url: "{% url 'restclients_proxy' 'nws' 'notification/v1/channel' %}",
-        subscription_url: "{% url 'restclients_proxy' 'nws' 'notification/v1/subscription' %}"
-    };
-</script>
-{% compress js %}
-<script type="text/javascript" src="{% static 'js/support.js' %}"></script>
-{% endcompress %}
