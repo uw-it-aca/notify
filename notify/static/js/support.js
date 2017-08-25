@@ -1,5 +1,5 @@
 /*jslint browser: true, plusplus: true */
-/*global $, jQuery */
+/*global $, jQuery, alert */
 (function ($) {
     "use strict";
 
@@ -74,7 +74,7 @@
     }
 
     $(document).ready(function () {
-		$("#channel-id-form").on("submit", channel_resource_by_channel_id);
+        $("#channel-id-form").on("submit", channel_resource_by_channel_id);
         $("#channel-search-form").on("submit", channel_search_by_sln_year_quarter);
         $("#person-regid-form").on("submit", person_resource_by_regid);
         $("#person-netid-form").on("submit", person_resource_by_netid);
