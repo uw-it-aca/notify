@@ -25,9 +25,12 @@
     }
 
     function endpoint_resource_by_endpoint_addr() {
-        var endpoint_addr = $.trim($("#endpoint_address").val());
+        var endpoint_addr = $.trim($("#endpoint_address").val()),
+            re = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
         if (endpoint_addr === "") {
-            alert("Missing endpoint address");
+            alert("Missing Endpoint Address or ID");
+        } else if (re.test(endpoint_addr)) {
+            window.location.href = window.notify.endpoint_url + "/" + endpoint_addr;
         } else {
             window.location.href = window.notify.endpoint_url + "?" +
                 $.param({endpoint_address: endpoint_addr});
