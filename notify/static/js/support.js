@@ -92,7 +92,7 @@
                 accepts: {json: "application/json"},
             }).done(function(data) {
                 window.location.href = window.location.href;
-            }).fail(function(data) {
+            }).fail(function(xhr) {
                 alert("Delete failed: " + xhr.status + " " + xhr.statusText);
             });
         }
