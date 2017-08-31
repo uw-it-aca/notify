@@ -36,7 +36,7 @@ setup(
         'UW-RestClients-GWS>=0.3,<1.0',
         'UW-RestClients-KWS>=0.1,<1.0',
         'UW-RestClients-Django-Utils>=0.6.8,<1.0',
-        'Django-SupportTools>=1.1',
+        'Django-SupportTools>=1.2',
         'django_mobileesp',
     ],
     license='Apache License, Version 2.0',
