@@ -100,20 +100,22 @@
 
     function add_endpoint_delete() {
         /*jshint validthis: true */
-        var el = $(this).next(),
-            endpoint_id = $.trim(el.text()),
-            btn = $("<button></button>")
-                    .addClass("btn btn-danger btn-sm")
-                    .text("Delete endpoint")
-                    .data("endpoint_id", endpoint_id)
-                    .on("click", delete_endpoint);
+        $("span.json-key:contains('EndpointID :')").each(function() {
+            var el = $(this).next();
+                endpoint_id = $.trim(el.text());
+                btn = $("<button></button>")
+                        .addClass("btn btn-danger btn-sm")
+                        .text("Delete endpoint")
+                        .data("endpoint_id", endpoint_id)
+                        .on("click", delete_endpoint);
 
-        el.append("&nbsp;&nbsp;");
-        el.append(btn);
+            el.append("&nbsp;&nbsp;");
+            el.append(btn);
+        });
     }
 
     $(document).ready(function () {
-        var url_re = /^\/notification\/v1\//;
+        var url_re = /^\/notification\/v\d\/(endpoint|person)/;
 
         $("#channel-id-form").on("submit", channel_resource_by_channel_id);
         $("#channel-search-form").on("submit", channel_search_by_sln_year_quarter);
@@ -123,7 +125,7 @@
         $("#subscription-netid-form").on("submit", subscription_search_by_netid);
 
         if (url_re.test($("#restclients-proxy-url").val())) {
-            $("span.json-key:contains('EndpointID :')").each(add_endpoint_delete);
+            add_endpoint_delete();
         }
     });
 }(jQuery));
