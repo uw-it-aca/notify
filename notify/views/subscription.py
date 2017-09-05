@@ -318,7 +318,7 @@ class SubscriptionProtocol(RESTDispatch):
         protocols = request.POST.getlist('protocol')
         subscriber_id = UserService().get_user()
         status = 500
-        subscriptions = []
+        subs = []
         subscribed_protocols = []
         n_unsubscribed = 0
 
@@ -333,7 +333,8 @@ class SubscriptionProtocol(RESTDispatch):
             subs = nws.get_subscriptions_by_channel_id_and_subscriber_id(
                 channel_id, subscriber_id)
         except DataFailureException as ex:
-            pass
+            return self.error_response(
+                status=500, message='Unsubscribe failed')
 
         if len(subs):
             for subscription in subs:
