@@ -36,6 +36,7 @@
 <form id="endpoint-addr-form">
     By Endpoint Address or ID: <input id="endpoint_address" type="text"/>
     <input value="Go" class="btn btn-primary btn-sm" type="submit"/>
+    {% csrf_token %}
 </form>
 <br/><br/>
 
