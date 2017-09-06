@@ -83,7 +83,7 @@
 
         if (window.confirm(msg)) {
             $.ajax({
-                url: "/admin/endpoint/" + endpoint_id,
+                url: "/admin/endpoint_search/?endpoint_id=" + endpoint_id,
                 headers: {
                     "X-CSRFToken": $('input[name="csrfmiddlewaretoken"]').val()
                 },
