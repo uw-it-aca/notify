@@ -3,6 +3,20 @@
 (function ($) {
     "use strict";
 
+    function to_eppn(netid) {
+        return netid + "@washington.edu";
+    }
+
+    function user_override_by_eppn() {
+        var input = $("input[name='override_as']"),
+            val = $.trim(input.val());
+
+        if (val.length && val.indexOf("@") === -1) {
+            input.val(to_eppn(val));
+        }
+        return true;
+    }
+
     function person_resource_by_regid() {
         var regid = $.trim($("#person_regid").val());
         if (regid === "") {
@@ -18,8 +32,7 @@
         if (netid === "") {
             alert("Missing NETID");
         } else {
-            window.location.href = window.notify.person_url + "/" +
-                netid + "@washington.edu";
+            window.location.href = window.notify.person_url + "/" + to_eppn(netid);
         }
         return false;
     }
@@ -71,7 +84,7 @@
             alert("Missing METID");
         } else {
             window.location.href = window.notify.subscription_url + "?" +
-                $.param({subscriber_id: netid + "@washington.edu"});
+                $.param({subscriber_id: to_eppn(netid)});
         }
         return false;
     }
@@ -90,9 +103,9 @@
                 dataType: "json",
                 type: "DELETE",
                 accepts: {json: "application/json"},
-            }).done(function(data) {
+            }).done(function () {
                 window.location.href = window.location.href;
-            }).fail(function(xhr) {
+            }).fail(function (xhr) {
                 alert("Delete failed: " + xhr.status + " " + xhr.statusText);
             });
         }
@@ -100,7 +113,7 @@
 
     function add_endpoint_delete() {
         /*jshint validthis: true */
-        $("span.json-key:contains('EndpointID :')").each(function() {
+        $("span.json-key:contains('EndpointID :')").each(function () {
             var el = $(this).next(),
                 endpoint_id = $.trim(el.text()),
                 btn = $("<button></button>")
@@ -128,6 +141,9 @@
         $("#person-netid-form").on("submit", person_resource_by_netid);
         $("#endpoint-addr-form").on("submit", endpoint_resource_by_endpoint_addr);
         $("#subscription-netid-form").on("submit", subscription_search_by_netid);
+        $("input[name='override_as']")
+            .attr("placeholder", "netid@washington.edu")
+            .closest("form").on("submit", user_override_by_eppn);
 
         if (display_endpoint_delete()) {
             add_endpoint_delete();
