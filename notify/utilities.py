@@ -128,13 +128,15 @@ def get_open_registration_periods(term=None):
         term = get_term_after(term)
         terms.append(term)
 
+    required_keys = ['year', 'quarter']
     active_terms = []
     nws = NWS()
     for term in terms:
         channels = nws.get_active_channels_by_year_quarter(
             channel_type, term.year, term.quarter)
         if len(channels):
-            active_terms.append(term.json_data())
+            term_json = term.json_data()
+            active_terms.append({k: term_json[k] for k in required_keys})
 
     return json.dumps(active_terms)
 

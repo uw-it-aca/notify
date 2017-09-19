@@ -20,7 +20,7 @@
     <div class="add_notification"><a href="/find/">+ add new class notification</a></div>
     {% else %}
     {% autoescape off %}
-    <script type="text/javascript">var reg_periods = [{% for term in reg_periods %}{'year': '{{ term.year }}', 'quarter': '{{ term.quarter|capfirst }}'}{% if not forloop.last %},{% endif %}{% endfor %}];</script>
+    <script type="text/javascript">var reg_periods = {{ reg_periods }};</script>
     {% endautoescape %}
     <div class="add_notification"><a href="javascript:void(0)" onclick="canui.openFindDialog()">+ add new class notification</a></div>
     {% endif %}
