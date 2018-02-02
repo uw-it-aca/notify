@@ -11,7 +11,10 @@ from notify.views.rest_dispatch import RESTDispatch
 from notify.utilities import netid_from_eppn
 from userservice.user import UserService
 from authz_group import Group
-from urllib import quote
+try:
+    from urllib import quote
+except ImportError:
+    from urllib.parse import quote
 
 
 class InvalidAdminException(Exception):
