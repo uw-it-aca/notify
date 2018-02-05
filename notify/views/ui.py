@@ -13,8 +13,6 @@ from userservice.user import UserService
 from authz_group import Group
 from uw_nws import NWS
 import logging
-import urlparse
-
 
 # Get an instance of a logger
 logger = logging.getLogger(__name__)

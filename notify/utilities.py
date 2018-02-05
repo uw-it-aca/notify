@@ -73,7 +73,7 @@ def get_course_details_by_channel(channel):
             meeting_json['start_time'] = start_time.strftime("%-I:%M%p")
             end_time = datetime.strptime(meeting_json['end_time'], "%H:%M")
             meeting_json['end_time'] = end_time.strftime("%-I:%M%p")
-        except:
+        except Exception:
             pass
         meetings.append(meeting_json)
 
