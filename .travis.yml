@@ -11,7 +11,7 @@ before_script:
   - npm install -g jshint
   - cp travis-ci/manage.py manage.py
 script:
-  - pycodestyle notify/ --exclude=migrations,test
+  - pycodestyle notify/ --exclude=migrations
   - jshint notify/static/js/ --verbose
   - coverage run --source=notify/ --omit=notify/migrations/* manage.py test notify
 after_success:
