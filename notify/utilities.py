@@ -1,3 +1,4 @@
+from django.conf import settings
 from uw_nws import NWS
 from uw_nws.models import Person
 from uw_pws import PWS
@@ -8,6 +9,7 @@ from uw_sws.exceptions import InvalidSectionID
 from restclients_core.exceptions import DataFailureException
 from notify.exceptions import InvalidUser
 from datetime import datetime
+import dateutil.parser
 import json
 import logging
 import re
@@ -114,6 +116,13 @@ def netid_from_eppn(eppn):
     return match[0]
 
 
+def expires_datetime():
+    expires = getattr(settings, 'CHANNEL_EXPIRES_AFTER')
+    if expires is not None:
+        expires = dateutil.parser.parse(expires)
+    return expires
+
+
 def get_open_registration_periods(term=None):
     # Check the passed term, and the next 3, to see if they have
     # a channel for any course in that term.
@@ -133,7 +142,7 @@ def get_open_registration_periods(term=None):
     nws = NWS()
     for term in terms:
         channels = nws.get_active_channels_by_year_quarter(
-            channel_type, term.year, term.quarter)
+            channel_type, term.year, term.quarter, expires=expires_datetime())
         if len(channels):
             term_json = term.json_data()
             active_terms.append({k: term_json[k] for k in required_keys})
