@@ -1,7 +1,7 @@
 from django.test import TestCase
 from notify.utilities import (
     netid_from_eppn, user_accepted_tos, get_quarter_index,
-    user_has_valid_endpoints)
+    user_has_valid_endpoints, expires_datetime)
 from uw_sws.term import get_current_term, get_term_after
 from uw_sws.util import fdao_sws_override
 from uw_pws.models import Person
@@ -54,3 +54,19 @@ class TestPersonAttributes(TestCase):
         self.person.endpoints.append(Endpoint(protocol='Email'))
         self.assertEquals(user_has_valid_endpoints(self.person),
                           '{"sms": true, "email": true}')
+
+
+class TestExpiresDateTime(TestCase):
+    def test_expires_datetime(self):
+        with self.settings(
+                CHANNEL_EXPIRES_AFTER=None):
+            self.assertEquals(expires_datetime(), None)
+
+        with self.settings(
+                CHANNEL_EXPIRES_AFTER='2013-05-31T00:00:00'):
+            self.assertEquals(expires_datetime().isoformat(),
+                              '2013-05-31T00:00:00')
+
+        with self.settings(
+                CHANNEL_EXPIRES_AFTER='000000000'):
+            self.assertRaises(ValueError, expires_datetime)

@@ -29,6 +29,7 @@ setup(
         'django-userservice>=1.3,<2.0',
         'django-aws-message>=0.2,<1.0',
         'unittest2',
+        'python-dateutil',
         'AuthZ-Group>=1.6',
         'UW-RestClients-NWS>=0.82,<1.0',
         'UW-RestClients-SWS>=1.4.6.2,<2.0',

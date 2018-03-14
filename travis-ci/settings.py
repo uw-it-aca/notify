@@ -117,3 +117,5 @@ LOGGING = {
     'handlers': {},
     'loggers': {},
 }
+
+CHANNEL_EXPIRES_AFTER = '2013-05-31T00:00:00'
