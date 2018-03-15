@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_exempt
@@ -35,8 +36,10 @@ class SubscriptionSearch(RESTDispatch):
 
         nws = NWS()
         try:
+            max_results = getattr(
+                settings, 'SUBSCRIPTION_SEARCH_MAX_RESULTS', 100)
             subscriptions = nws.get_subscriptions_by_subscriber_id(
-                subscriber_id, max_results=100)
+                subscriber_id, max_results=max_results)
         except DataFailureException as ex:
             logger.warning(ex.msg)
             return self.error_response(
