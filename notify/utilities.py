@@ -133,7 +133,7 @@ def get_open_registration_periods(term=None):
         term = get_current_term()
 
     terms = [term]
-    for i in range(3):
+    for i in range(getattr(settings, 'FUTURE_TERMS_TO_SEARCH', 3)):
         term = get_term_after(term)
         terms.append(term)
 
