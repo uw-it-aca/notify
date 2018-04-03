@@ -1,7 +1,7 @@
 from django.conf import settings
-from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
 from django.utils.decorators import method_decorator
+from uw_saml.decorators import group_required
 from uw_nws import NWS
 from uw_pws import PWS
 from restclients_core.exceptions import (
@@ -10,35 +10,21 @@ from uw_nws.exceptions import InvalidUUID
 from notify.views.rest_dispatch import RESTDispatch
 from notify.utilities import netid_from_eppn
 from userservice.user import UserService
-from authz_group import Group
 try:
     from urllib import quote
 except ImportError:
     from urllib.parse import quote
 
 
-class InvalidAdminException(Exception):
-    def __str__(self):
-        return "User is not authorized for administrator activity"
-
-
-@method_decorator(login_required, name='dispatch')
+@method_decorator(group_required(settings.USERSERVICE_ADMIN_GROUP),
+                                 name='dispatch')
 @method_decorator(never_cache, name='dispatch')
-class AdminRESTDispatch(RESTDispatch):
-    def user_is_admin(self):
-        actual_user = UserService().get_original_user()
-        group_id = getattr(settings, 'USERSERVICE_ADMIN_GROUP')
-        if not Group().is_member_of_group(actual_user, group_id):
-            raise InvalidAdminException()
-
-
-class EndpointSearchAdmin(AdminRESTDispatch):
+class EndpointSearchAdmin(RESTDispatch):
     def get(self, request, *args, **kwargs):
         endpoint_address = request.GET.get('endpoint_address', None)
         endpoint_id = request.GET.get('endpoint_id', None)
 
         try:
-            self.user_is_admin()
             if endpoint_id is not None:
                 endpoint = NWS().get_endpoint_by_endpoint_id(endpoint_id)
             elif endpoint_address is not None:
@@ -50,18 +36,11 @@ class EndpointSearchAdmin(AdminRESTDispatch):
         except DataFailureException as ex:
             return self.error_response(
                 status=404, message="No endpoints found")
-        except InvalidAdminException as ex:
-            return self.error_response(status=403, message="%s" % ex)
 
         return self.json_response(endpoint.json_data())
 
     def delete(self, request, *args, **kwargs):
         endpoint_id = request.GET.get('endpoint_id', None)
-
-        try:
-            self.user_is_admin()
-        except InvalidAdminException as ex:
-            return self.error_response(status=403, message="%s" % ex)
 
         if endpoint_id is not None:
             nws = NWS(actas_user=UserService().get_original_user())
@@ -79,7 +58,10 @@ class EndpointSearchAdmin(AdminRESTDispatch):
         return self.json_response({"message": "Endpoint deleted"})
 
 
-class ChannelSearchAdmin(AdminRESTDispatch):
+@method_decorator(group_required(settings.USERSERVICE_ADMIN_GROUP),
+                                 name='dispatch')
+@method_decorator(never_cache, name='dispatch')
+class ChannelSearchAdmin(RESTDispatch):
     def get(self, request, *args, **kwargs):
         channel_id = request.GET.get('channel_id', '').strip()
         channel_year = request.GET.get('channel_year', '').strip()
@@ -87,7 +69,6 @@ class ChannelSearchAdmin(AdminRESTDispatch):
         channel_sln = request.GET.get('channel_sln', '').strip()
 
         try:
-            self.user_is_admin()
             nws = NWS()
             if len(channel_id):
                 channel = nws.get_channel_by_channel_id(channel_id)
@@ -111,19 +92,15 @@ class ChannelSearchAdmin(AdminRESTDispatch):
         except InvalidUUID:
             return self.error_response(
                 status=400, message="Invalid channel ID")
-        except InvalidAdminException as ex:
-            return self.error_response(status=403, message="%s" % ex)
 
 
-class UserSearchAdmin(AdminRESTDispatch):
+@method_decorator(group_required(settings.USERSERVICE_ADMIN_GROUP),
+                                 name='dispatch')
+@method_decorator(never_cache, name='dispatch')
+class UserSearchAdmin(RESTDispatch):
     def get(self, request, *args, **kwargs):
         regid = request.GET.get('regid', '').strip()
         netid = request.GET.get('netid', '').strip()
-
-        try:
-            self.user_is_admin()
-        except InvalidAdminException as ex:
-            return self.error_response(status=403, message="%s" % ex)
 
         if not len(netid) and not len(regid):
             return self.error_response(status=400, message="Missing input")
@@ -155,13 +132,15 @@ class UserSearchAdmin(AdminRESTDispatch):
         return self.json_response(person.json_data())
 
 
-class SubscriptionSearchAdmin(AdminRESTDispatch):
+@method_decorator(group_required(settings.USERSERVICE_ADMIN_GROUP),
+                                 name='dispatch')
+@method_decorator(never_cache, name='dispatch')
+class SubscriptionSearchAdmin(RESTDispatch):
     def get(self, request, *args, **kwargs):
         user_id = request.GET.get('person_id')
 
         response_json = {'Subscriptions': []}
         try:
-            self.user_is_admin()
             subscriptions = NWS().get_subscriptions_by_subscriber_id(
                 user_id, '1000')
             for subscription in subscriptions:
@@ -170,7 +149,5 @@ class SubscriptionSearchAdmin(AdminRESTDispatch):
             return self.error_response(
                 status=400, message=("User does not exist or has not signed "
                                      "up to use Notify.UW"))
-        except InvalidAdminException as ex:
-            return self.error_response(status=403, message="%s" % ex)
 
         return self.json_response(response_json)

@@ -31,6 +31,7 @@ setup(
         'unittest2',
         'python-dateutil',
         'AuthZ-Group>=1.6',
+        'UW-Django-SAML2>=0.4',
         'UW-RestClients-NWS>=0.82,<1.0',
         'UW-RestClients-SWS>=1.4.6.2,<2.0',
         'UW-RestClients-PWS>=0.6,<1.0',
