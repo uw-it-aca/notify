@@ -17,7 +17,7 @@ except ImportError:
 
 
 @method_decorator(group_required(settings.USERSERVICE_ADMIN_GROUP),
-                                 name='dispatch')
+                  name='dispatch')
 @method_decorator(never_cache, name='dispatch')
 class EndpointSearchAdmin(RESTDispatch):
     def get(self, request, *args, **kwargs):
@@ -59,7 +59,7 @@ class EndpointSearchAdmin(RESTDispatch):
 
 
 @method_decorator(group_required(settings.USERSERVICE_ADMIN_GROUP),
-                                 name='dispatch')
+                  name='dispatch')
 @method_decorator(never_cache, name='dispatch')
 class ChannelSearchAdmin(RESTDispatch):
     def get(self, request, *args, **kwargs):
@@ -95,7 +95,7 @@ class ChannelSearchAdmin(RESTDispatch):
 
 
 @method_decorator(group_required(settings.USERSERVICE_ADMIN_GROUP),
-                                 name='dispatch')
+                  name='dispatch')
 @method_decorator(never_cache, name='dispatch')
 class UserSearchAdmin(RESTDispatch):
     def get(self, request, *args, **kwargs):
@@ -133,7 +133,7 @@ class UserSearchAdmin(RESTDispatch):
 
 
 @method_decorator(group_required(settings.USERSERVICE_ADMIN_GROUP),
-                                 name='dispatch')
+                  name='dispatch')
 @method_decorator(never_cache, name='dispatch')
 class SubscriptionSearchAdmin(RESTDispatch):
     def get(self, request, *args, **kwargs):
