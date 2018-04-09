@@ -10,12 +10,11 @@ from notify.views.admin import (
     SubscriptionSearchAdmin)
 from notify.views.ui import (
     home_view, profile_view, find_view, tos_view, detail_view,
-    unsubscribe_view, course_view, shib_redirect, admin)
+    unsubscribe_view, course_view, admin)
 
 
 urlpatterns = [
     url(r'^$', home_view, name='home'),
-    url(r'^accounts/login/?$', shib_redirect),
     url(r'^profile/', profile_view),
     url(r'^find/', find_view),
     url(r'^tos/', tos_view),
