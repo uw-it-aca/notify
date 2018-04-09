@@ -117,7 +117,7 @@ def netid_from_eppn(eppn):
 
 
 def expires_datetime():
-    expires = getattr(settings, 'CHANNEL_EXPIRES_AFTER')
+    expires = getattr(settings, 'CHANNEL_EXPIRES_AFTER', None)
     if expires is not None:
         expires = dateutil.parser.parse(expires)
     return expires
