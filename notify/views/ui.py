@@ -1,16 +1,14 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
-from django.contrib import auth
 from django.conf import settings
+from uw_saml.decorators import group_required
 from restclients_core.exceptions import DataFailureException
 from notify.utilities import (
     get_open_registration_periods, get_person, user_accepted_tos,
     user_has_valid_endpoints)
-from notify.decorators import restrict_session_to_weblogin_timeout
 from notify.exceptions import InvalidUser
 from userservice.user import UserService
-from authz_group import Group
 from uw_nws import NWS
 import logging
 
@@ -52,7 +50,6 @@ def build_view_context(request):
     return context
 
 
-@restrict_session_to_weblogin_timeout
 @login_required
 def home_view(request):
     context = build_view_context(request)
@@ -62,7 +59,6 @@ def home_view(request):
     return render(request, 'app.html', context)
 
 
-@restrict_session_to_weblogin_timeout
 @login_required
 def profile_view(request):
     context = build_view_context(request)
@@ -71,7 +67,6 @@ def profile_view(request):
     return render(request, 'profile.html', context)
 
 
-@restrict_session_to_weblogin_timeout
 @login_required
 def find_view(request):
     context = build_view_context(request)
@@ -81,7 +76,6 @@ def find_view(request):
     return render(request, 'find.html', context)
 
 
-@restrict_session_to_weblogin_timeout
 @login_required
 def course_view(request, year, quarter, sln):
     context = build_view_context(request)
@@ -94,7 +88,6 @@ def course_view(request, year, quarter, sln):
     return render(request, 'course.html', context)
 
 
-@restrict_session_to_weblogin_timeout
 @login_required
 def detail_view(request, channel_id):
     context = build_view_context(request)
@@ -112,7 +105,6 @@ def detail_view(request, channel_id):
     return render(request, 'class_details.html', context)
 
 
-@restrict_session_to_weblogin_timeout
 @login_required
 def confirm_view(request):
     context = build_view_context(request)
@@ -121,7 +113,6 @@ def confirm_view(request):
     return render(request, 'confirm_subscription.html', context)
 
 
-@restrict_session_to_weblogin_timeout
 @login_required
 def unsubscribe_view(request, channel_id):
     context = build_view_context(request)
@@ -130,7 +121,6 @@ def unsubscribe_view(request, channel_id):
     return render(request, 'confirm_unsubscribe.html', context)
 
 
-@restrict_session_to_weblogin_timeout
 @login_required
 def tos_view(request):
     context = build_view_context(request)
@@ -140,22 +130,9 @@ def tos_view(request):
     return render(request, 'terms_of_service.html', context)
 
 
-@restrict_session_to_weblogin_timeout
-@login_required
+@group_required(settings.USERSERVICE_ADMIN_GROUP)
 def admin(request):
-    actual_user = UserService().get_original_user()
-    g = Group()
-    is_admin = g.is_member_of_group(
-        actual_user, getattr(settings, 'USERSERVICE_ADMIN_GROUP'))
-
-    if is_admin is False:
-        return HttpResponseRedirect("/")
-
     return render(request, 'admin/menu.html', {})
-
-
-def shib_redirect(request):
-    return HttpResponseRedirect(request.GET.get('next', '/'))
 
 
 def redirect_to_terms_of_service(context):
