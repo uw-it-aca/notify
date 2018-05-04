@@ -37,7 +37,7 @@ setup(
         'UW-RestClients-PWS>=1.0,<2.0',
         'UW-RestClients-GWS>=1.0,<2.0',
         'UW-RestClients-KWS>=0.1,<1.0',
-        'UW-RestClients-Django-Utils>=1.0,<2.0',
+        'UW-RestClients-Django-Utils>=1.0.1,<2.0',
         'Django-SupportTools>=2.0,<3.0',
         'django_mobileesp',
     ],
