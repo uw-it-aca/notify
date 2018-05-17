@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.contrib.auth.models import AnonymousUser
+from uw_saml.decorators import group_required
 from time import time
 
 
