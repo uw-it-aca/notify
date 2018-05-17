@@ -54,7 +54,6 @@ INSTALLED_APPS = (
     'templatetag_handlebars',
     'supporttools',
     'userservice',
-    'authz_group',
     'notify.apps.NotifyUIConfig',
     'rc_django',
 )
@@ -118,5 +117,5 @@ LOGGING = {
     'loggers': {},
 }
 
-USERSERVICE_ADMIN_GROUP = 'test'
+NOTIFY_ADMIN_GROUP = 'test'
 CHANNEL_EXPIRES_AFTER = '2013-05-31T00:00:00'

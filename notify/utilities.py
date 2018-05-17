@@ -6,7 +6,7 @@ from uw_sws.section import get_section_by_label
 from uw_sws.section_status import get_section_status_by_label
 from uw_sws.term import get_current_term, get_term_after
 from uw_sws.exceptions import InvalidSectionID
-from restclients_core.exceptions import DataFailureException
+from restclients_core.exceptions import InvalidNetID, DataFailureException
 from notify.exceptions import InvalidUser
 from datetime import datetime
 import dateutil.parser
@@ -194,3 +194,22 @@ def user_accepted_tos(person):
 def get_quarter_index(quarter):
     quarters = ['winter', 'spring', 'summer', 'autumn']
     return quarters.index(quarter.lower())
+
+
+def validate_override_user(username):
+    if not len(username):
+        return ("No override user supplied, please enter a user to override"
+                "as in the format of [netid]@washington.edu")
+
+    match = re.search('@washington.edu', username)
+    if match:
+        try:
+            netid = netid_from_eppn(username)
+            pws_person = PWS().get_person_by_netid(netid)
+        except (InvalidNetID, DataFailureException) as ex:
+            return ("Override user could not be found in the PWS. "
+                    "Please enter a valid user to override as in the "
+                    "format of [netid]@washington.edu You entered: ")
+    else:
+        return ("Override user must be formatted as [netid]@washington.edu. "
+                "You entered: ")
