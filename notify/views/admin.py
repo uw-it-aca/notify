@@ -1,12 +1,12 @@
 from django.conf import settings
 from django.views.decorators.cache import never_cache
 from django.utils.decorators import method_decorator
-from uw_saml.decorators import group_required
 from uw_nws import NWS
 from uw_pws import PWS
 from restclients_core.exceptions import (
     DataFailureException, InvalidRegID, InvalidNetID)
 from uw_nws.exceptions import InvalidUUID
+from notify.decorators import group_required
 from notify.views.rest_dispatch import RESTDispatch
 from notify.utilities import netid_from_eppn
 from userservice.user import UserService
@@ -16,8 +16,7 @@ except ImportError:
     from urllib.parse import quote
 
 
-@method_decorator(group_required(settings.USERSERVICE_ADMIN_GROUP),
-                  name='dispatch')
+@method_decorator(group_required(settings.NOTIFY_ADMIN_GROUP), name='dispatch')
 @method_decorator(never_cache, name='dispatch')
 class EndpointSearchAdmin(RESTDispatch):
     def get(self, request, *args, **kwargs):
@@ -58,8 +57,7 @@ class EndpointSearchAdmin(RESTDispatch):
         return self.json_response({"message": "Endpoint deleted"})
 
 
-@method_decorator(group_required(settings.USERSERVICE_ADMIN_GROUP),
-                  name='dispatch')
+@method_decorator(group_required(settings.NOTIFY_ADMIN_GROUP), name='dispatch')
 @method_decorator(never_cache, name='dispatch')
 class ChannelSearchAdmin(RESTDispatch):
     def get(self, request, *args, **kwargs):
@@ -94,8 +92,7 @@ class ChannelSearchAdmin(RESTDispatch):
                 status=400, message="Invalid channel ID")
 
 
-@method_decorator(group_required(settings.USERSERVICE_ADMIN_GROUP),
-                  name='dispatch')
+@method_decorator(group_required(settings.NOTIFY_ADMIN_GROUP), name='dispatch')
 @method_decorator(never_cache, name='dispatch')
 class UserSearchAdmin(RESTDispatch):
     def get(self, request, *args, **kwargs):
@@ -132,8 +129,7 @@ class UserSearchAdmin(RESTDispatch):
         return self.json_response(person.json_data())
 
 
-@method_decorator(group_required(settings.USERSERVICE_ADMIN_GROUP),
-                  name='dispatch')
+@method_decorator(group_required(settings.NOTIFY_ADMIN_GROUP), name='dispatch')
 @method_decorator(never_cache, name='dispatch')
 class SubscriptionSearchAdmin(RESTDispatch):
     def get(self, request, *args, **kwargs):

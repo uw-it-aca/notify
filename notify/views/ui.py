@@ -2,8 +2,8 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
-from uw_saml.decorators import group_required
 from restclients_core.exceptions import DataFailureException
+from notify.decorators import group_required
 from notify.utilities import (
     get_open_registration_periods, get_person, user_accepted_tos,
     user_has_valid_endpoints)
@@ -130,7 +130,7 @@ def tos_view(request):
     return render(request, 'terms_of_service.html', context)
 
 
-@group_required(settings.USERSERVICE_ADMIN_GROUP)
+@group_required(settings.NOTIFY_ADMIN_GROUP)
 def admin(request):
     return render(request, 'admin/menu.html', {})
 
