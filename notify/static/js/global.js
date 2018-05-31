@@ -214,7 +214,7 @@
 
     canui.loadProfile = function loadProfile(success_callback) {
         $.ajax({
-            url: "/uiapi/profile/" + can_user + "?_=" + jQuery.now(),
+            url: "/uiapi/profile?_=" + jQuery.now(),
             dataType: "json",
             type: "GET",
             accepts: {json: "application/json"},
@@ -264,7 +264,7 @@
 
     canui.submitEndpoint = function submitEndpoint(request_body, request_type){
         $.ajax({
-            url: "/uiapi/profile/" + can_user + "?_=" + jQuery.now(),
+            url: "/uiapi/profile?_=" + jQuery.now(),
             contentType: "application/json",
             dataType: "json",
             type: request_type,
@@ -303,7 +303,7 @@
     canui.requireProfileSetup = function requireProfileSetup(){
         if(canui.hasEndpoints()){
             $.ajax({
-                url: "/uiapi/profile/" + can_user + "?_=" + jQuery.now(),
+                url: "/uiapi/profile?_=" + jQuery.now(),
                 dataType: "json",
                 type: "GET",
                 accepts: {json: "application/json"},
@@ -1080,7 +1080,7 @@
         }
         $("#terms_agreement").click(function() {
             $.ajax({
-                url: "/uiapi/tos/" + can_user + "?_=" + jQuery.now(),
+                url: "/uiapi/tos?_=" + jQuery.now(),
                 contentType: "application/json",
                 dataType: "json",
                 type: "POST",
