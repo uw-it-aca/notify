@@ -20,19 +20,22 @@ logger = logging.getLogger(__name__)
 @method_decorator(never_cache, name='dispatch')
 class EndpointView(RESTDispatch):
     def get(self, request, *args, **kwargs):
-        user = kwargs.get('user')
+        user = UserService().get_user()
         try:
             person = get_person(user)
+
+            # Catch AttributeError below if person is None
+            endpoints = person.endpoints
         except DataFailureException as ex:
             return self.error_response(
-                status=500, message="Service unavailable" % user)
-        except InvalidUser:
+                status=500, message="Service unavailable")
+        except (AttributeError, InvalidUser):
             return self.error_response(
                 status=404, message="Person '%s' not found" % user)
 
         sender_address = getattr(settings, 'SENDER_ADDRESS', '')
         endpoints_json = {}
-        for endpoint in person.endpoints:
+        for endpoint in endpoints:
             is_valid = (endpoint.status.lower() != 'invalid')
             is_confirmed = (endpoint.status.lower() == 'verified')
             is_blacklisted = (endpoint.status.lower() == 'blacklisted' and
@@ -55,9 +58,8 @@ class EndpointView(RESTDispatch):
 
         if not endpoints_json:
             # Format emails at @uw.edu per CAN-930
-            eppn = UserService().get_user()
-            eppn = eppn.replace('@washington.edu', '@uw.edu')
-            endpoints_json['DefaultEndpoint'] = {'EndpointAddress': eppn}
+            email = user.replace('@washington.edu', '@uw.edu')
+            endpoints_json['DefaultEndpoint'] = {'EndpointAddress': email}
 
         return self.json_response(endpoints_json)
 
@@ -217,7 +219,7 @@ class ResendSMSConfirmationView(RESTDispatch):
 @method_decorator(never_cache, name='dispatch')
 class ToSConfirmation(RESTDispatch):
     def post(self, request, *args, **kwargs):
-        user = kwargs.get('user')
+        user = UserService().get_user()
         try:
             person = get_person(user)
 
