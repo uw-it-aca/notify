@@ -1,5 +1,5 @@
-{% load templatetag_handlebars %}
-{% tplhandlebars "subscription_list" %}
+{% verbatim %}
+<script id="tpl-subscription-list" type="text/x-handlebars-template">
 <div class="registration_period accordion">
 {{ #each RegistrationPeriods }}
 <h3 class="clearfix"><span class="registration_period_header">{{RegistrationPeriod}}</span></h3>
@@ -69,4 +69,5 @@
   </div>
 {{/each}}
 </div>
-{% endtplhandlebars %}
+</script>
+{% endverbatim %}

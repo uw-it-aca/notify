@@ -30,7 +30,7 @@
     });
 
     canui.populateFindPage = function populateFindPage(){
-        template_source = $('#find').html();
+        template_source = $('#tpl-find').html();
         template = Handlebars.compile(template_source);
         html_output = $(template());
         $("div#body").html(html_output);
@@ -56,7 +56,7 @@
     };
 
     canui.populateUnsubscribe = function populateUnsubscribe(data){
-        template_source = $('#unsubscribe').html();
+        template_source = $('#tpl-unsubscribe').html();
         template = Handlebars.compile(template_source);
         html_output = $(template(data));
         $("div#body").html(html_output);
@@ -68,7 +68,7 @@
             template_source,
             html_output;
 
-        template_source = $('#endpoint').html();
+        template_source = $('#tpl-endpoint').html();
         template = Handlebars.compile(template_source);
         html_output = $(template(endpoint));
         if(!canui.hasEndpoints()){
@@ -83,7 +83,7 @@
             template_source,
             template,
             html_output;
-        template_source = $('#class_details').html();
+        template_source = $('#tpl-class-details').html();
         template = Handlebars.compile(template_source);
         html_output = $(template(data));
         details_container = $('#class_details_container');

@@ -14,7 +14,7 @@ $(document).ready(function() {
             type: "GET",
             accepts: {json: "application/json"},
             success: function(data) {
-                displayResult("endpoint_address", data);
+                displayResult("tpl-endpoint-address", data);
             },
             error: function(data) {
                 displayError(data);
@@ -29,7 +29,7 @@ $(document).ready(function() {
             type: "GET",
             accepts: {json: "application/json"},
             success: function(data) {
-                displayResult("user_subscriptions", data);
+                displayResult("tpl-user-subscriptions", data);
             },
             error: function(data) {
                 displayError(data);
@@ -44,7 +44,7 @@ $(document).ready(function() {
             type: "GET",
             accepts: {json: "application/json"},
             success: function(data) {
-                displayResult("channel_details_admin", data);
+                displayResult("tpl-channel-details", data);
             },
             error: function(data) {
                 displayError(data);
@@ -61,7 +61,7 @@ $(document).ready(function() {
             type: "GET",
             accepts: {json: "application/json"},
             success: function(data) {
-                displayResult("endpoint_address", data);
+                displayResult("tpl-endpoint-address", data);
             },
             error: function(data) {
                 displayError(data);
@@ -94,7 +94,7 @@ $(document).ready(function() {
             type: "GET",
             accepts: {json: "application/json"},
             success: function(data) {
-                displayResult("user_details", data);
+                displayResult("tpl-user-details", data);
                 if(data.Person.Attributes.SubscriptionCount > 0){
                     contents = $("#SubscriptionCount").html();
                 }
@@ -125,7 +125,7 @@ $(document).ready(function() {
     }
 
     function displayError(xhr){
-        var template_source = $("#admin_error").html(),
+        var template_source = $("#tpl-admin-error").html(),
             template = Handlebars.compile(template_source),
             data = JSON.parse(xhr.responseText);
 

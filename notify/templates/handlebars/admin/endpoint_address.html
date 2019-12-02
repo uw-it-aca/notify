@@ -1,5 +1,5 @@
-{% load templatetag_handlebars %}
-{% tplhandlebars "endpoint_address" %}
+{% verbatim %}
+<script id="tpl-endpoint-address" type="text/x-handlebars-template">
 <div>
     <p>Endpoint ID: {{Endpoint.EndpointID}}</p>
     <p>Endpoint Address: {{Endpoint.EndpointAddress}}</p>
@@ -13,4 +13,5 @@
     <p>Modified By: {{Endpoint.ModifiedBy}}</p>
     <button type="submit" onclick="confirmDelete('{{Endpoint.EndpointID}}')">Delete</button>
 </div>
-{% endtplhandlebars %}
+</script>
+{% endverbatim %}

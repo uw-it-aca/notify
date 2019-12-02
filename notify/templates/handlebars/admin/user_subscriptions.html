@@ -1,5 +1,5 @@
-{% load templatetag_handlebars %}
-{% tplhandlebars "user_subscriptions" %}
+{% verbatim %}
+<script id="tpl-user-subscriptions" type="text/x-handlebars-template">
 <div>
     {{#unless Subscriptions}}
         <p>User does not have any subscriptions</p>
@@ -24,4 +24,5 @@
     {{/each}}
     </div>
 </div>
-{% endtplhandlebars %}
+</script>
+{% endverbatim %}

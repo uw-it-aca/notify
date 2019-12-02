@@ -1,5 +1,5 @@
-{% load templatetag_handlebars %}
-{% tplhandlebars "user_details" %}
+{% verbatim %}
+<script id="tpl-user-details" type="text/x-handlebars-template">
 <div>
     <p>Person ID (UWRegID): {{Person.PersonID}}</p>
     <p>Surrogate ID: {{Person.SurrogateID}}</p>
@@ -31,4 +31,5 @@
     {{/each}}
     </ul>
 </div>
-{% endtplhandlebars %}
+</script>
+{% endverbatim %}

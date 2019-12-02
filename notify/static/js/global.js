@@ -688,7 +688,7 @@
             match_user_id,
             re_user_id = /^([^@]+)(?:@?)/i,
             html_output;
-        template_source = $('#profile_box').html();
+        template_source = $('#tpl-profile-box').html();
         template = Handlebars.compile(template_source);
         if (match_user_id === user_id.match(re_user_id)) {
             user_id = match_user_id[1];
@@ -744,7 +744,7 @@
             registration_total,
             registration_count,
             registration_period_names = [];
-        template_source = $('#subscription_list').html();
+        template_source = $('#tpl-subscription-list').html();
         template = Handlebars.compile(template_source);
         html_output = $(template(data));
         subs_list = $('div.content-container').first();

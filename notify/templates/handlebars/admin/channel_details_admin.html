@@ -1,5 +1,5 @@
-{% load templatetag_handlebars %}
-{% tplhandlebars "channel_details_admin" %}
+{% verbatim %}
+<script id="tpl-channel-details" type="text/x-handlebars-template">
 <div>
     <p>Channel ID: {{Channel.ChannelID}}</p>
     <p>Channel Type: {{Channel.Type}}</p>
@@ -13,4 +13,5 @@
     <p>Expires Date: {{Channel.Expires}}</p>
     <p>Expires Description: {{Channel.Tags.expires_desc}}</p>
 </div>
-{% endtplhandlebars %}
+</script>
+{% endverbatim %}

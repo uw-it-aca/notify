@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 
 def build_view_context(request):
     user_service = UserService()
-    context = {'is_mobile': request.is_mobile,
+    context = {'is_mobile': request.user_agent.is_mobile,
                'override_user': user_service.get_override_user(),
                'netid': None,
                'valid_login': True,

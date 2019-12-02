@@ -17,7 +17,7 @@
         var template,
             template_source,
             html_output;
-            template_source = $('#endpoint').html();
+            template_source = $('#tpl-endpoint').html();
             template = Handlebars.compile(template_source);
             html_output = $(template(endpoint));
             html_output = $('<div class="profile"></div>').append(html_output);
@@ -37,7 +37,7 @@
             canui.resetSubscriptionDialog();
             canui.subscriptionDialog.dialog('open');
         } else{
-            template_source = $('#find').html();
+            template_source = $('#tpl-find').html();
             template = Handlebars.compile(template_source);
             html_output = $(template());
             html_output = $('<div></div>').append(html_output);
@@ -69,7 +69,7 @@
         //Prevent multiple details dialogs from opening
         if(canui.details_dialog_is_open === false){
             canui.details_dialog_is_open = true;
-            template_source = $('#class_details').html();
+            template_source = $('#tpl-class-details').html();
             template = Handlebars.compile(template_source);
             html_output = $(template(data));
             html_output = $('<div></div>').html(html_output);
@@ -84,7 +84,7 @@
     };
 
     canui.populateUnsubscribe = function populateUnsubscribe(data){
-        template_source = $('#unsubscribe').html();
+        template_source = $('#tpl-unsubscribe').html();
         template = Handlebars.compile(template_source);
         html_output = $(template(data));
         html_output = $('<div id="find_div"></div>').append(html_output);
@@ -96,7 +96,7 @@
     };
 
     canui.populateFindDetails = function populateFindDetails(data) {
-        template_source = $('#class_details').html();
+        template_source = $('#tpl-class-details').html();
         template = Handlebars.compile(template_source);
         html_output = $(template(data));
         html_output = $("#class_details_container").html(html_output);
