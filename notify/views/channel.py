@@ -73,7 +73,7 @@ class ChannelUnsubscribe(RESTDispatch):
             subscription_id = subscription.subscription_id
             try:
                 nws.delete_subscription(subscription_id)
-                logger.info("DELETE subscription %s" % subscription_id)
+                logger.info("DELETE subscription {}".format(subscription_id))
             except DataFailureException as ex:
                 logger.warning(ex.msg)
                 failed_deletions.append(subscription_id)
@@ -82,7 +82,7 @@ class ChannelUnsubscribe(RESTDispatch):
         if n_failed > 0:
             return self.error_response(
                 status=500,
-                message="Failed to unsubscribe from %s subscriptions" % (
+                message="Failed to unsubscribe from {} subscriptions".format(
                     n_failed))
 
         return self.json_response({'message': 'Unsubscription successful'})
@@ -105,10 +105,11 @@ class ChannelSearch(RESTDispatch):
         channel_type = 'uw_student_courseavailable'
         channels = None
         channel_id = None
-        msg_no_class_by_sln = 'No class found with SLN %s for %s %s' % (
-            sln, quarter, year)
-        msg_expired_channel = 'The section SLN %s for %s %s has expired.' % (
-            sln, quarter, year)
+        quarter_name = ' '.join([quarter, year])
+        msg_no_class_by_sln = 'No class found with SLN {} for {}'.format(
+            sln, quarter_name)
+        msg_expired_channel = 'The section SLN {} for {} has expired.'.format(
+            sln, quarter_name)
 
         nws = NWS()
         try:
@@ -134,20 +135,20 @@ class ChannelSearch(RESTDispatch):
 
         if 'add_code_required' in data and data['add_code_required']:
             msg_add_code = (
-                "No notifications are available for this course. %s (SLN: %s) "
+                "No notifications are available for this course. {} (SLN: {}) "
                 "requires an Add Code for registration. Please consult the "
                 "Time Schedule about where to obtain the Add Code required to "
-                "register for this course. " % (
-                    data['course_abbr'], data['section_sln']))
+                "register for this course. ").format(
+                    data['course_abbr'], data['section_sln'])
             return self.error_response(status=404, message=msg_add_code)
 
         if 'faculty_code_required' in data and data['faculty_code_required']:
             msg_faculty_code = (
-                "No notifications are available for this course. %s (SLN: %s) "
+                "No notifications are available for this course. {} (SLN: {}) "
                 "is an independent study course. Please consult the Time "
                 "Schedule about where to obtain the Faculty Code required to "
-                "register for this course. " % (
-                    data['course_abbr'], data['section_sln']))
+                "register for this course. ").format(
+                    data['course_abbr'], data['section_sln'])
             return self.error_response(status=404, message=msg_faculty_code)
 
         # check if user is already subscribed

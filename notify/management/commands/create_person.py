@@ -11,4 +11,4 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         uwnetid = options['uwnetid']
-        person = create_person("%s@%s" % (uwnetid, "washington.edu"))
+        person = create_person("@".join([uwnetid, "washington.edu"]))

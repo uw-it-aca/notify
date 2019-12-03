@@ -49,8 +49,8 @@ def get_course_details_by_channel(channel):
         logger.exception(ex)
         return {'course_title': 'No section info found'}
 
-    course_abbr = "%s %s %s" % (section.curriculum_abbr, section.course_number,
-                                section.section_id)
+    course_abbr = " ".join([
+        section.curriculum_abbr, section.course_number, section.section_id])
 
     # build meetings object
     meetings = []

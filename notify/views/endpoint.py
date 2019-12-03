@@ -31,7 +31,7 @@ class EndpointView(RESTDispatch):
                 status=500, message="Service unavailable")
         except (AttributeError, InvalidUser):
             return self.error_response(
-                status=404, message="Person '%s' not found" % user)
+                status=404, message="Person '{}' not found".format(user))
 
         sender_address = getattr(settings, 'SENDER_ADDRESS', '')
         endpoints_json = {}
@@ -68,11 +68,11 @@ class EndpointView(RESTDispatch):
         try:
             person = get_person(user)
         except DataFailureException as ex:
-            msg = "Endpoint addition attempted for non-existent user '%s'" % (
+            msg = "Endpoint addition failed for non-existent user '{}'".failed(
                 user)
             logger.warning(msg)
             return self.error_response(
-                status=404, message="Person '%s' not found" % user)
+                status=404, message="Person '{}' not found".format(user))
 
         request_obj = json.loads(request.body)
         protocol = request_obj['Protocol']
@@ -85,7 +85,7 @@ class EndpointView(RESTDispatch):
             endpoint.endpoint_address = request_obj['EndpointAddress']
             endpoint.protocol = protocol
             nws.create_endpoint(endpoint)
-            logger.info("CREATE endpoint %s" % endpoint.endpoint_address)
+            logger.info("CREATE endpoint {}".format(endpoint.endpoint_address))
 
         except DataFailureException as ex:
             if ex.status == 403:
@@ -110,11 +110,11 @@ class EndpointView(RESTDispatch):
         try:
             person = get_person(user)
         except DataFailureException as ex:
-            msg = "Endpoint update attempted for non-existent user '%s'" % (
+            msg = "Endpoint update failed for non-existent user '{}'".format(
                 user)
             logger.warning(msg)
             return self.error_response(
-                status=404, message="Person '%s' not found" % user)
+                status=404, message="Person '{}' not found".format(user))
 
         request_obj = json.loads(request.body)
         endpoint_id = request_obj['EndpointID']
@@ -125,16 +125,17 @@ class EndpointView(RESTDispatch):
 
         if endpoint is None:
             return self.error_response(
-                status=404, message="Endpoint '%s' not found" % endpoint_id)
+                status=404, message="Endpoint '{}' not found".format(
+                    endpoint_id))
 
         nws = NWS(actas_user=UserService().get_original_user())
         try:
             endpoint.endpoint_address = request_obj['EndpointAddress']
             response = nws.update_endpoint(endpoint)
-            logger.info("UPDATE endpoint %s" % endpoint.endpoint_address)
+            logger.info("UPDATE endpoint {}".format(endpoint.endpoint_address))
         except DataFailureException as ex:
             if ex.status == 403:
-                return self.error_response(status=403, message="%s" % ex.msg)
+                return self.error_response(status=403, message=ex.msg)
 
             logger.warning(ex.msg)
             return self.error_response(
@@ -147,18 +148,18 @@ class EndpointView(RESTDispatch):
         try:
             person = get_person(user)
         except DataFailureException as ex:
-            msg = "Endpoint deletion attempted for non-existent user '%s'" % (
+            msg = "Endpoint deletion failed for non-existent user '{}'".format(
                 user)
             logger.warning(msg)
             return self.error_response(
-                status=404, message="Person '%s' not found" % user)
+                status=404, message="Person '{}' not found".format(user))
 
         nws = NWS(actas_user=UserService().get_original_user())
         try:
             request_obj = json.loads(request.body)
             endpoint_id = request_obj['EndpointID']
             nws.delete_endpoint(endpoint_id)
-            logger.info("DELETE endpoint %s" % endpoint_id)
+            logger.info("DELETE endpoint {}".format(endpoint_id))
 
         except InvalidUUID as ex:
             return self.error_response(status=400, message="Invalid endpoint")
@@ -167,7 +168,8 @@ class EndpointView(RESTDispatch):
             if ex.status != 410:
                 logger.warning(ex.msg)
                 return self.error_response(
-                    status=500, message="Delete endpoint failed: %s" % ex.msg)
+                    status=500, message="Delete endpoint failed: {}".format(
+                        ex.msg))
 
         return self.json_response({"message": "success"})
 
@@ -181,7 +183,7 @@ class ResendSMSConfirmationView(RESTDispatch):
             person = get_person(user)
         except DataFailureException as ex:
             return self.error_response(
-                status=404, message="Person '%s' not found" % user)
+                status=404, message="Person '{}' not found".format(user))
 
         endpoint = None
         for ep in person.endpoints:
@@ -189,7 +191,7 @@ class ResendSMSConfirmationView(RESTDispatch):
                 endpoint = ep
 
         if endpoint is None:
-            msg = ("Resend SMS verification requested for '{0}', "
+            msg = ("Resend SMS verification requested for '{}', "
                    "but no endpoint found").format(user)
             logger.warning(msg)
             return self.error_response(status=409, message=msg)
@@ -202,14 +204,15 @@ class ResendSMSConfirmationView(RESTDispatch):
                 status_code = NWS().resend_sms_endpoint_verification(
                     endpoint.endpoint_id)
                 if status_code == 202:
-                    logger.info("RESEND endpoint verification %s" % (
+                    logger.info("RESEND endpoint verification {}".format(
                         endpoint.endpoint_id))
                     msg = "OK"
                 else:
                     msg = "unknown condition"
             except DataFailureException as ex:
                 logger.warning(ex.msg)
-                msg = "Failed to request verification resend: %s" % ex.msg
+                msg = "Failed to request verification resend: {}".format(
+                    ex.msg)
                 status_code = 500
 
         return self.json_response({"status": status_code, "message": msg})
@@ -229,25 +232,27 @@ class ToSConfirmation(RESTDispatch):
             nws = NWS(actas_user=UserService().get_original_user())
             try:
                 nws.update_person(person)
-                logger.info("UPDATE person '%s', accepted ToS" % user)
+                logger.info("UPDATE person '{}', accepted ToS".format(user))
             except DataFailureException as ex:
-                logger.warning("UPDATE person '%s' failed: %s" % (
+                logger.warning("UPDATE person '{}' failed: {}".format(
                     user, ex.msg))
                 return self.error_response(
-                    status=500, message="Update person failed: %s" % ex.msg)
+                    status=500, message="Update person failed: {}".format(
+                        ex.msg))
 
         except InvalidUser:
             return self.error_response(
-                status=404, message="Person '%s' not found" % user)
+                status=404, message="Person '{}' not found".format(user))
 
         except (AttributeError, DataFailureException) as ex:
             try:
                 create_person(user, attributes={"AcceptedTermsOfUse": True})
-                logger.info("CREATE person '%s', accepted ToS" % user)
+                logger.info("CREATE person '{}', accepted ToS".format(user))
             except DataFailureException as ex:
-                logger.warning("CREATE person '%s' failed: %s" % (
+                logger.warning("CREATE person '{}' failed: {}".format(
                     user, ex.msg))
                 return self.error_response(
-                    status=500, message="Create person failed: %s" % ex.msg)
+                    status=500, message="Create person failed: {}".format(
+                        ex.msg))
 
         return self.json_response({"status": 200, "message": "OK"})
