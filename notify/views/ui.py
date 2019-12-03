@@ -9,6 +9,7 @@ from notify.utilities import (
     user_has_valid_endpoints)
 from notify.exceptions import InvalidUser
 from userservice.user import UserService
+from persistent_message.models import Message
 from uw_nws import NWS
 import logging
 
@@ -25,8 +26,12 @@ def build_view_context(request):
                'support_email': getattr(settings, 'SUPPORT_EMAIL', ''),
                'ANALYTICS_KEY': getattr(settings, 'GOOGLE_ANALYTICS_KEY', '')}
 
-    if hasattr(settings, 'UI_SYSTEM_MESSAGE'):
-        context['system_message'] = getattr(settings, 'UI_SYSTEM_MESSAGE')
+    messages = []
+    for message in Message.objects.active_messages():
+        if 'message_level' not in context:
+            context['message_level'] = message.get_level_display().lower()
+        messages.append(message.render())
+    context['messages'] = messages
 
     netid = user_service.get_user()
     if netid:

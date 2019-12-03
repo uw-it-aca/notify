@@ -66,11 +66,8 @@
             </span>
                 {% endblock %}
             <span class="title"><h1 ><span class="visuallyhidden">Notify.UW</span></h1></span>
-            {% if system_message %}
-            <div id="message_container" class="info" role="alert">
-            {{system_message}}
-            </div>
-            {% endif %}
+
+            {% include "persistent_messages.html" %}
             </div>
             <div id="container">
                 {% block content %}
