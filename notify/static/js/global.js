@@ -1,5 +1,9 @@
 (function(canuiu, $, undefined){
 
+    Handlebars.registerHelper("if_mobile", function() {
+        return (is_mobile) ? options.fn(this) : options.inverse(this);
+    });
+
     canui.ACCORDION_OPTIONS = {
         //autoHeight: false,
         heightStyle: "content",

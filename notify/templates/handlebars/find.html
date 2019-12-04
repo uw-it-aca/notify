@@ -1,19 +1,18 @@
+{% verbatim %}
 <script id="tpl-find" type="text/x-handlebars-template">
 <div class="content-container find_sln_container">
-{% if reg_periods %}
   <form>
     <label for="sln_search" class="visuallyhidden">Find course section by SLN</label>
-    <input id="sln_search" {% if is_mobile %}type="number"{% else %}type="text"{% endif %} placeholder="Enter SLN">
-    <span class="quarter_select_container"><select id='quarter_selector'>
+    <input id="sln_search" type="{{#if_mobile}}number{{else}}text{{/if_mobile}}" placeholder="Enter SLN">
+    <span class="quarter_select_container"><select id="quarter_selector">
     </select>
     </span>
     <button id="sln_submit" type="submit" class="flat add"> Add </button>
   </form>
-{% else %}
   <div class="validation_error" role="alert">Due to a system outage, you are unable to add new subscriptions at this time. Please try again later.</div>
-{% endif %}
 <div id="channel_expired_msg" class="validation_error" role="alert" style="display:none"></div>
 </div>
 <div id="class_details_container" class="content-container"></div>
 <div id="create_subscription_container" class="content-container clearfix"></div>
 </script>
+{% endverbatim %}
