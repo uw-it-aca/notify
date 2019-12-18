@@ -1,7 +1,8 @@
 from django.test import TestCase
 from notify.utilities import (
-    netid_from_eppn, user_accepted_tos, get_quarter_index,
-    user_has_valid_endpoints, expires_datetime)
+    user_accepted_tos, user_has_valid_endpoints, expires_datetime)
+from notify.dao.person import netid_from_eppn
+from notify.dao.term import get_quarter_index
 from uw_sws.term import get_current_term, get_term_after
 from uw_sws.util import fdao_sws_override
 from uw_pws.models import Person

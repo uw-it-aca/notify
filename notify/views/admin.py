@@ -2,13 +2,12 @@ from django.conf import settings
 from django.views.decorators.cache import never_cache
 from django.utils.decorators import method_decorator
 from uw_nws import NWS
-from uw_pws import PWS
 from restclients_core.exceptions import (
     DataFailureException, InvalidRegID, InvalidNetID)
 from uw_nws.exceptions import InvalidUUID
+from notify.dao.person import get_person_by_netid
 from notify.decorators import group_required
 from notify.views.rest_dispatch import RESTDispatch
-from notify.utilities import netid_from_eppn
 from userservice.user import UserService
 try:
     from urllib import quote
@@ -105,7 +104,7 @@ class UserSearchAdmin(RESTDispatch):
         # search by netid
         if len(netid) > 0:
             try:
-                pws_person = PWS().get_person_by_netid(netid)
+                pws_person = get_person_by_netid(netid)
                 regid = pws_person.uwregid
             except DataFailureException as ex:
                 return self.error_response(

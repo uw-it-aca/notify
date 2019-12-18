@@ -8,9 +8,9 @@ from uw_nws import NWS
 from uw_nws.exceptions import InvalidUUID
 from restclients_core.exceptions import DataFailureException
 from notify.views.rest_dispatch import RESTDispatch
+from notify.dao.section import get_section_details_by_channel
 from notify.utilities import (
-    get_channel_details_by_channel_id, get_course_details_by_channel,
-    get_verified_endpoints_by_protocol)
+    get_channel_details_by_channel_id, get_verified_endpoints_by_protocol)
 from userservice.user import UserService
 from datetime import datetime
 import logging
@@ -129,7 +129,7 @@ class ChannelSearch(RESTDispatch):
             return self.error_response(status=404, message=msg_expired_channel)
 
         channel_id = channel.channel_id
-        data = get_course_details_by_channel(channel)
+        data = get_section_details_by_channel(channel)
         data['ChannelID'] = channel_id
         data['SLN'] = sln
 

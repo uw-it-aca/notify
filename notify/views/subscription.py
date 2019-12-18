@@ -7,8 +7,9 @@ from django.utils.timezone import utc
 from uw_nws import NWS
 from uw_nws.models import Subscription
 from restclients_core.exceptions import DataFailureException
-from notify.utilities import (
-    get_course_details_by_channel, get_person, get_quarter_index)
+from notify.dao.section import get_section_details_by_channel
+from notify.dao.term import get_quarter_index
+from notify.utilities import get_person
 from notify.views.rest_dispatch import RESTDispatch
 from userservice.user import UserService
 from datetime import datetime
@@ -61,7 +62,7 @@ class SubscriptionSearch(RESTDispatch):
                     if (channel.expires and channel.expires <= utcnow):
                         continue
 
-                    channel_details = get_course_details_by_channel(channel)
+                    channel_details = get_section_details_by_channel(channel)
 
                 except DataFailureException as ex:
                     continue

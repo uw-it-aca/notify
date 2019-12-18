@@ -1,12 +1,10 @@
 from django.conf import settings
 from uw_nws import NWS
 from uw_nws.models import Person
-from uw_pws import PWS
-from uw_sws.section import get_section_by_label
-from uw_sws.section_status import get_section_status_by_label
-from uw_sws.term import get_current_term, get_term_after
-from uw_sws.exceptions import InvalidSectionID
 from restclients_core.exceptions import InvalidNetID, DataFailureException
+from notify.dao.person import get_person_by_eppn
+from notify.dao.section import get_section_details_by_channel
+from notify.dao.term import get_open_terms
 from notify.exceptions import InvalidUser
 from datetime import datetime
 import dateutil.parser
@@ -20,73 +18,7 @@ logger = logging.getLogger(__name__)
 
 def get_channel_details_by_channel_id(channel_id):
     channel = NWS().get_channel_by_channel_id(channel_id)
-    return get_course_details_by_channel(channel)
-
-
-def get_course_details_by_channel(channel):
-    section_label = ""
-    try:
-        parts = channel.surrogate_id.split(",")
-        if (len(parts) == 5):
-            parts[2] = parts[2].upper()
-            section_id = parts.pop().upper()
-            section_label = ",".join(parts) + "/" + section_id
-        else:
-            raise Exception('Invalid surrogate id')
-    except Exception as ex:
-        logger.exception(ex)
-        return {'course_title': 'No Course Found'}
-
-    section = None
-    try:
-        section = get_section_by_label(section_label)
-        section_status = get_section_status_by_label(section_label)
-    except DataFailureException as ex:
-        return {'course_title': 'No section info found'}
-    except InvalidSectionID as ex:
-        return {'course_title': 'Invalid section'}
-    except Exception as ex:
-        logger.exception(ex)
-        return {'course_title': 'No section info found'}
-
-    course_abbr = " ".join([
-        section.curriculum_abbr, section.course_number, section.section_id])
-
-    # build meetings object
-    meetings = []
-    for meeting in section.meetings:
-        meeting_json = meeting.json_data()
-        cleaned_instructors = []
-        for inst in meeting.instructors:
-            if inst.TSPrint:
-                cleaned_instructor = {'first_name': inst.first_name,
-                                      'surname': inst.surname}
-                cleaned_instructors.append(cleaned_instructor)
-        meeting_json['instructors'] = cleaned_instructors
-        if len(cleaned_instructors) > 0:
-            meeting_json['has_instructors'] = True
-        else:
-            meeting_json['has_instructors'] = False
-        if meeting.building_to_be_arranged and meeting.room_to_be_arranged:
-            meeting_json['location_tbd'] = True
-        # format meeting times
-        try:
-            start_time = datetime.strptime(meeting_json['start_time'], "%H:%M")
-            meeting_json['start_time'] = start_time.strftime("%-I:%M%p")
-            end_time = datetime.strptime(meeting_json['end_time'], "%H:%M")
-            meeting_json['end_time'] = end_time.strftime("%-I:%M%p")
-        except Exception:
-            pass
-        meetings.append(meeting_json)
-
-    response = {'course_title': section.course_title_long,
-                'course_abbr': course_abbr, 'section_sln': section.sln,
-                'meetings': meetings,
-                'current_enrollment': section_status.current_enrollment,
-                'total_seats': section_status.limit_estimated_enrollment,
-                'add_code_required': section_status.add_code_required,
-                'faculty_code_required': section_status.faculty_code_required}
-    return response
+    return get_section_details_by_channel(channel)
 
 
 def user_has_valid_endpoints(person):
@@ -111,11 +43,6 @@ def get_verified_endpoints_by_protocol(user_id):
     return verified_endpoints
 
 
-def netid_from_eppn(eppn):
-    match = re.split("@", eppn)
-    return match[0]
-
-
 def expires_datetime():
     expires = getattr(settings, 'CHANNEL_EXPIRES_AFTER', None)
     if expires is not None:
@@ -129,23 +56,14 @@ def get_open_registration_periods(term=None):
     # when the sws term resource provides us with a timeschedule publish
     # date, use that instead of this.
     channel_type = 'uw_student_courseavailable'
-    if term is None:
-        term = get_current_term()
-
-    terms = [term]
-    for i in range(getattr(settings, 'FUTURE_TERMS_TO_SEARCH', 3)):
-        term = get_term_after(term)
-        terms.append(term)
-
-    required_keys = ['year', 'quarter']
     active_terms = []
     nws = NWS()
-    for term in terms:
+    for term in get_open_terms(term):
         channels = nws.get_active_channels_by_year_quarter(
             channel_type, term.year, term.quarter, expires=expires_datetime())
         if len(channels):
             term_json = term.json_data()
-            active_terms.append({k: term_json[k] for k in required_keys})
+            active_terms.append({k: term_json[k] for k in ['year', 'quarter']})
 
     return json.dumps(active_terms)
 
@@ -155,7 +73,7 @@ def get_open_registration_periods(term=None):
 #   NWS by uwregid
 def get_person(user_id):
     try:
-        pws_person = PWS().get_person_by_netid(netid_from_eppn(user_id))
+        uwregid = get_person_by_eppn(user_id).uwregid
     except DataFailureException as ex:
         if ex.status == 400 or ex.status == 404:
             raise InvalidUser(user_id)
@@ -165,7 +83,7 @@ def get_person(user_id):
     person = None
     nws = NWS()
     try:
-        person = nws.get_person_by_uwregid(pws_person.uwregid)
+        person = nws.get_person_by_uwregid(uwregid)
         # Update surrogate ID when user changes NETID
         if person.surrogate_id != user_id:
             person.surrogate_id = user_id
@@ -176,10 +94,8 @@ def get_person(user_id):
 
 
 def create_person(user_id, attributes={}):
-    pws_person = PWS().get_person_by_netid(netid_from_eppn(user_id))
-
     person = Person()
-    person.person_id = pws_person.uwregid
+    person.person_id = get_person_by_eppn(user_id).uwregid
     person.surrogate_id = user_id
     person.default_endpoint_id = None
     person.attributes = attributes
@@ -191,11 +107,6 @@ def user_accepted_tos(person):
     return person.attributes.get("AcceptedTermsOfUse", False)
 
 
-def get_quarter_index(quarter):
-    quarters = ['winter', 'spring', 'summer', 'autumn']
-    return quarters.index(quarter.lower())
-
-
 def validate_override_user(username):
     if not len(username):
         return ("No override user supplied, please enter a user to override"
@@ -204,8 +115,7 @@ def validate_override_user(username):
     match = re.search('@washington.edu', username)
     if match:
         try:
-            netid = netid_from_eppn(username)
-            pws_person = PWS().get_person_by_netid(netid)
+            person = get_person_by_eppn(username)
         except (InvalidNetID, DataFailureException) as ex:
             return ("Override user could not be found in the PWS. "
                     "Please enter a valid user to override as in the "
