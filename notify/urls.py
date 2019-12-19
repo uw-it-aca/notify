@@ -9,18 +9,18 @@ from notify.views.admin import (
     EndpointSearchAdmin, ChannelSearchAdmin, UserSearchAdmin,
     SubscriptionSearchAdmin)
 from notify.views.ui import (
-    home_view, profile_view, find_view, tos_view, detail_view,
-    unsubscribe_view, course_view, admin)
+    HomeView, ProfileView, FindView, CourseView, DetailView, ConfirmView,
+    UnsubscribeView, ToSView, AdminView)
 
 
 urlpatterns = [
-    re_path(r'^$', home_view, name='home'),
-    re_path(r'^profile/', profile_view),
-    re_path(r'^find/', find_view),
-    re_path(r'^tos/', tos_view),
-    re_path(r'^class_details/(?P<channel_id>[^/]+)', detail_view),
+    re_path(r'^$', HomeView.as_view(), name='home'),
+    re_path(r'^profile/', ProfileView.as_view()),
+    re_path(r'^find/', FindView.as_view()),
+    re_path(r'^tos/', ToSView.as_view(), name='tos'),
+    re_path(r'^class_details/(?P<channel_id>[^/]+)', DetailView.as_view()),
     re_path(r'^subscribe/', SubscribeSLN.as_view()),
-    re_path(r'^unsubscribe/(?P<channel_id>[^/]+)', unsubscribe_view),
+    re_path(r'^unsubscribe/(?P<channel_id>[^/]+)', UnsubscribeView.as_view()),
     re_path(r'^uiapi/unsubscribe/', ChannelUnsubscribe.as_view()),
     re_path(r'^uiapi/channel_details/(?P<channel_id>[^/]+)',
             ChannelDetails.as_view()),
@@ -36,7 +36,7 @@ urlpatterns = [
     re_path(r'^admin/channel_search/', ChannelSearchAdmin.as_view()),
     re_path(r'^admin/user_search/', UserSearchAdmin.as_view()),
     re_path(r'^admin/subscription_search/', SubscriptionSearchAdmin.as_view()),
-    re_path(r'^admin/?$', admin),
+    re_path(r'^admin/?$', AdminView.as_view()),
     re_path(r'^course/(?P<year>\d{4})/(?P<quarter>\w+)/(?P<sln>\d+)/',
-            course_view),
+            CourseView.as_view()),
 ]

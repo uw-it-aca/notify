@@ -1,6 +1,5 @@
 from django.test import TestCase
-from notify.utilities import (
-    user_accepted_tos, user_has_valid_endpoints, expires_datetime)
+from notify.utilities import user_has_valid_endpoints, expires_datetime
 from notify.dao.person import netid_from_eppn
 from notify.dao.term import get_quarter_index
 from uw_sws.term import get_current_term, get_term_after
@@ -37,12 +36,6 @@ class TestPersonAttributes(TestCase):
         self.person = Person()
         self.person.attributes = {}
         self.person.endpoints = []
-
-    def test_user_accepted_tos(self):
-        self.assertEquals(user_accepted_tos(self.person), False)
-
-        self.person.attributes['AcceptedTermsOfUse'] = True
-        self.assertEquals(user_accepted_tos(self.person), True)
 
     def test_user_has_valid_endpoints(self):
         self.assertEquals(user_has_valid_endpoints(self.person),

@@ -99,12 +99,7 @@ def create_person(user_id, attributes={}):
     person.surrogate_id = user_id
     person.default_endpoint_id = None
     person.attributes = attributes
-
     return NWS().create_person(person)
-
-
-def user_accepted_tos(person):
-    return person.attributes.get("AcceptedTermsOfUse", False)
 
 
 def validate_override_user(username):
