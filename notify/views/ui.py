@@ -6,12 +6,12 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from restclients_core.exceptions import DataFailureException
 from notify.decorators import group_required
-from notify.utilities import (
-    get_open_registration_periods, get_person, user_has_valid_endpoints)
+from notify.utilities import get_open_registration_periods, get_person
 from notify.exceptions import InvalidUser
 from userservice.user import UserService
 from persistent_message.models import Message
 from uw_nws import NWS
+import json
 
 
 @method_decorator(group_required(settings.NOTIFY_ADMIN_GROUP), name='dispatch')
@@ -50,11 +50,10 @@ class NotifyView(TemplateView):
                 context['valid_login'] = True
                 context['netid'] = netid
 
-                if (person is not None and
-                        person.attributes.get('AcceptedTermsOfUse', False)):
+                if person is not None and person.accepted_tos():
                     context['user_accepted_tos'] = True
-                    context['valid_endpoints'] = user_has_valid_endpoints(
-                        person)
+                    context['valid_endpoints'] = json.dumps(
+                        person.has_valid_endpoints())
 
                 context['reg_periods'] = get_open_registration_periods()
 

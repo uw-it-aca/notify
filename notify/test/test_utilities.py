@@ -1,5 +1,5 @@
 from django.test import TestCase
-from notify.utilities import user_has_valid_endpoints, expires_datetime
+from notify.utilities import expires_datetime
 from notify.dao.person import netid_from_eppn
 from notify.dao.term import get_quarter_index
 from uw_sws.term import get_current_term, get_term_after
@@ -29,25 +29,6 @@ class TestQuarterIndex(TestCase):
 
         term = get_term_after(term)
         self.assertEquals(get_quarter_index(term.quarter), 2)
-
-
-class TestPersonAttributes(TestCase):
-    def setUp(self):
-        self.person = Person()
-        self.person.attributes = {}
-        self.person.endpoints = []
-
-    def test_user_has_valid_endpoints(self):
-        self.assertEquals(user_has_valid_endpoints(self.person),
-                          '{"sms": false, "email": false}')
-
-        self.person.endpoints.append(Endpoint(protocol='SMS'))
-        self.assertEquals(user_has_valid_endpoints(self.person),
-                          '{"sms": true, "email": false}')
-
-        self.person.endpoints.append(Endpoint(protocol='Email'))
-        self.assertEquals(user_has_valid_endpoints(self.person),
-                          '{"sms": true, "email": true}')
 
 
 class TestExpiresDateTime(TestCase):

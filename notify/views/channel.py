@@ -9,8 +9,7 @@ from uw_nws.exceptions import InvalidUUID
 from restclients_core.exceptions import DataFailureException
 from notify.views.rest_dispatch import RESTDispatch
 from notify.dao.section import get_section_details_by_channel
-from notify.utilities import (
-    get_channel_details_by_channel_id, get_verified_endpoints_by_protocol)
+from notify.utilities import get_channel_details_by_channel_id
 from userservice.user import UserService
 from datetime import datetime
 import logging
@@ -102,6 +101,7 @@ class ChannelSearch(RESTDispatch):
             return self.error_response(
                 status=401, message="No user is logged in")
 
+        person = get_person(subscriber_id)
         channel_type = 'uw_student_courseavailable'
         channels = None
         channel_id = None
@@ -159,8 +159,7 @@ class ChannelSearch(RESTDispatch):
         except DataFailureException as ex:
             pass
 
-        verified_endpoints = get_verified_endpoints_by_protocol(subscriber_id)
-
+        verified_endpoints = person.get_verified_endpoints()
         for protocol in ['email', 'sms']:
             if protocol not in verified_endpoints:
                 data['class_unverified_' + protocol] = ' disabled'

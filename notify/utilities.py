@@ -6,41 +6,14 @@ from notify.dao.person import get_person_by_eppn
 from notify.dao.section import get_section_details_by_channel
 from notify.dao.term import get_open_terms
 from notify.exceptions import InvalidUser
-from datetime import datetime
 import dateutil.parser
 import json
-import logging
 import re
-
-
-logger = logging.getLogger(__name__)
 
 
 def get_channel_details_by_channel_id(channel_id):
     channel = NWS().get_channel_by_channel_id(channel_id)
     return get_section_details_by_channel(channel)
-
-
-def user_has_valid_endpoints(person):
-    endpoints = {'sms': False, 'email': False}
-    if person is not None:
-        for endpoint in person.endpoints:
-            endpoints[endpoint.protocol.lower()] = True
-    return json.dumps(endpoints)
-
-
-def get_verified_endpoints_by_protocol(user_id):
-    verified_endpoints = {}
-    try:
-        endpoints = NWS().get_endpoints_by_subscriber_id(user_id)
-        for endpoint in endpoints:
-            if (endpoint.status.lower() == 'verified'):
-                verified_endpoints[endpoint.protocol.lower()] = endpoint
-    except DataFailureException as ex:
-        pass
-    except Exception as ex:
-        logger.exception(ex)
-    return verified_endpoints
 
 
 def expires_datetime():
