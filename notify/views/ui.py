@@ -55,7 +55,9 @@ class NotifyView(TemplateView):
                     context['valid_endpoints'] = json.dumps(
                         person.has_valid_endpoints())
 
-                context['reg_periods'] = get_open_registration_periods()
+                reg_periods = get_open_registration_periods()
+                context['has_reg_periods'] = len(reg_periods)
+                context['reg_periods'] = json.dumps(reg_periods)
 
             except InvalidUser:
                 pass

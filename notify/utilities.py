@@ -7,7 +7,6 @@ from notify.dao.section import get_section_details_by_channel
 from notify.dao.term import get_open_terms
 from notify.exceptions import InvalidUser
 import dateutil.parser
-import json
 import re
 
 
@@ -37,8 +36,7 @@ def get_open_registration_periods(term=None):
         if len(channels):
             term_json = term.json_data()
             active_terms.append({k: term_json[k] for k in ['year', 'quarter']})
-
-    return json.dumps(active_terms)
+    return active_terms
 
 
 # get person, trying the following:
