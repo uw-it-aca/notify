@@ -70,12 +70,12 @@
         <script type="text/javascript" src="{% static "libs/jquery-ui-1.9.2.custom/js/jquery-ui-1.9.2.custom.min.js" %}"></script>
 
         {% compress js %}
-            <script type="text/javascript" src="{% static "js/global.js" %}"></script>
-            <script type="text/javascript" src="{% static "js/desktop.js" %}"></script>
             <script type="text/javascript" src="{% static "libs/handlebars.js" %}"></script>
             <script type="text/javascript" src="{% static "libs/jquery.selectboxit.js" %}"></script>
             <script type="text/javascript" src="{% static "libs/jquery.placeholder.min.js" %}"></script>
             <script type="text/javascript" src="{% static "libs/json2.js" %}"></script>
+            <script type="text/javascript" src="{% static "js/global.js" %}"></script>
+            <script type="text/javascript" src="{% static "js/desktop.js" %}"></script>
             {% block extra_js %}{% endblock %}
         {% endcompress %}
     </body>

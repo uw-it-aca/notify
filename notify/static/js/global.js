@@ -1,6 +1,6 @@
 (function(canuiu, $, undefined){
 
-    Handlebars.registerHelper("if_mobile", function() {
+    Handlebars.registerHelper("if_mobile", function(options) {
         return (is_mobile) ? options.fn(this) : options.inverse(this);
     });
 
