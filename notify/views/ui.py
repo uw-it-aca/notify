@@ -5,7 +5,6 @@ from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from restclients_core.exceptions import DataFailureException
-from notify.decorators import group_required
 from notify.utilities import get_open_registration_periods, get_person
 from notify.exceptions import InvalidUser
 from userservice.user import UserService
@@ -14,9 +13,9 @@ from uw_nws import NWS
 import json
 
 
-@method_decorator(group_required(settings.NOTIFY_ADMIN_GROUP), name='dispatch')
 class AdminView(TemplateView):
-    template_name = 'admin/menu.html'
+    def get(self, request, *args, **kwargs):
+        return HttpResponseRedirect('/support')
 
 
 @method_decorator(login_required, name='dispatch')
