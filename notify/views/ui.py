@@ -5,11 +5,12 @@ from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from restclients_core.exceptions import DataFailureException
-from notify.utilities import get_open_registration_periods, get_person
+from notify.dao.term import get_open_registration_periods
+from notify.dao.person import get_person
+from notify.dao.channel import get_channel_by_id
 from notify.exceptions import InvalidUser
 from userservice.user import UserService
 from persistent_message.models import Message
-from uw_nws import NWS
 import json
 
 
@@ -97,7 +98,7 @@ class DetailView(NotifyView):
         context = self.get_context_data(**kwargs)
         channel_id = kwargs.get('channel_id')
         try:
-            channel = NWS().get_channel_by_channel_id(channel_id)
+            channel = get_channel_by_id(channel_id)
             context['class_name'] = channel.name
             context['description'] = channel.description
         except DataFailureException as ex:

@@ -7,7 +7,7 @@ from uw_nws.exceptions import InvalidUUID
 from uw_nws.models import Endpoint
 from userservice.user import UserService
 from restclients_core.exceptions import DataFailureException
-from notify.utilities import get_person, create_person
+from notify.dao.person import get_person, create_person, update_person
 from notify.views.rest_dispatch import RESTDispatch
 from notify.exceptions import InvalidUser
 import json
@@ -223,15 +223,15 @@ class ResendSMSConfirmationView(RESTDispatch):
 class ToSConfirmation(RESTDispatch):
     def post(self, request, *args, **kwargs):
         user = UserService().get_user()
+        original_user = UserService().get_original_user()
         try:
             person = get_person(user)
 
             # Catch AttributeError below if person is None
             person.attributes["AcceptedTermsOfUse"] = True
 
-            nws = NWS(actas_user=UserService().get_original_user())
             try:
-                nws.update_person(person)
+                update_person(person, act_as=original_user)
                 logger.info("UPDATE person '{}', accepted ToS".format(user))
             except DataFailureException as ex:
                 logger.warning("UPDATE person '{}' failed: {}".format(
@@ -246,7 +246,9 @@ class ToSConfirmation(RESTDispatch):
 
         except (AttributeError, DataFailureException) as ex:
             try:
-                create_person(user, attributes={"AcceptedTermsOfUse": True})
+                create_person(
+                    user, attributes={"AcceptedTermsOfUse": True},
+                    act_as=original_user)
                 logger.info("CREATE person '{}', accepted ToS".format(user))
             except DataFailureException as ex:
                 logger.warning("CREATE person '{}' failed: {}".format(

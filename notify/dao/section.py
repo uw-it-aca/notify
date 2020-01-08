@@ -2,6 +2,7 @@ from uw_sws.section import get_section_by_label
 from uw_sws.section_status import get_section_status_by_label
 from uw_sws.exceptions import InvalidSectionID
 from restclients_core.exceptions import DataFailureException
+from notify.dao.channel import get_channel_by_id
 from datetime import datetime
 
 
@@ -67,3 +68,7 @@ def get_section_details_by_channel(channel):
                 'add_code_required': section_status.add_code_required,
                 'faculty_code_required': section_status.faculty_code_required}
     return response
+
+
+def get_section_details_by_channel_id(channel_id):
+    return get_section_details_by_channel(get_channel_by_id(channel_id))

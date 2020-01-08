@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand, CommandError
-from notify.utilities import create_person
+from notify.dao.person import create_person
 
 
 class Command(BaseCommand):

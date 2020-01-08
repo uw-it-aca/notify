@@ -1,7 +1,7 @@
 from django.test import TestCase
-from notify.utilities import expires_datetime
 from notify.dao.person import netid_from_eppn
 from notify.dao.term import get_quarter_index
+from notify.dao.channel import channel_expires
 from uw_sws.term import get_current_term, get_term_after
 from uw_sws.util import fdao_sws_override
 from uw_pws.models import Person
@@ -31,17 +31,14 @@ class TestQuarterIndex(TestCase):
         self.assertEquals(get_quarter_index(term.quarter), 2)
 
 
-class TestExpiresDateTime(TestCase):
-    def test_expires_datetime(self):
-        with self.settings(
-                CHANNEL_EXPIRES_AFTER=None):
-            self.assertEquals(expires_datetime(), None)
+class TestChannelExpires(TestCase):
+    def test_channel_expires(self):
+        with self.settings(CHANNEL_EXPIRES_AFTER=None):
+            self.assertEquals(channel_expires(), None)
 
-        with self.settings(
-                CHANNEL_EXPIRES_AFTER='2013-05-31T00:00:00'):
-            self.assertEquals(expires_datetime().isoformat(),
-                              '2013-05-31T00:00:00')
+        with self.settings(CHANNEL_EXPIRES_AFTER='2013-05-31T00:00:00'):
+            self.assertEquals(
+                channel_expires().isoformat(), '2013-05-31T00:00:00')
 
-        with self.settings(
-                CHANNEL_EXPIRES_AFTER='000000000'):
-            self.assertRaises(ValueError, expires_datetime)
+        with self.settings(CHANNEL_EXPIRES_AFTER='000000000'):
+            self.assertRaises(ValueError, channel_expires)

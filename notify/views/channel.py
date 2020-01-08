@@ -8,8 +8,10 @@ from uw_nws import NWS
 from uw_nws.exceptions import InvalidUUID
 from restclients_core.exceptions import DataFailureException
 from notify.views.rest_dispatch import RESTDispatch
-from notify.dao.section import get_section_details_by_channel
-from notify.utilities import get_channel_details_by_channel_id
+from notify.dao.section import (
+    get_section_details_by_channel, get_section_details_by_channel_id)
+from notify.dao.channel import get_channel_by_sln_year_quarter
+from notify.dao.person import get_person
 from userservice.user import UserService
 from datetime import datetime
 import logging
@@ -30,7 +32,7 @@ class ChannelDetails(RESTDispatch):
         channel_id = kwargs.get('channel_id')
         try:
             valid_channel_id(channel_id)
-            data = get_channel_details_by_channel_id(channel_id)
+            data = get_section_details_by_channel_id(channel_id)
             data['channel_id'] = channel_id
         except DataFailureException as ex:
             return self.error_response(
@@ -102,8 +104,6 @@ class ChannelSearch(RESTDispatch):
                 status=401, message="No user is logged in")
 
         person = get_person(subscriber_id)
-        channel_type = 'uw_student_courseavailable'
-        channels = None
         channel_id = None
         quarter_name = ' '.join([quarter, year])
         msg_no_class_by_sln = 'No class found with SLN {} for {}'.format(
@@ -111,16 +111,12 @@ class ChannelSearch(RESTDispatch):
         msg_expired_channel = 'The section SLN {} for {} has expired.'.format(
             sln, quarter_name)
 
-        nws = NWS()
         try:
-            channels = nws.get_channels_by_sln_year_quarter(
-                channel_type, sln, year, quarter)
+            channel = get_channel_by_sln_year_quarter(sln, year, quarter)
         except DataFailureException as ex:
             return self.error_response(status=404, message=msg_no_class_by_sln)
 
-        if channels is not None and len(channels) > 0:
-            channel = channels[0]
-        else:
+        if not channel:
             return self.error_response(status=404, message=msg_no_class_by_sln)
 
         channel_expires = channel.expires
@@ -154,7 +150,7 @@ class ChannelSearch(RESTDispatch):
         # check if user is already subscribed
         subs = []
         try:
-            subs = nws.get_subscriptions_by_channel_id_and_subscriber_id(
+            subs = NWS().get_subscriptions_by_channel_id_and_subscriber_id(
                 channel_id, subscriber_id)
         except DataFailureException as ex:
             pass

@@ -9,7 +9,7 @@ from uw_nws.models import Subscription
 from restclients_core.exceptions import DataFailureException
 from notify.dao.section import get_section_details_by_channel
 from notify.dao.term import get_quarter_index
-from notify.utilities import get_person
+from notify.dao.person import get_person
 from notify.views.rest_dispatch import RESTDispatch
 from userservice.user import UserService
 from datetime import datetime

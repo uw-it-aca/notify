@@ -8,15 +8,15 @@ from base64 import b64decode
 import json
 import re
 
-logger = getLogger('registration_consumer')
-
 
 class NotifyEventProcessor(MessageBodyProcessor):
     _re_json_cruft = re.compile(r'[^{]*({.*})[^}]*')
 
     def __init__(self, *args, **kwargs):
         super(NotifyEventProcessor, self).__init__(
-            logger, self.QUEUE_SETTINGS_NAME, is_encrypted=True)
+            getLogger('registration_consumer'),
+            self.QUEUE_SETTINGS_NAME,
+            is_encrypted=True)
 
     def validate_message_body(self, message):
         header = message.get('Header', {})
@@ -109,20 +109,20 @@ class NotifyEventProcessor(MessageBodyProcessor):
                 self._re_json_cruft.sub(r'\g<1>', body.decode('utf-8')))
 
         except KeyError as ex:
-            logger.error('Key Error: {}\nHEADER: {}'.format(ex, header))
+            self.logger.error('Key Error: {}\nHEADER: {}'.format(ex, header))
             raise
         except ValueError as ex:
-            logger.error(
+            self.logger.error(
                 'Error: {}\nHEADER: {}\nBODY: {}'.format(ex, header, body))
             return {}
         except CryptoException as ex:
-            logger.error(
+            self.logger.error(
                 'Error: {}\nHEADER: {}\nBODY: {}'.format(ex, header, body))
             raise ProcessorException('Cannot decrypt: {}'.format(ex))
         except DataFailureException as ex:
             msg = 'Request failure for {}: {} ({})'.format(
                 ex.url, ex.msg, ex.status)
-            logger.error(msg)
+            self.logger.error(msg)
             raise ProcessorException(msg)
         except Exception as ex:
             raise ProcessorException('Cannot read: {}'.format(ex))

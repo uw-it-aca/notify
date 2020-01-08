@@ -5,14 +5,13 @@ from uw_nws import NWS
 from restclients_core.exceptions import (
     DataFailureException, InvalidRegID, InvalidNetID)
 from uw_nws.exceptions import InvalidUUID
-from notify.dao.person import get_person_by_netid
+from notify.dao.person import get_person_by_netid, get_person_by_regid
+from notify.dao.channel import (
+    get_channel_by_id, get_channel_by_sln_year_quarter)
 from notify.decorators import group_required
 from notify.views.rest_dispatch import RESTDispatch
 from userservice.user import UserService
-try:
-    from urllib import quote
-except ImportError:
-    from urllib.parse import quote
+from urllib.parse import quote
 
 
 @method_decorator(group_required(settings.NOTIFY_ADMIN_GROUP), name='dispatch')
@@ -66,18 +65,15 @@ class ChannelSearchAdmin(RESTDispatch):
         channel_sln = request.GET.get('channel_sln', '').strip()
 
         try:
-            nws = NWS()
             if len(channel_id):
-                channel = nws.get_channel_by_channel_id(channel_id)
+                channel = get_channel_by_id(channel_id)
             elif (len(channel_year) and len(channel_sln) and
                     len(channel_quarter)):
-                channel_type = "uw_student_courseavailable"
-                search_result = nws.get_channels_by_sln_year_quarter(
-                    channel_type, channel_sln, channel_year, channel_quarter)
-                if not len(search_result):
+                channel = get_channel_by_sln_year_quarter(
+                    channel_sln, channel_year, channel_quarter)
+                if not channel:
                     return self.error_response(
                         status=400, message="No channels found")
-                channel = search_result[0]
             else:
                 return self.error_response(
                     status=400, message="Invalid search")
@@ -116,7 +112,7 @@ class UserSearchAdmin(RESTDispatch):
         # search by regid
         if len(regid) > 0:
             try:
-                person = NWS().get_person_by_uwregid(regid)
+                person = get_person_by_regid(regid)
             except DataFailureException as ex:
                 return self.error_response(
                     status=400,
