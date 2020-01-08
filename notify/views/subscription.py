@@ -10,6 +10,7 @@ from restclients_core.exceptions import DataFailureException
 from notify.dao.section import get_section_details_by_channel
 from notify.dao.term import get_quarter_index
 from notify.dao.person import get_person
+from notify.dao.channel import get_channel_by_id
 from notify.views.rest_dispatch import RESTDispatch
 from userservice.user import UserService
 from datetime import datetime
@@ -57,7 +58,7 @@ class SubscriptionSearch(RESTDispatch):
             channel_id = subscription.channel.channel_id
             if channel_id not in channel_ids:
                 try:
-                    channel = nws.get_channel_by_channel_id(channel_id)
+                    channel = get_channel_by_id(channel_id)
 
                     if (channel.expires and channel.expires <= utcnow):
                         continue
@@ -153,9 +154,8 @@ class SubscribeSLN(RESTDispatch):
             "protocols": protocols
         }
 
-        nws = NWS(actas_user=UserService().get_original_user())
         try:
-            channel = nws.get_channel_by_channel_id(channel_id)
+            channel = get_channel_by_id(channel_id)
         except DataFailureException as ex:
             msg = 'Error retrieving channel {0}'.format(channel_id)
             return self.error_response(status=404, message=msg)
@@ -174,6 +174,7 @@ class SubscribeSLN(RESTDispatch):
             return self.error_response(status=404,
                                        message='Person has no endpoints')
 
+        nws = NWS(actas_user=UserService().get_original_user())
         for protocol in protocols:
             subscription = Subscription()
             subscription.channel = channel
@@ -229,9 +230,8 @@ class SubscriptionProtocol(RESTDispatch):
         protocol = request_data['Protocol']
         channel_id = request_data['ChannelID']
 
-        nws = NWS(actas_user=UserService().get_original_user())
         try:
-            channel = nws.get_channel_by_channel_id(channel_id)
+            channel = get_channel_by_id(channel_id)
         except Exception as ex:
             logger.exception(ex)
             msg = 'Error retrieving channel {0}'.format(channel_id)
@@ -242,6 +242,7 @@ class SubscriptionProtocol(RESTDispatch):
         msg = 'Failed to retrieve {0} endpoint for {1}'.format(
             protocol, subscriber_id)
 
+        nws = NWS(actas_user=UserService().get_original_user())
         try:
             endpoints = nws.get_endpoints_by_subscriber_id(subscriber_id)
         except DataFailureException as ex:
@@ -327,13 +328,13 @@ class SubscriptionProtocol(RESTDispatch):
         subscribed_protocols = []
         n_unsubscribed = 0
 
-        nws = NWS(actas_user=UserService().get_original_user())
         try:
-            channel = nws.get_channel_by_channel_id(channel_id)
+            channel = get_channel_by_id(channel_id)
         except DataFailureException as ex:
             msg = 'Error retrieving channel {}'.format(channel_id)
             return self.error_response(status=404, message=msg)
 
+        nws = NWS(actas_user=UserService().get_original_user())
         try:
             subs = nws.get_subscriptions_by_channel_id_and_subscriber_id(
                 channel_id, subscriber_id)
