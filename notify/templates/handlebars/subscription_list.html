@@ -1,11 +1,11 @@
 {% verbatim %}
 <script id="tpl-subscription-list" type="text/x-handlebars-template">
 <div class="registration_period accordion">
-{{ #each RegistrationPeriods }}
+{{#each RegistrationPeriods}}
 <h3 class="clearfix"><span class="registration_period_header">{{RegistrationPeriod}}</span></h3>
   <div class="clearfix accordion_content">
   <ol class="notification_list">
-    {{ #each Channels}}
+    {{#each Channels}}
     <li id="{{ChannelID}}" class="{{#if expired}} disabled{{/if}} clearfix">
         <div class="class_details_container">
             <span class="unsubscribe"><a href="javascript:void(0)" title="Unsubscribe from {{course_abbr}} notifications">X</a></span>

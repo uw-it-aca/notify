@@ -5,7 +5,7 @@
     <h3>{{course_title}}</h3>
     <div class="class_meta">SLN: {{section_sln}}</div>
     <div class="class_meta container">
-            {{ #each meetings}}
+            {{#each meetings}}
                 <div>
                     <span class="meet_time">
                     {{#if days_tbd}}
@@ -37,7 +37,7 @@
                     </span>
                     <span class="instructor">
                     {{#if has_instructors}}
-                        {{ #each instructors}}
+                        {{#each instructors}}
                             {{surname}}, {{first_name}}
                         {{/each}}
                     {{else}}
