@@ -1,13 +1,15 @@
 from django.conf import settings
 from django.views.decorators.cache import never_cache
 from django.utils.decorators import method_decorator
-from uw_nws import NWS
 from restclients_core.exceptions import (
     DataFailureException, InvalidRegID, InvalidNetID)
-from uw_nws.exceptions import InvalidUUID
+from notify.exceptions import InvalidUUID
 from notify.dao.person import get_person_by_netid, get_person_by_regid
+from notify.dao.endpoint import (
+    get_endpoint_by_id, get_endpoint_by_address, delete_endpoint)
 from notify.dao.channel import (
     get_channel_by_id, get_channel_by_sln_year_quarter)
+from notify.dao.subscription import get_subscriptions_by_subscriber_id
 from notify.decorators import group_required
 from notify.views.rest_dispatch import RESTDispatch
 from userservice.user import UserService
@@ -23,10 +25,9 @@ class EndpointSearchAdmin(RESTDispatch):
 
         try:
             if endpoint_id is not None:
-                endpoint = NWS().get_endpoint_by_endpoint_id(endpoint_id)
+                endpoint = get_endpoint_by_endpoint_id(endpoint_id)
             elif endpoint_address is not None:
-                endpoint = NWS().get_endpoint_by_address(
-                    quote(endpoint_address))
+                endpoint = get_endpoint_by_address(quote(endpoint_address))
             else:
                 return self.error_response(
                     status=400, message="No search term provided")
@@ -40,9 +41,9 @@ class EndpointSearchAdmin(RESTDispatch):
         endpoint_id = request.GET.get('endpoint_id', None)
 
         if endpoint_id is not None:
-            nws = NWS(actas_user=UserService().get_original_user())
+            orig_user = UserService().get_original_user()
             try:
-                endpoint = nws.delete_endpoint(endpoint_id)
+                endpoint = delete_endpoint(endpoint_id, act_as=orig_user)
             except DataFailureException as ex:
                 if ex.status == 410:
                     return self.json_response()
@@ -132,8 +133,7 @@ class SubscriptionSearchAdmin(RESTDispatch):
 
         response_json = {'Subscriptions': []}
         try:
-            subscriptions = NWS().get_subscriptions_by_subscriber_id(
-                user_id, '1000')
+            subscriptions = get_subscriptions_by_subscriber_id(user_id)
             for subscription in subscriptions:
                 response_json['Subscriptions'].append(subscription.json_data())
         except DataFailureException as ex:

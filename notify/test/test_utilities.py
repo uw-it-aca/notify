@@ -2,10 +2,10 @@ from django.test import TestCase
 from notify.dao.person import netid_from_eppn
 from notify.dao.term import get_quarter_index
 from notify.dao.channel import channel_expires
+from notify.dao.endpoint import Endpoint
 from uw_sws.term import get_current_term, get_term_after
 from uw_sws.util import fdao_sws_override
 from uw_pws.models import Person
-from uw_nws.models import Endpoint
 
 
 class TestNetid(TestCase):

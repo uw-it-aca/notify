@@ -2,14 +2,14 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
 from django.utils.decorators import method_decorator
-from uw_nws import NWS
-from uw_nws.exceptions import InvalidUUID
-from uw_nws.models import Endpoint
 from userservice.user import UserService
 from restclients_core.exceptions import DataFailureException
 from notify.dao.person import get_person, create_person, update_person
+from notify.dao.endpoint import (
+    Endpoint, create_endpoint, update_endpoint, delete_endpoint,
+    resend_sms_endpoint_verification)
 from notify.views.rest_dispatch import RESTDispatch
-from notify.exceptions import InvalidUser
+from notify.exceptions import InvalidUser, InvalidUUID
 import json
 import logging
 
@@ -77,14 +77,14 @@ class EndpointView(RESTDispatch):
         request_obj = json.loads(request.body)
         protocol = request_obj['Protocol']
 
-        nws = NWS(actas_user=UserService().get_original_user())
+        orig_user = UserService().get_original_user()
         try:
             endpoint = Endpoint()
             endpoint.owner = person.surrogate_id
             endpoint.subscriber_id = person.surrogate_id
             endpoint.endpoint_address = request_obj['EndpointAddress']
             endpoint.protocol = protocol
-            nws.create_endpoint(endpoint)
+            create_endpoint(endpoint, act_as=orig_user)
             logger.info("CREATE endpoint {}".format(endpoint.endpoint_address))
 
         except DataFailureException as ex:
@@ -128,10 +128,10 @@ class EndpointView(RESTDispatch):
                 status=404, message="Endpoint '{}' not found".format(
                     endpoint_id))
 
-        nws = NWS(actas_user=UserService().get_original_user())
+        orig_user = UserService().get_original_user()
         try:
             endpoint.endpoint_address = request_obj['EndpointAddress']
-            response = nws.update_endpoint(endpoint)
+            update_endpoint(endpoint, act_as=orig_user)
             logger.info("UPDATE endpoint {}".format(endpoint.endpoint_address))
         except DataFailureException as ex:
             if ex.status == 403:
@@ -154,11 +154,11 @@ class EndpointView(RESTDispatch):
             return self.error_response(
                 status=404, message="Person '{}' not found".format(user))
 
-        nws = NWS(actas_user=UserService().get_original_user())
+        orig_user = UserService().get_original_user()
         try:
             request_obj = json.loads(request.body)
             endpoint_id = request_obj['EndpointID']
-            nws.delete_endpoint(endpoint_id)
+            delete_endpoint(endpoint_id, act_as=orig_user)
             logger.info("DELETE endpoint {}".format(endpoint_id))
 
         except InvalidUUID as ex:
@@ -201,7 +201,7 @@ class ResendSMSConfirmationView(RESTDispatch):
             status_code = 200
         else:
             try:
-                status_code = NWS().resend_sms_endpoint_verification(
+                status_code = resend_sms_endpoint_verification(
                     endpoint.endpoint_id)
                 if status_code == 202:
                     logger.info("RESEND endpoint verification {}".format(

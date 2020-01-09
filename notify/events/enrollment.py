@@ -4,8 +4,9 @@
 
 from notify.events import NotifyEventProcessor
 from notify.dao.channel import CHANNEL_TYPE
+from notify.dao.subscription import (
+    get_subscriptions_by_channel_id_and_person_id, delete_subscription)
 from restclients_core.exceptions import DataFailureException
-from uw_nws import NWS
 
 
 class EnrollmentProcessor(NotifyEventProcessor):
@@ -21,7 +22,6 @@ class EnrollmentProcessor(NotifyEventProcessor):
     _eventMessageVersion = '2'
 
     def process_message_body(self, json_data):
-        nws = NWS()
         for event in json_data.get('Events', []):
             action_code = event['Action']['Code'].upper()
             if action_code == 'A':
@@ -40,10 +40,10 @@ class EnrollmentProcessor(NotifyEventProcessor):
 
                 # Unsubscribe reg_id from channel_id
                 try:
-                    subs = nws.get_subscriptions_by_channel_id_and_person_id(
+                    subs = get_subscriptions_by_channel_id_and_person_id(
                         channel_id, reg_id)
                     for sub in subs:
-                        nws.delete_subscription(sub.subscription_id)
+                        delete_subscription(sub.subscription_id)
                         self.logger.info('DELSUB to {} for {}'.format(
                             sub.subscription_id, reg_id))
 

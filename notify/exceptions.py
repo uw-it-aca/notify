@@ -1,6 +1,4 @@
-"""
-Custom exceptions used by Notify.UW
-"""
+from uw_nws.exceptions import InvalidUUID
 
 
 class InvalidUser(Exception):

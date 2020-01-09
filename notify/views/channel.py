@@ -4,14 +4,15 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.timezone import utc
-from uw_nws import NWS
-from uw_nws.exceptions import InvalidUUID
 from restclients_core.exceptions import DataFailureException
+from notify.exceptions import InvalidUUID
 from notify.views.rest_dispatch import RESTDispatch
 from notify.dao.section import (
     get_section_details_by_channel, get_section_details_by_channel_id)
 from notify.dao.channel import get_channel_by_sln_year_quarter
 from notify.dao.person import get_person
+from notify.dao.subscription import (
+    get_subscriptions_by_channel_id_and_subscriber_id, delete_subscription)
 from userservice.user import UserService
 from datetime import datetime
 import logging
@@ -50,14 +51,14 @@ class ChannelUnsubscribe(RESTDispatch):
         """Unsubscribe from channel"""
         request_data = json.loads(request.body)
         channel_id = request_data['ChannelID']
-        netid = UserService().get_user()
+        user = UserService().get_user()
+        orig_user = UserService().get_original_user()
 
         subs = []
-        nws = NWS(actas_user=UserService().get_original_user())
         try:
             valid_channel_id(channel_id)
-            subs = nws.get_subscriptions_by_channel_id_and_subscriber_id(
-                channel_id, netid)
+            subs = get_subscriptions_by_channel_id_and_subscriber_id(
+                channel_id, user)
         except DataFailureException as ex:
             return self.error_response(
                 status=404, message="Unable to retrieve subscriptions")
@@ -73,7 +74,7 @@ class ChannelUnsubscribe(RESTDispatch):
         for subscription in subs:
             subscription_id = subscription.subscription_id
             try:
-                nws.delete_subscription(subscription_id)
+                delete_subscription(subscription_id, act_as=orig_user)
                 logger.info("DELETE subscription {}".format(subscription_id))
             except DataFailureException as ex:
                 logger.warning(ex.msg)
@@ -150,7 +151,7 @@ class ChannelSearch(RESTDispatch):
         # check if user is already subscribed
         subs = []
         try:
-            subs = NWS().get_subscriptions_by_channel_id_and_subscriber_id(
+            subs = get_subscriptions_by_channel_id_and_subscriber_id(
                 channel_id, subscriber_id)
         except DataFailureException as ex:
             pass
