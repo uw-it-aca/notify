@@ -4,6 +4,10 @@
         return (is_mobile) ? options.fn(this) : options.inverse(this);
     });
 
+    Handlebars.registerHelper("if_reg_periods", function(options) {
+        return (reg_periods.length > 0) ? options.fn(this) : options.inverse(this);
+    });
+
     canui.ACCORDION_OPTIONS = {
         //autoHeight: false,
         heightStyle: "content",
