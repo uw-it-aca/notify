@@ -172,7 +172,7 @@
                 error: function(data) {
                     //handle error
                     var response = JSON.parse(data.responseText),
-                    msg = "<strong>"+response.message+"</strong>";
+                    msg = "<strong>"+response.error+"</strong>";
                     $('#class_details_container').html(msg);
                 }
             });
@@ -397,7 +397,7 @@
             },
            statusCode: {
                 403: function(data) {
-                    message = $.parseJSON(data.responseText).message;
+                    message = $.parseJSON(data.responseText).error;
                     canui.resetSubscriptionDialog(message);
                 }
             }
