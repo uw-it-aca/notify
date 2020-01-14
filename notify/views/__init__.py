@@ -8,3 +8,7 @@ def can_override_user(request):
 
 def can_proxy_restclient(request, service, url):
     return is_member_of_group(request, settings.NOTIFY_ADMIN_GROUP)
+
+
+def can_manage_persistent_messages(request):
+    return is_member_of_group(request, settings.NOTIFY_ADMIN_GROUP)

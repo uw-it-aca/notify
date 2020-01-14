@@ -5,7 +5,7 @@ users who have signed up for a course.
 
 from django.core.management.base import BaseCommand, CommandError
 from aws_message.gather import Gather, GatherException
-from notify.events.enrollment import Enrollment
+from notify.events.enrollment import EnrollmentProcessor
 
 
 class Command(BaseCommand):
@@ -13,8 +13,6 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         try:
-            Gather(processor=Enrollment).gather_events()
+            Gather(processor=EnrollmentProcessor()).gather_events()
         except GatherException as err:
             raise CommandError(err)
-        except Exception as err:
-            raise CommandError('FAIL: %s' % err)

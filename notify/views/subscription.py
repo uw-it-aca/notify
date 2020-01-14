@@ -1,18 +1,23 @@
-from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from django.utils.timezone import utc
-from uw_nws import NWS
-from uw_nws.models import Subscription
 from restclients_core.exceptions import DataFailureException
-from notify.utilities import (
-    get_course_details_by_channel, get_person, get_quarter_index)
+from notify.dao.section import get_section_details_by_channel
+from notify.dao.term import get_quarter_index
+from notify.dao.person import get_person
+from notify.dao.channel import get_channel_by_id
+from notify.dao.endpoint import (
+    get_endpoint_by_id, get_endpoints_by_subscriber_id)
+from notify.dao.subscription import (
+    Subscription, create_subscription, delete_subscription,
+    get_subscriptions_by_subscriber_id,
+    get_subscriptions_by_channel_id_and_subscriber_id,
+    get_subscription_by_channel_id_and_endpoint_id)
 from notify.views.rest_dispatch import RESTDispatch
 from userservice.user import UserService
 from datetime import datetime
-from operator import attrgetter
 import logging
 import json
 
@@ -32,18 +37,14 @@ class SubscriptionSearch(RESTDispatch):
             person = get_person(subscriber_id)
         except DataFailureException as ex:
             return self.error_response(
-                status=404, message="Person '%s' not found" % user)
+                status=404, message="Person '{}' not found".format(user))
 
-        nws = NWS()
         try:
-            max_results = getattr(
-                settings, 'SUBSCRIPTION_SEARCH_MAX_RESULTS', 100)
-            subscriptions = nws.get_subscriptions_by_subscriber_id(
-                subscriber_id, max_results=max_results)
+            subscriptions = get_subscriptions_by_subscriber_id(subscriber_id)
         except DataFailureException as ex:
             logger.warning(ex.msg)
             return self.error_response(
-                status=500, message="Search error: %s" % ex.msg)
+                status=500, message="Search error: {}".format(ex.msg))
 
         data = {"TotalCount": len(subscriptions), "Subscriptions": []}
 
@@ -56,12 +57,12 @@ class SubscriptionSearch(RESTDispatch):
             channel_id = subscription.channel.channel_id
             if channel_id not in channel_ids:
                 try:
-                    channel = nws.get_channel_by_channel_id(channel_id)
+                    channel = get_channel_by_id(channel_id)
 
                     if (channel.expires and channel.expires <= utcnow):
                         continue
 
-                    channel_details = get_course_details_by_channel(channel)
+                    channel_details = get_section_details_by_channel(channel)
 
                 except DataFailureException as ex:
                     continue
@@ -152,9 +153,8 @@ class SubscribeSLN(RESTDispatch):
             "protocols": protocols
         }
 
-        nws = NWS(actas_user=UserService().get_original_user())
         try:
-            channel = nws.get_channel_by_channel_id(channel_id)
+            channel = get_channel_by_id(channel_id)
         except DataFailureException as ex:
             msg = 'Error retrieving channel {0}'.format(channel_id)
             return self.error_response(status=404, message=msg)
@@ -173,20 +173,21 @@ class SubscribeSLN(RESTDispatch):
             return self.error_response(status=404,
                                        message='Person has no endpoints')
 
+        orig_user = UserService().get_original_user()
         for protocol in protocols:
             subscription = Subscription()
             subscription.channel = channel
             if protocol.lower() in endpoints_by_protocol:
                 subscription.endpoint = endpoints_by_protocol[protocol.lower()]
             else:
-                msg = "No endpoint of type: %s" % protocol.lower()
+                msg = "Unknown endpoint type '{}'".format(protocol.lower())
                 return self.error_response(status=404, message=msg)
             subscription.subscriber_id = subscriber_id
             subscription.owner_id = subscriber_id
 
             try:
-                status = nws.create_subscription(subscription)
-                logger.info("CREATE subscription for channel %s" % (
+                status = create_subscription(subscription, act_as=orig_user)
+                logger.info("CREATE subscription for channel {}".format(
                     channel.channel_id))
             except DataFailureException as ex:
                 if channel.expires <= datetime.utcnow().replace(tzinfo=utc):
@@ -200,7 +201,8 @@ class SubscribeSLN(RESTDispatch):
                     logger.warning(ex.msg)
                     return self.error_response(
                         status=500,
-                        message="Error subscribing to channel: %s" % ex.msg)
+                        message="Error subscribing to channel: {}".format(
+                            ex.msg))
 
         return self.json_response(status=201)
 
@@ -227,9 +229,8 @@ class SubscriptionProtocol(RESTDispatch):
         protocol = request_data['Protocol']
         channel_id = request_data['ChannelID']
 
-        nws = NWS(actas_user=UserService().get_original_user())
         try:
-            channel = nws.get_channel_by_channel_id(channel_id)
+            channel = get_channel_by_id(channel_id)
         except Exception as ex:
             logger.exception(ex)
             msg = 'Error retrieving channel {0}'.format(channel_id)
@@ -241,7 +242,7 @@ class SubscriptionProtocol(RESTDispatch):
             protocol, subscriber_id)
 
         try:
-            endpoints = nws.get_endpoints_by_subscriber_id(subscriber_id)
+            endpoints = get_endpoints_by_subscriber_id(subscriber_id)
         except DataFailureException as ex:
             return self.error_response(status=404, message=msg)
 
@@ -263,10 +264,11 @@ class SubscriptionProtocol(RESTDispatch):
         subscription.user = subscriber_id
         subscription.owner = subscriber_id
 
+        orig_user = UserService().get_original_user()
         status = None
         try:
-            status = nws.create_subscription(subscription)
-            logger.info("CREATE subscription for channel %s" % (
+            status = create_subscription(subscription, act_as=orig_user)
+            logger.info("CREATE subscription for channel {}".format(
                 channel.channel_id))
         except DataFailureException as ex:
             logger.warning(ex.msg)
@@ -282,11 +284,11 @@ class SubscriptionProtocol(RESTDispatch):
         channel_id = request_data['ChannelID']
         endpoint_id = request_data['EndpointID']
         user = UserService().get_user()
+        orig_user = UserService().get_original_user()
 
-        nws = NWS(actas_user=UserService().get_original_user())
         # confirm endpoint belongs to subscriber
         try:
-            endpoint = nws.get_endpoint_by_endpoint_id(endpoint_id)
+            endpoint = get_endpoint_by_id(endpoint_id)
         except DataFailureException as ex:
             msg = 'Endpoint "{0}" not found'.format(endpoint_id)
             return self.error_response(status=404, message=msg)
@@ -298,8 +300,8 @@ class SubscriptionProtocol(RESTDispatch):
 
         # confirm subscription exists
         try:
-            subscription = nws.get_subscription_by_channel_id_and_endpoint_id(
-                channel_id=channel_id, endpoint_id=endpoint_id)
+            subscription = get_subscription_by_channel_id_and_endpoint_id(
+                channel_id, endpoint_id)
         except DataFailureException as ex:
             msg = '{0} endpoint "{1}" not subscribed to channel "{2}"'.format(
                   protocol, endpoint_id, channel_id)
@@ -307,10 +309,10 @@ class SubscriptionProtocol(RESTDispatch):
 
         subscription_id = subscription.subscription_id
         try:
-            status = nws.delete_subscription(subscription_id)
-            logger.info("DELETE subscription %s" % subscription_id)
+            status = delete_subscription(subscription_id, act_as=orig_user)
+            logger.info("DELETE subscription {}".format(subscription_id))
         except self.error_response as ex:
-            msg = 'Failed to delete subscription {0}'.format(subscription_id)
+            msg = 'Failed to delete subscription {}'.format(subscription_id)
             return self.error_response(status=500, message=msg)
 
         return self.json_response(
@@ -320,20 +322,20 @@ class SubscriptionProtocol(RESTDispatch):
         channel_id = request.POST.get('channel_id')
         protocols = request.POST.getlist('protocol')
         subscriber_id = UserService().get_user()
+        orig_user = UserService().get_original_user()
         status = 500
         subs = []
         subscribed_protocols = []
         n_unsubscribed = 0
 
-        nws = NWS(actas_user=UserService().get_original_user())
         try:
-            channel = nws.get_channel_by_channel_id(channel_id)
+            channel = get_channel_by_id(channel_id)
         except DataFailureException as ex:
-            msg = 'Error retrieving channel {0}'.format(channel_id)
+            msg = 'Error retrieving channel {}'.format(channel_id)
             return self.error_response(status=404, message=msg)
 
         try:
-            subs = nws.get_subscriptions_by_channel_id_and_subscriber_id(
+            subs = get_subscriptions_by_channel_id_and_subscriber_id(
                 channel_id, subscriber_id)
         except DataFailureException as ex:
             return self.error_response(
@@ -346,8 +348,10 @@ class SubscriptionProtocol(RESTDispatch):
                     # unsubscribe
                     subscription_id = subscription.subscription_id
                     try:
-                        status = nws.delete_subscription(subscription_id)
-                        logger.info("DELETE subscription %s" % subscription_id)
+                        status = delete_subscription(
+                            subscription_id, act_as=orig_user)
+                        logger.info("DELETE subscription {}".format(
+                            subscription_id))
                         n_unsubscribed += 1
                     except DataFailureException as ex:
                         pass
@@ -371,7 +375,7 @@ class SubscriptionProtocol(RESTDispatch):
         try:
             person = get_person(subscriber_id)
         except DataFailureException as ex:
-            msg = 'Error retrieving person {0}'.format(subscriber_id)
+            msg = 'Error retrieving person {}'.format(subscriber_id)
             return self.error_response(status=404, message=msg)
 
         for ep in person.endpoints:
@@ -384,8 +388,9 @@ class SubscriptionProtocol(RESTDispatch):
                 subscription.owner = subscriber_id
 
                 try:
-                    status = nws.create_subscription(subscription)
-                    logger.info("CREATE subscription for channel %s" % (
+                    status = create_subscription(
+                        subscription, act_as=orig_user)
+                    logger.info("CREATE subscription for channel {}".format(
                         channel.channel_id))
                     subscribed_protocols.append(ep.protocol.lower())
                 except DataFailureException as ex:

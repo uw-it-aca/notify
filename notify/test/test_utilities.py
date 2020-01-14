@@ -1,11 +1,11 @@
 from django.test import TestCase
-from notify.utilities import (
-    netid_from_eppn, user_accepted_tos, get_quarter_index,
-    user_has_valid_endpoints, expires_datetime)
+from notify.dao.person import netid_from_eppn
+from notify.dao.term import get_quarter_index
+from notify.dao.channel import channel_expires
+from notify.dao.endpoint import Endpoint
 from uw_sws.term import get_current_term, get_term_after
 from uw_sws.util import fdao_sws_override
 from uw_pws.models import Person
-from uw_nws.models import Endpoint
 
 
 class TestNetid(TestCase):
@@ -31,42 +31,14 @@ class TestQuarterIndex(TestCase):
         self.assertEquals(get_quarter_index(term.quarter), 2)
 
 
-class TestPersonAttributes(TestCase):
-    def setUp(self):
-        self.person = Person()
-        self.person.attributes = {}
-        self.person.endpoints = []
+class TestChannelExpires(TestCase):
+    def test_channel_expires(self):
+        with self.settings(CHANNEL_EXPIRES_AFTER=None):
+            self.assertEquals(channel_expires(), None)
 
-    def test_user_accepted_tos(self):
-        self.assertEquals(user_accepted_tos(self.person), False)
+        with self.settings(CHANNEL_EXPIRES_AFTER='2013-05-31T00:00:00'):
+            self.assertEquals(
+                channel_expires().isoformat(), '2013-05-31T00:00:00')
 
-        self.person.attributes['AcceptedTermsOfUse'] = True
-        self.assertEquals(user_accepted_tos(self.person), True)
-
-    def test_user_has_valid_endpoints(self):
-        self.assertEquals(user_has_valid_endpoints(self.person),
-                          '{"sms": false, "email": false}')
-
-        self.person.endpoints.append(Endpoint(protocol='SMS'))
-        self.assertEquals(user_has_valid_endpoints(self.person),
-                          '{"sms": true, "email": false}')
-
-        self.person.endpoints.append(Endpoint(protocol='Email'))
-        self.assertEquals(user_has_valid_endpoints(self.person),
-                          '{"sms": true, "email": true}')
-
-
-class TestExpiresDateTime(TestCase):
-    def test_expires_datetime(self):
-        with self.settings(
-                CHANNEL_EXPIRES_AFTER=None):
-            self.assertEquals(expires_datetime(), None)
-
-        with self.settings(
-                CHANNEL_EXPIRES_AFTER='2013-05-31T00:00:00'):
-            self.assertEquals(expires_datetime().isoformat(),
-                              '2013-05-31T00:00:00')
-
-        with self.settings(
-                CHANNEL_EXPIRES_AFTER='000000000'):
-            self.assertRaises(ValueError, expires_datetime)
+        with self.settings(CHANNEL_EXPIRES_AFTER='000000000'):
+            self.assertRaises(ValueError, channel_expires)

@@ -1,5 +1,5 @@
-{% load templatetag_handlebars %}
-{% tplhandlebars "endpoint" %}
+{% verbatim %}
+<script id="tpl-endpoint" type="text/x-handlebars-template">
 <div class="profile_container">
     <h3 id="email_header">Email</h3>
         <div id="email_text">
@@ -16,12 +16,12 @@
             <input id="current_email_endpoint" type="hidden" value="{{email.EndpointAddress}}" />
 
             <!-- the default address comes in via DefaultEndpoint, not email -->
-            {{#if email }}
+            {{#if email}}
             <a href="javascript:void(0)" class="remove" title="remove email & any subscriptions associated with this email">X</a>
             {{else}}
             <span  class="remove"></span>
             {{/if}}
-            <input {% if is_mobile %}type="email"{% else %}type="text"{% endif %} name="email" id="email_input" aria-labelledby="email_header" {{#if email.EndpointAddress}}value="{{email.EndpointAddress}}"{{/if}} placeholder="Enter email"/>
+            <input type="{{#if_mobile}}email{{else}}text{{/if_mobile}}" name="email" id="email_input" aria-labelledby="email_header" {{#if email.EndpointAddress}}value="{{email.EndpointAddress}}"{{/if}} placeholder="Enter email"/>
             <button class="flat add" type="submit">OK</button>
             <div role="alert" class="error_text"></div>
         </form>
@@ -31,7 +31,7 @@
             <div class="confirmation_message">This phone number was Blacklisted from our service. You need to reply to any text from {{email.SenderAddress}} with "Start" to reinstate this #.</div>
             {{else}}
                 {{#unless sms.isConfirmed}}
-<div class="confirmation_message">A confirmation text was sent. Reply "YES" to confirm{% if is_mobile %}{% else %} your #{% endif %}. <a id="sms_resend" href="javascript:void(0)" title="Resend confirmation request" class="resend">resend text</a></div>
+<div class="confirmation_message">A confirmation text was sent. Reply "YES" to confirm{{#if_mobile}}{{else}} your #{{/if_mobile}}. <a id="sms_resend" href="javascript:void(0)" title="Resend confirmation request" class="resend">resend text</a></div>
                 {{/unless}}
             {{/if}}
         {{/if}}
@@ -52,11 +52,12 @@
             {{else}}
             <span  class="remove"></span>
             {{/if}}
-            <input {% if is_mobile %}type="tel"{% else %}type="text"{% endif %} name="sms" id="sms_input" aria-labelledby="phone_header" {{#if sms.EndpointAddress}}value="{{sms.EndpointAddress}}"{{/if}} placeholder="Enter phone # (US only)"/>
+            <input type="{{#if_mobile}}tel{{else}}text{{/if_mobile}}" name="sms" id="sms_input" aria-labelledby="phone_header" {{#if sms.EndpointAddress}}value="{{sms.EndpointAddress}}"{{/if}} placeholder="Enter phone # (US only)"/>
             <button class="flat add" type="submit">OK</button>
             <div role="alert" class="error_text"></div>
         </form>
         <div id="endpoint_required" role="alert" class="validation_error" style="display:none;">At least one notification option is required.</div>
 <div class="button_container"><button id="profile_done" type="submit" class="flat" value="Done">Done</button></div>
 </div>
-{% endtplhandlebars %}
+</script>
+{% endverbatim %}
