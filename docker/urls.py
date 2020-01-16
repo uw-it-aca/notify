@@ -1,9 +1,10 @@
-from django.conf.urls import include, re_path
+from .base_urls import *
+from django.urls import include, re_path
 
 
-urlpatterns = [
+urlpatterns += [
     re_path(r'^', include('notify.urls')),
-    re_path(r'^saml/', include('uw_saml.urls')),
+    re_path(r'^', include('django_prometheus.urls')),
     re_path(r'^support/?', include('userservice.urls')),
     re_path(r'^persistent_message/', include('persistent_message.urls')),
 ]

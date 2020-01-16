@@ -1,19 +1,34 @@
+sudo: required
 language: python
 python:
 - '3.6'
+services:
+  - docker
+os:
+  - linux
+env:
+  global:
+    - RELEASE_NAME="notify"
+    - DJANGO_APP="notify"
+    - COMMIT_HASH="$(git rev-parse --short=7 HEAD)"
+    - IMAGE_TAG="${RELEASE_NAME}:${COMMIT_HASH}"
+    - DEPLOY_SCRIPT_BASE=https://raw.githubusercontent.com/uw-it-aca/gcp-app-deploy/master
+
 install:
-  - sudo apt-get install -qq python-dev libxml2-dev libxmlsec1-dev
+  - docker build -t "$IMAGE_TAG" .
 before_script:
-  - pip install -r requirements.txt
   - pip install coverage
-  - pip install python-coveralls
-  - pip install pycodestyle
-  - npm install -g jshint
-  - cp travis-ci/manage.py manage.py
+  - pip install coveralls
 script:
-  - pycodestyle notify/ --exclude=migrations
-  - jshint notify/static/js/ --verbose
-  - coverage run --source=notify/ --omit=notify/migrations/* manage.py test notify
+  - docker run -u root -it -v /tmp:/coverage -e DJANGO_APP="$DJANGO_APP" -e "ENV=localdev" -e "AUTH=SAML_MOCK" "$IMAGE_TAG" bash -c ". ./travis-ci/test.sh"
 after_success:
+  - cp /tmp/.coverage.* .
+  - coverage combine
   - coveralls
-notifications:
+    #- if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [[ "$TRAVIS_BRANCH" =~ ^(develop|master)$ ]]; then
+    #curl -Ls ${DEPLOY_SCRIPT_BASE}/travis-ci/deploy.sh | bash;
+    #fi
+cache:
+  directories:
+    - "$HOME/helm"
+    - "$HOME/kubeval"

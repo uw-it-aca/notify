@@ -1,0 +1,107 @@
+ingress:
+  enabled: true
+  annotations:
+    kubernetes.io/ingress.class: nginx
+  tls:
+    notify-test:
+      secretName: notify-test.uw.edu
+      hosts:
+        - notify-test.uw.edu
+  hosts:
+    notify-test:
+      host: notify-test.uw.edu
+      paths:
+        - "/"
+    notify-test-aca-aws:
+      host: notify-test.aca-aws.s.uw.edu
+      paths:
+        - "/"
+database:
+  engine: postgres
+  name: notify
+  hostname: notify-db-test-service
+  secretName: notify-db-test
+externalService:
+  enabled: true
+  name: notify-db-test-service
+  type: ClusterIP
+  serviceAddress:
+  servicePort: 5432
+repo: notify
+instance: test
+replicaCount: 2
+minReplicas: 2
+maxReplicas: 6
+targetAverageUtilization: 90
+resources:
+  limits:
+    cpu: 600m
+  requests:
+    cpu: 200m
+image:
+  repository: registry.hub.docker.com/acait/notify
+  tag: IMAGE_TAG
+metrics:
+  enabled: true
+  serviceMonitor:
+    enabled: true
+cronjob:
+  enabled: true
+  jobs:
+    - name: unsubscribe-registered
+      schedule: '55 8-17 * * 1-5'
+      command: '["bash"]'
+      args: '["-c", "(cd /app && source ./bin/activate && ./bin/python manage.py unsubscribe_registered)"]'
+certs:
+  mounted: true
+  certPath: /certs/notify-test.uw.edu-uwca.cert
+  keyPath: /certs/notify-test.uw.edu-uwca.key
+  secretName: notify-test-uwca-certs
+environmentVariables:
+  - name: ENV
+    value: dev
+  - name: CERT_PATH
+    value: /certs/notify-test.uw.edu-uwca.cert
+  - name: KEY_PATH
+    value: /certs/notify-test.uw.edu-uwca.key
+  - name: GWS_ENV
+    value: PROD
+  - name: PWS_ENV
+    value: PROD
+  - name: SWS_ENV
+    value: EVAL
+  - name: NWS_ENV
+    value: EVAL
+  - name: AUTH
+    value: SAML
+  - name: SAML_ENTITY_ID
+    value: https://notify-test.s.uw.edu/shibboleth
+  - name: CLUSTER_CNAME
+    value: notify-test.uw.edu
+  - name: SAML_USER_ATTRIBUTE
+    value: eppn
+  - name: SP_CERT
+    value: 'MIIDADCCAeigAwIBAgIJALdSTm5QcJcqMA0GCSqGSIb3DQEBBQUAMB4xHDAaBgNV\nBAMTE25vdGlmeS1kZXYucy51dy5lZHUwHhcNMTIxMjE4MTYzMDE0WhcNMjIxMjE2\nMTYzMDE0WjAeMRwwGgYDVQQDExNub3RpZnktZGV2LnMudXcuZWR1MIIBIjANBgkq\nhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvarnHMQfW0F4dNoaDjJ2wCxjAl9gxO9b\no+KmqxQSsSxca3J/2jswTLkDmQ27N6BvqRqPTOzHy/6s4izjR3vF5fkdTS53Ob1c\nzWMJt6clvjRTJ8WOav1jPTaFlbqoXmx4vt4mcEG7tAWPXvePro37cHK5ebRqpS2z\n5uQVKxgUdjXSPp+LUXks66OQ2DzUU51iiU2/sV1XFfZ+Cd0BRnXi5F18VfVw5h2d\nWfL4wcI40bPR6B3WhWptcyRUhqhJt8kJq8YeaIoELYYnk0XTlufASvAplb118sil\nYgTZxSgJeTOH0GxQq6AunqlT9/ngozGJygvIW+p5EJR5v10rjjl2zQIDAQABo0Ew\nPzAeBgNVHREEFzAVghNub3RpZnktZGV2LnMudXcuZWR1MB0GA1UdDgQWBBR4TfKQ\nt9LKox31fvayao3cyMFG5zANBgkqhkiG9w0BAQUFAAOCAQEAYbLr1Pm+i87TG9W9\nbC0w5sJxG25gdLIvQj/HU8eopNqKRsxRYGuJnBitdLMPJt2iuC7ogOCFLfPED7UY\nULCqdhRZGFRBEu8o/K2kOo1vOlHVnbi45n4Leek2R5UiU/kyy9V29Az+nTd5ci/c\n44jbnSyTJKtovV1MeV1Ngq8fa8QXJDq+VdB+clxKewOQdFA468xG3fHVxbYQYruE\nw4CGpgwaK8BNggg0mtwmbv/n2ktnagYQ5zYa5VcomJE3HL6ytdAjZJqNBVkNDaK/\nA+/SHGg79tiAOmEYtIuUXSgHbIRSeftHtbguXqsp+YGhSbPAXdgpdV6J+tcqHbCR\nK97YUw=='
+  - name: IDP_CERT
+    value: 'MIID/TCCAuWgAwIBAgIJAMoYJbDt9lKKMA0GCSqGSIb3DQEBBQUAMFwxCzAJBgNVBAYTAlVTMQswCQYDVQQIEwJXQTEhMB8GA1UEChMYVW5pdmVyc2l0eSBvZiBXYXNoaW5ndG9uMR0wGwYDVQQDExRpZHAudS53YXNoaW5ndG9uLmVkdTAeFw0xMTA0MjYxOTEwMzlaFw0yMTA0MjMxOTEwMzlaMFwxCzAJBgNVBAYTAlVTMQswCQYDVQQIEwJXQTEhMB8GA1UEChMYVW5pdmVyc2l0eSBvZiBXYXNoaW5ndG9uMR0wGwYDVQQDExRpZHAudS53YXNoaW5ndG9uLmVkdTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAMH9G8m68L0Hf9bmf4/7c+ERxgDQrbq50NfSi2YTQWc1veUIPYbZy1agSNuc4dwn3RtC0uOQbdNTYUAiVTcYgaYceJVB7syWf9QyGIrglZPMu98c5hWb7vqwvs6d3s2Sm7tBib2v6xQDDiZ4KJxpdAvsoPQlmGdgpFfmAsiYrnYFXLTHgbgCc/YhV8lubTakUdI3bMYWfh9dkj+DVGUmt2gLtQUzbuH8EU44vnXgrQYSXNQkmRcyoE3rj4Rhhbu/p5D3P+nuOukLYFOLRaNeiiGyTu3P7gtc/dy/UjUrf+pH75UUU7Lb369dGEfZwvVtITXsdyp0pBfun4CP808H9N0CAwEAAaOBwTCBvjAdBgNVHQ4EFgQUP5smx3ZYKODMkDglkTbduvLcGYAwgY4GA1UdIwSBhjCBg4AUP5smx3ZYKODMkDglkTbduvLcGYChYKReMFwxCzAJBgNVBAYTAlVTMQswCQYDVQQIEwJXQTEhMB8GA1UEChMYVW5pdmVyc2l0eSBvZiBXYXNoaW5ndG9uMR0wGwYDVQQDExRpZHAudS53YXNoaW5ndG9uLmVkdYIJAMoYJbDt9lKKMAwGA1UdEwQFMAMBAf8wDQYJKoZIhvcNAQEFBQADggEBAEo7c2CNHEI+Fvz5DhwumU+WHXqwSOK47MxXwNJVpFQ9GPR2ZGDAq6hzLJLAVWcY4kB3ECDkRtysAWSFHm1roOU7xsU9f0C17QokoXfLNC0d7KoivPM6ctl8aRftU5moyFJkkJX3qSExXrl053uxTOQVPms4ypkYv1A/FBZWgSC8eNoYnBnv1Mhy4m8bfeEN7qT9rFoxh4cVjMH1Ykq7JWyFXLEB4ifzH4KHyplt5Ryv61eh6J1YPFa2RurVTyGpHJZeOLUIBvJu15GzcexuDDXe0kg7sHD6PbK0xzEF/QeXP/hXzMxR9kQXB/IR/b2k4ien+EM3eY/ueBcTZ95dgVM='
+  - name: ADMIN_GROUP
+    value: 'u_acadev_notifydev-support'
+  - name: GOOGLE_ANALYTICS_KEY
+    value: ''
+environmentVariablesSecrets:
+  djangoSecret:
+    name: DJANGO_SECRET
+    secretName: notify-test-django-secret
+    secretKey: django-secret
+  enrollmentQueueArn:
+    name: ENROLLMENT_QUEUE_ARN
+    secretName: notify-test-enrollment-queue-arn
+    secretKey: enrollment-queue-arn
+  enrollmentKeyId:
+    name: ENROLLMENT_KEY_ID
+    secretName: notify-test-enrollment-key-id
+    secretKey: enrollment-key-id
+  enrollmentKey:
+    name: ENROLLMENT_KEY
+    secretName: notify-test-enrollment-key
+    secretKey: enrollment-key

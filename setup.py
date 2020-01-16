@@ -24,10 +24,11 @@ setup(
     include_package_data=True,
     install_requires=[
         'Django>=2.0.13,<2.1',
-        'django-compressor',
         'django-user-agents',
         'django-userservice>=3.1.2',
         'django-aws-message>=1.5.1',
+        'django-prometheus>=1.0,<2.0',
+        'psycopg2<3.0',
         'python-dateutil',
         'UW-Django-SAML2>=1.4.1,<2.0',
         'UW-RestClients-NWS>=1.2,<2.0',
