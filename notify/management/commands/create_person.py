@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand, CommandError
-from notify.utilities import create_person
+from notify.dao.person import create_person
 
 
 class Command(BaseCommand):
@@ -11,4 +11,4 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         uwnetid = options['uwnetid']
-        person = create_person("%s@%s" % (uwnetid, "washington.edu"))
+        person = create_person("@".join([uwnetid, "washington.edu"]))

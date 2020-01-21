@@ -1,12 +1,11 @@
-{% load templatetag_handlebars %}
-
-{% tplhandlebars "class_details" %}
+{% verbatim %}
+<script id="tpl-class-details" type="text/x-handlebars-template">
 {{#if course_abbr}}
     <div class="course_info"><span class="class_abbr">{{course_abbr}}</span><span class="class_avail">{{current_enrollment}} / {{total_seats}} <span class="txt">seats</span></span></div>
     <h3>{{course_title}}</h3>
     <div class="class_meta">SLN: {{section_sln}}</div>
     <div class="class_meta container">
-            {{ #each meetings}}
+            {{#each meetings}}
                 <div>
                     <span class="meet_time">
                     {{#if days_tbd}}
@@ -38,7 +37,7 @@
                     </span>
                     <span class="instructor">
                     {{#if has_instructors}}
-                        {{ #each instructors}}
+                        {{#each instructors}}
                             {{surname}}, {{first_name}}
                         {{/each}}
                     {{else}}
@@ -58,4 +57,5 @@
     {{else}}
     <div class="validation_error" role="alert">There was a problem retrieving the class data. Check back later for accurate information.</div>
     {{/if}}
-{% endtplhandlebars %}
+</script>
+{% endverbatim %}

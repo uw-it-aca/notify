@@ -4,13 +4,15 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.timezone import utc
-from uw_nws import NWS
-from uw_nws.exceptions import InvalidUUID
 from restclients_core.exceptions import DataFailureException
+from notify.exceptions import InvalidUUID
 from notify.views.rest_dispatch import RESTDispatch
-from notify.utilities import (
-    get_channel_details_by_channel_id, get_course_details_by_channel,
-    get_verified_endpoints_by_protocol)
+from notify.dao.section import (
+    get_section_details_by_channel, get_section_details_by_channel_id)
+from notify.dao.channel import get_channel_by_sln_year_quarter
+from notify.dao.person import get_person
+from notify.dao.subscription import (
+    get_subscriptions_by_channel_id_and_subscriber_id, delete_subscription)
 from userservice.user import UserService
 from datetime import datetime
 import logging
@@ -31,7 +33,7 @@ class ChannelDetails(RESTDispatch):
         channel_id = kwargs.get('channel_id')
         try:
             valid_channel_id(channel_id)
-            data = get_channel_details_by_channel_id(channel_id)
+            data = get_section_details_by_channel_id(channel_id)
             data['channel_id'] = channel_id
         except DataFailureException as ex:
             return self.error_response(
@@ -49,14 +51,14 @@ class ChannelUnsubscribe(RESTDispatch):
         """Unsubscribe from channel"""
         request_data = json.loads(request.body)
         channel_id = request_data['ChannelID']
-        netid = UserService().get_user()
+        user = UserService().get_user()
+        orig_user = UserService().get_original_user()
 
         subs = []
-        nws = NWS(actas_user=UserService().get_original_user())
         try:
             valid_channel_id(channel_id)
-            subs = nws.get_subscriptions_by_channel_id_and_subscriber_id(
-                channel_id, netid)
+            subs = get_subscriptions_by_channel_id_and_subscriber_id(
+                channel_id, user)
         except DataFailureException as ex:
             return self.error_response(
                 status=404, message="Unable to retrieve subscriptions")
@@ -72,8 +74,8 @@ class ChannelUnsubscribe(RESTDispatch):
         for subscription in subs:
             subscription_id = subscription.subscription_id
             try:
-                nws.delete_subscription(subscription_id)
-                logger.info("DELETE subscription %s" % subscription_id)
+                delete_subscription(subscription_id, act_as=orig_user)
+                logger.info("DELETE subscription {}".format(subscription_id))
             except DataFailureException as ex:
                 logger.warning(ex.msg)
                 failed_deletions.append(subscription_id)
@@ -82,7 +84,7 @@ class ChannelUnsubscribe(RESTDispatch):
         if n_failed > 0:
             return self.error_response(
                 status=500,
-                message="Failed to unsubscribe from %s subscriptions" % (
+                message="Failed to unsubscribe from {} subscriptions".format(
                     n_failed))
 
         return self.json_response({'message': 'Unsubscription successful'})
@@ -102,24 +104,20 @@ class ChannelSearch(RESTDispatch):
             return self.error_response(
                 status=401, message="No user is logged in")
 
-        channel_type = 'uw_student_courseavailable'
-        channels = None
+        person = get_person(subscriber_id)
         channel_id = None
-        msg_no_class_by_sln = 'No class found with SLN %s for %s %s' % (
-            sln, quarter, year)
-        msg_expired_channel = 'The section SLN %s for %s %s has expired.' % (
-            sln, quarter, year)
+        quarter_name = ' '.join([quarter, year])
+        msg_no_class_by_sln = 'No class found with SLN {} for {}'.format(
+            sln, quarter_name)
+        msg_expired_channel = 'The section SLN {} for {} has expired.'.format(
+            sln, quarter_name)
 
-        nws = NWS()
         try:
-            channels = nws.get_channels_by_sln_year_quarter(
-                channel_type, sln, year, quarter)
+            channel = get_channel_by_sln_year_quarter(sln, year, quarter)
         except DataFailureException as ex:
             return self.error_response(status=404, message=msg_no_class_by_sln)
 
-        if channels is not None and len(channels) > 0:
-            channel = channels[0]
-        else:
+        if not channel:
             return self.error_response(status=404, message=msg_no_class_by_sln)
 
         channel_expires = channel.expires
@@ -128,38 +126,37 @@ class ChannelSearch(RESTDispatch):
             return self.error_response(status=404, message=msg_expired_channel)
 
         channel_id = channel.channel_id
-        data = get_course_details_by_channel(channel)
+        data = get_section_details_by_channel(channel)
         data['ChannelID'] = channel_id
         data['SLN'] = sln
 
         if 'add_code_required' in data and data['add_code_required']:
             msg_add_code = (
-                "No notifications are available for this course. %s (SLN: %s) "
+                "No notifications are available for this course. {} (SLN: {}) "
                 "requires an Add Code for registration. Please consult the "
                 "Time Schedule about where to obtain the Add Code required to "
-                "register for this course. " % (
-                    data['course_abbr'], data['section_sln']))
+                "register for this course. ").format(
+                    data['course_abbr'], data['section_sln'])
             return self.error_response(status=404, message=msg_add_code)
 
         if 'faculty_code_required' in data and data['faculty_code_required']:
             msg_faculty_code = (
-                "No notifications are available for this course. %s (SLN: %s) "
+                "No notifications are available for this course. {} (SLN: {}) "
                 "is an independent study course. Please consult the Time "
                 "Schedule about where to obtain the Faculty Code required to "
-                "register for this course. " % (
-                    data['course_abbr'], data['section_sln']))
+                "register for this course. ").format(
+                    data['course_abbr'], data['section_sln'])
             return self.error_response(status=404, message=msg_faculty_code)
 
         # check if user is already subscribed
         subs = []
         try:
-            subs = nws.get_subscriptions_by_channel_id_and_subscriber_id(
+            subs = get_subscriptions_by_channel_id_and_subscriber_id(
                 channel_id, subscriber_id)
         except DataFailureException as ex:
             pass
 
-        verified_endpoints = get_verified_endpoints_by_protocol(subscriber_id)
-
+        verified_endpoints = person.get_verified_endpoints()
         for protocol in ['email', 'sms']:
             if protocol not in verified_endpoints:
                 data['class_unverified_' + protocol] = ' disabled'

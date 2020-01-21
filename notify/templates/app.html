@@ -1,13 +1,12 @@
 {% extends is_mobile|yesno:"base-mobile.html,base-desktop.html" %}
 {% block head_container %}<div class="head main clearfix">{% endblock %}
 {% block content %}
-{% load templatetag_handlebars %}
 <div class="page-heading"><h2>Your Notifications </h2>
 </div>
 <div class="content-container">
 
 
-{% if reg_periods %}
+{% if has_reg_periods %}
     <!-- Loading message  -->
     <div id="subscriptions_loading" class="loading" role="alert">Loading...</div>
     <!-- Replace the following section with the commented out code that follows IF there are no class sections.  -->

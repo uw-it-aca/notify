@@ -5,6 +5,7 @@
         <title>Notify.UW - Mobile</title>
         {% load staticfiles %}
         {% load compress %}
+        <link rel="shortcut icon" href="{% static 'uw/ico/favicon.ico' %}" type="image/x-icon">
         <link rel="apple-touch-icon-precomposed" href="{% static "img/touch-icon-iphone-precomposed.png" %}" />
         <link rel="apple-touch-icon-precomposed" sizes="72x72" href="{% static "img/touch-icon-ipad-precomposed.png" %}" />
         <link rel="apple-touch-icon-precomposed" sizes="114x114" href="{% static "img/touch-icon-iphone-retina-precomposed.png" %}" />
@@ -62,12 +63,7 @@
             {% endblock %}
         <span class="title"><a href="/" title=" " aria-hidden="true"><h1><span class="visuallyhidden">Notify.UW</span></h1></a></span>
 
-        {% if system_message %}
-            <div id="message_container" class="info" role="alert">
-            {{system_message}}
-            </div>
-        {% endif %}
-
+        {% include "persistent_messages.html" %}
         </div>
         <div id="container">
             {% block content %}
@@ -86,12 +82,12 @@
           <script type="text/javascript" src="{% static "libs/jquery-ui-1.9.2.custom/js/jquery-ui-1.9.2.custom.min.js" %}"></script>
 
           {% compress js %}
-            <script type="text/javascript" src="{% static "js/global.js" %}"></script>
-            <script type="text/javascript" src="{% static "js/mobile.js" %}"></script>
             <script type="text/javascript" src="{% static "libs/handlebars.js" %}"></script>
             <script type="text/javascript" src="{% static "libs/jquery.selectboxit.js" %}"></script>
             <script type="text/javascript" src="{% static "libs/jquery.placeholder.min.js" %}"></script>
             <script type="text/javascript" src="{% static "libs/json2.js" %}"></script>
+            <script type="text/javascript" src="{% static "js/global.js" %}"></script>
+            <script type="text/javascript" src="{% static "js/mobile.js" %}"></script>
             {% block extra_js %}{% endblock %}
           {% endcompress %}
     </body>

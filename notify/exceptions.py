@@ -1,6 +1,4 @@
-"""
-Custom exceptions used by Notify.UW
-"""
+from uw_nws.exceptions import InvalidUUID
 
 
 class InvalidUser(Exception):
@@ -8,4 +6,4 @@ class InvalidUser(Exception):
         self.identifier = identifier
 
     def __str__(self):
-        return _("Invalid identifier %s" % self.identifier)
+        return "Invalid identifier {}".format(self.identifier)

@@ -1,143 +1,124 @@
-from django.shortcuts import render
-from django.http import HttpResponseRedirect
-from django.contrib.auth.decorators import login_required
 from django.conf import settings
+from django.views.generic.base import TemplateView
+from django.http import HttpResponseRedirect
+from django.urls import reverse
+from django.utils.decorators import method_decorator
+from django.contrib.auth.decorators import login_required
 from restclients_core.exceptions import DataFailureException
-from notify.decorators import group_required
-from notify.utilities import (
-    get_open_registration_periods, get_person, user_accepted_tos,
-    user_has_valid_endpoints)
+from notify.dao.term import get_open_registration_periods
+from notify.dao.person import get_person
+from notify.dao.channel import get_channel_by_id
 from notify.exceptions import InvalidUser
 from userservice.user import UserService
-from uw_nws import NWS
-import logging
-
-# Get an instance of a logger
-logger = logging.getLogger(__name__)
+from persistent_message.models import Message
+import json
 
 
-def build_view_context(request):
-    user_service = UserService()
-    context = {'is_mobile': request.is_mobile,
-               'override_user': user_service.get_override_user(),
-               'netid': None,
-               'valid_login': True,
-               'support_email': getattr(settings, 'SUPPORT_EMAIL', ''),
-               'ANALYTICS_KEY': getattr(settings, 'GOOGLE_ANALYTICS_KEY', '')}
+class AdminView(TemplateView):
+    def get(self, request, *args, **kwargs):
+        return HttpResponseRedirect('/support')
 
-    if hasattr(settings, 'UI_SYSTEM_MESSAGE'):
-        context['system_message'] = getattr(settings, 'UI_SYSTEM_MESSAGE')
 
-    netid = user_service.get_user()
-    if netid:
-        person = None
-        try:
-            person = get_person(netid)
-        except InvalidUser:
-            context['valid_login'] = False
-            return context
+@method_decorator(login_required, name='dispatch')
+class NotifyView(TemplateView):
+    def get_context_data(self, **kwargs):
+        user_service = UserService()
+        context = {
+            'is_mobile': self.request.user_agent.is_mobile,
+            'override_user': user_service.get_override_user(),
+            'valid_login': False,
+            'netid': None,
+            'user_accepted_tos': False,
+            'support_email': getattr(settings, 'SUPPORT_EMAIL', ''),
+            'ANALYTICS_KEY': getattr(settings, 'GOOGLE_ANALYTICS_KEY', ''),
+            'messages': [],
+            'year': kwargs.get('year'),
+            'quarter': kwargs.get('quarter'),
+            'sln': kwargs.get('sln'),
+        }
 
-        context['user_accepted_tos'] = True
-        if person is None or user_accepted_tos(person) is False:
-            context['user_accepted_tos'] = False
-            # grab path requested for later redirection
-            full_path = request.get_full_path()
+        for message in Message.objects.active_messages():
+            if 'message_level' not in context:
+                context['message_level'] = message.get_level_display().lower()
+            context['messages'].append(message.render())
+
+        netid = user_service.get_user()
+        if netid:
+            person = None
+            try:
+                person = get_person(netid)
+                context['valid_login'] = True
+                context['netid'] = netid
+
+                if person is not None and person.accepted_tos():
+                    context['user_accepted_tos'] = True
+                    context['valid_endpoints'] = json.dumps(
+                        person.has_valid_endpoints())
+
+                reg_periods = get_open_registration_periods()
+                context['has_reg_periods'] = len(reg_periods)
+                context['reg_periods'] = json.dumps(reg_periods)
+
+            except InvalidUser:
+                pass
+
+        return context
+
+    def render_to_response(self, context, **response_kwargs):
+        if not context.get('user_accepted_tos'):
+            full_path = self.request.get_full_path()
             if full_path and full_path != '/':
-                context['full_path'] = full_path
-        context['netid'] = netid
-        context['valid_endpoints'] = user_has_valid_endpoints(person)
+                return HttpResponseRedirect('{}?next={}'.format(
+                    reverse('tos'), full_path))
 
-    return context
-
-
-@login_required
-def home_view(request):
-    context = build_view_context(request)
-    if context.get('user_accepted_tos', False) is False:
-        return redirect_to_terms_of_service(context)
-    context['reg_periods'] = get_open_registration_periods()
-    return render(request, 'app.html', context)
+        return super(NotifyView, self).render_to_response(
+            context, **response_kwargs)
 
 
-@login_required
-def profile_view(request):
-    context = build_view_context(request)
-    if context.get('user_accepted_tos', False) is False:
-        return redirect_to_terms_of_service(context)
-    return render(request, 'profile.html', context)
+class HomeView(NotifyView):
+    template_name = 'app.html'
 
 
-@login_required
-def find_view(request):
-    context = build_view_context(request)
-    if context.get('user_accepted_tos', False) is False:
-        return redirect_to_terms_of_service(context)
-    context['reg_periods'] = get_open_registration_periods()
-    return render(request, 'find.html', context)
+class ProfileView(NotifyView):
+    template_name = 'profile.html'
 
 
-@login_required
-def course_view(request, year, quarter, sln):
-    context = build_view_context(request)
-    if context.get('user_accepted_tos', False) is False:
-        return redirect_to_terms_of_service(context)
-    context['reg_periods'] = get_open_registration_periods()
-    context['year'] = year
-    context['quarter'] = quarter
-    context['sln'] = sln
-    return render(request, 'course.html', context)
+class FindView(NotifyView):
+    template_name = 'find.html'
 
 
-@login_required
-def detail_view(request, channel_id):
-    context = build_view_context(request)
-    if context.get('user_accepted_tos', False) is False:
-        return redirect_to_terms_of_service(context)
-
-    try:
-        channel = NWS().get_channel_by_channel_id(channel_id)
-        context['class_name'] = channel.name
-        context['description'] = channel.description
-    except DataFailureException as ex:
-        context['class_name'] = 'No class found'
-        context['description'] = 'Invalid channel id {0}'.format(channel_id)
-
-    return render(request, 'class_details.html', context)
+class CourseView(NotifyView):
+    template_name = 'course.html'
 
 
-@login_required
-def confirm_view(request):
-    context = build_view_context(request)
-    if context.get('user_accepted_tos', False) is False:
-        return redirect_to_terms_of_service(context)
-    return render(request, 'confirm_subscription.html', context)
+class DetailView(NotifyView):
+    template_name = 'class_details.html'
+
+    def get(self, request, *args, **kwargs):
+        context = self.get_context_data(**kwargs)
+        channel_id = kwargs.get('channel_id')
+        try:
+            channel = get_channel_by_id(channel_id)
+            context['class_name'] = channel.name
+            context['description'] = channel.description
+        except DataFailureException as ex:
+            context['class_name'] = 'No class found'
+            context['description'] = 'Invalid channel ID {}'.format(channel_id)
+        return self.render_to_response(context)
 
 
-@login_required
-def unsubscribe_view(request, channel_id):
-    context = build_view_context(request)
-    if context.get('user_accepted_tos', False) is False:
-        return redirect_to_terms_of_service(context)
-    return render(request, 'confirm_unsubscribe.html', context)
+class ConfirmView(NotifyView):
+    template_name = 'confirm_subscription.html'
 
 
-@login_required
-def tos_view(request):
-    context = build_view_context(request)
-    redirect_path = request.GET.get('next', None)
-    if redirect_path is not None:
-        context['redirect_path'] = redirect_path
-    return render(request, 'terms_of_service.html', context)
+class UnsubscribeView(NotifyView):
+    template_name = 'confirm_unsubscribe.html'
 
 
-@group_required(settings.NOTIFY_ADMIN_GROUP)
-def admin(request):
-    return render(request, 'admin/menu.html', {})
+class ToSView(NotifyView):
+    template_name = 'terms_of_service.html'
 
-
-def redirect_to_terms_of_service(context):
-    tos_path = '/tos/'
-    full_path = context.get('full_path', None)
-    if full_path:
-        tos_path += '?next=' + full_path
-    return HttpResponseRedirect(tos_path)
+    def get(self, request, *args, **kwargs):
+        context = self.get_context_data(**kwargs)
+        context['redirect_path'] = request.GET.get('next')
+        return self.render_to_response(context)

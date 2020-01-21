@@ -1,5 +1,5 @@
-{% load templatetag_handlebars %}
-{% tplhandlebars "profile_box" %}
+{% verbatim %}
+<script id="tpl-profile-box" type="text/x-handlebars-template">
     <span class="id">{{user_id}}</span>
     <span class="edit_link">edit</span>
     <hr/>
@@ -22,8 +22,9 @@
         {{#both sms.isValid sms.isConfirmed}}
         <span class="phone">{{sms.EndpointAddress}}</span>
         {{/both}}
-        
+
     {{else}}
     <span class="phone">Phone #: <b class="none">None</b></span>
     {{/if}}
-{% endtplhandlebars %}
+</script>
+{% endverbatim %}
