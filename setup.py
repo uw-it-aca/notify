@@ -33,7 +33,7 @@ setup(
         'UW-RestClients-NWS>=1.2,<2.0',
         'UW-RestClients-SWS>=2.2.4,<3.0',
         'UW-RestClients-PWS>=2.1,<3.0',
-        'UW-RestClients-KWS>=1.1<2.0',
+        'UW-RestClients-KWS>=1.1,<2.0',
         'UW-RestClients-Django-Utils>=2.1.6,<3.0',
         'Django-Persistent-Message>=0.1.9,<2.0',
         'Django-SupportTools>=3.4,<4.0',
