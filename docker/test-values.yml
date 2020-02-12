@@ -1,7 +1,6 @@
 ingress:
   enabled: true
-  annotations:
-    kubernetes.io/ingress.class: nginx
+  type: nginx
   tls:
     notify-test:
       secretName: notify-test.uw.edu
@@ -11,11 +10,11 @@ ingress:
     notify-test:
       host: notify-test.uw.edu
       paths:
-        - "/"
+        - '/'
     notify-test-aca-aws:
       host: notify-test.aca-aws.s.uw.edu
       paths:
-        - "/"
+        - '/'
 database:
   engine: postgres
   name: notify
@@ -25,10 +24,10 @@ externalService:
   enabled: true
   name: notify-db-test-service
   type: ClusterIP
-  serviceAddress:
+  serviceAddress: 172.18.1.14
   servicePort: 5432
 repo: notify
-instance: test
+instance: dev
 replicaCount: 2
 minReplicas: 2
 maxReplicas: 6
@@ -51,7 +50,7 @@ cronjob:
     - name: unsubscribe-registered
       schedule: '55 8-17 * * 1-5'
       command: '["bash"]'
-      args: '["-c", "(cd /app && source ./bin/activate && ./bin/python manage.py unsubscribe_registered)"]'
+      args: '["-c", "(cd /app && source ./bin/activate && ./bin/python manage.py registration_consumer)"]'
 certs:
   mounted: true
   certPath: /certs/notify-test.uw.edu-uwca.cert
@@ -59,7 +58,7 @@ certs:
   secretName: notify-test-uwca-certs
 environmentVariables:
   - name: ENV
-    value: dev
+    value: test
   - name: CERT_PATH
     value: /certs/notify-test.uw.edu-uwca.cert
   - name: KEY_PATH

@@ -3,32 +3,32 @@ language: python
 python:
 - '3.6'
 services:
-  - docker
+- docker
 os:
-  - linux
+- linux
 env:
   global:
-    - RELEASE_NAME="notify"
-    - DJANGO_APP="notify"
-    - COMMIT_HASH="$(git rev-parse --short=7 HEAD)"
-    - IMAGE_TAG="${RELEASE_NAME}:${COMMIT_HASH}"
-    - DEPLOY_SCRIPT_BASE=https://raw.githubusercontent.com/uw-it-aca/gcp-app-deploy/master
-
+  - RELEASE_NAME="notify"
+  - DJANGO_APP="notify"
+  - COMMIT_HASH="$(git rev-parse --short=7 HEAD)"
+  - IMAGE_TAG="${RELEASE_NAME}:${COMMIT_HASH}"
+  - DEPLOY_SCRIPT_BASE=https://raw.githubusercontent.com/uw-it-aca/gcp-app-deploy/master
+  - secure: ujy9hhHbfEEM6g0yTh7vH6qf9xlkMnLndbPfUK+QGV7L+mojto0udx5bdqu2FzjPLmJeuuQLJp1OPfwG6pJ+Ump+BVSl3XmvWfgDqwBDGcV14JEF7sEhPotiQpsDByhXhQIhRwll7tAJAqshCZK9cUyBy/KBh4kTyyIyE8GsgpA3YlfnCBkUFpfImLNIbZodQtVXUM74Xbuhz4LaUvgNybPvvlD+ZHIupalk2E5EBKto5GqsrLV/KlpqpnfZ2prdUNzrpRh2MTaYwZxCWqxSY2W4VAp0RbBmBmnfn8nIZGoXj9uXnz6E1B5AbrP+lact4qqtAOFSEbGu1dGboTka+a9TWTRGHczHdF2EUXNHYOLSHXWjuqrDJ1xYiojwHHFKpeY37RmHhJA+EtaiYKz/UBNuBZ91pSqNPYKOm15bC+HCw5X7UDZJEAfkapikz/YEfNW6gSp3yqNfatVPavOy1c/XG8Cmf98CVFu0ww5MCGGEaoBlpY1NQVJw6WmWWW48IOIwkGWOVvylWqbT+PtmBN7fiiSqmGyE9OoWeza4x68PqCh/EvakO6JrnSG5SsiECDMprPiQ9RFC9Xrllyktzc07AZdgiG76WgHAynqRYI/EOdOjG/YZV1pzg0h6mSI5Do7OwLIpCn1F6t4004LEexKcseBlblCUZHNTAiZdPy8=
+  - secure: 0bzlMbOBOCy/4tuhEqfYHCNUVv63doJPu9rjH99i5IOl8O1e802+DjoAeOnIkdRHXoyk2QFN0Wc/rAmdY1cGekbQ2XHclowjAyL4p35bJh4AQ8cYwhPjc06f6j06V8t8oq1A9+JrYEnsWZCg9GIx22QAtulJStSl/Ob5u4rzriJtLx/AQtd4XtWptBV5Zs7Mgo4rgYERdHDivEIoEaVx96GlSI5HrY4llG1J7OyhVMo8z2iMuGpY12RiF3o1n2PJSGEJ/K4yuFzRZ28cBV0p23B3DEDh5WN71Kuk0WENGtuRjsfSg2EIt3wZHzEQ/dOGxmy4POZn9tm+i+SQlb6XiD8b30fIt9Pz/7vME863VoU7/bvF6bW4xoXCV1WoB5o+JINDk/OCp5Xum4QWtIu570A1gGFOxejeouFZByQENOcVmnoIc4KacUCDRCFg37G4WYG5dpIQj1nDylQwgRocY7lsmpQZ+xsbA9YJ1Ify9SuePLUgwlrosoP87QK1cm+CKpPQx+XARRA8vPwzyTXo3+D2eTEAfQeQBX8c1j8wSpXe6tYuBFSx0dJs/OVxmYsWSmQvwGq4zrjIXN1vQQ84Wr0QD1w6iHLgdk3cFGPsT1EbiJ4d+DpzpYOrYwubKI7U0GxZuHRnTkZ8qh6ZSxZK+hLEBeUPdO2/JR45jb3hMQk=
+  - secure: cKRnJG9gO9a74TKmyxB5hCkiadoH6Dk9G13tTRTe78XB9mlEdsVFvI+tHduV827/qm9Ozw28Pfus2kLNuIHwAxZP3o748Q2yVBxkshlwpAZodzaQvgV7Z9/Iw9acBCVgR88A8Qn8jqcwFI1P+MC6A9K7XTSKDcdcsDU8DC9nzHSH/t0zpM+90RGwRw1Y6fmO8SNxcZ+a4Eog3/6RHt+F3JdXtVOHZgNxRGqof72B5k8GYndx7e7tneMmoJoXqMc/rGgW7H/lLLXsjqObTbiVOjAdC22Tv33Kx5DJIm/cZDhG9eKkOOccjHTnEfnOyz3RYDokJMuEUPQG9j2aPacPG0YR5U0Zbo22XL9sxnZapGSkilx3hFuvo8R5pb1zdttuhLCIXow8anGvPhp42r5a6Rj1ssS0k+eYpR5MYNeMO7hgznpdvLZy4Pjms7YT3L+gXBtU49S1X6Uaplh0ZV1OgYiAvsGNiK+KBa9slet1VD/xFZyb37tivSvaZ0CldJpVNNn9hwQAXPZF7lm5iFk/xmonaL9XBugEijJhvms5vzN0HdyfE7Q8S6Y6oxRKHQMcJNn+BDDwHu7x9Hdc3pWVcxQkIwMgICCWJ0WhGkaG45IlwS5Fjx6yN62bU9jRIhqhrc5KUNj0IwHJvTq2VbGyx062QQhz4Kr8YK8eyqccfmI=
 install:
-  - docker build -t "$IMAGE_TAG" .
+- docker build -t "$IMAGE_TAG" .
 before_script:
-  - pip install coverage
-  - pip install coveralls
+- pip install coverage
+- pip install coveralls
 script:
-  - docker run -u root -it -v /tmp:/coverage -e DJANGO_APP="$DJANGO_APP" -e "ENV=localdev" -e "AUTH=SAML_MOCK" "$IMAGE_TAG" bash -c ". ./travis-ci/test.sh"
+- docker run -u root -it -v /tmp:/coverage -e DJANGO_APP="$DJANGO_APP" -e "ENV=localdev"
+  -e "AUTH=SAML_MOCK" "$IMAGE_TAG" bash -c ". ./travis-ci/test.sh"
 after_success:
-  - cp /tmp/.coverage.* .
-  - coverage combine
-  - coveralls
-    #- if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [[ "$TRAVIS_BRANCH" =~ ^(develop|master)$ ]]; then
-    #curl -Ls ${DEPLOY_SCRIPT_BASE}/travis-ci/deploy.sh | bash;
-    #fi
+- cp /tmp/.coverage.* .
+- coverage combine
+- coveralls
 cache:
   directories:
-    - "$HOME/helm"
-    - "$HOME/kubeval"
+  - "$HOME/helm"
+  - "$HOME/kubeval"

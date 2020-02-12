@@ -1,4 +1,6 @@
 from .base_settings import *
+import os
+
 
 ALLOWED_HOSTS = ['*']
 
