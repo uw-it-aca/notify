@@ -66,10 +66,8 @@ class NotifyView(TemplateView):
 
     def render_to_response(self, context, **response_kwargs):
         if not context.get('user_accepted_tos'):
-            full_path = self.request.get_full_path()
-            if full_path and full_path != '/':
-                return HttpResponseRedirect('{}?next={}'.format(
-                    reverse('tos'), full_path))
+            return HttpResponseRedirect('{}?next={}'.format(
+                reverse('tos'), self.request.get_full_path()))
 
         return super(NotifyView, self).render_to_response(
             context, **response_kwargs)
@@ -121,6 +119,4 @@ class ToSView(NotifyView):
     def get(self, request, *args, **kwargs):
         context = self.get_context_data(**kwargs)
         context['redirect_path'] = request.GET.get('next')
-
-        return super(NotifyView, self).render_to_response(
-            context, **response_kwargs)
+        return super(NotifyView, self).render_to_response(context)
