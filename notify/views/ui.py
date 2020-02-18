@@ -8,7 +8,7 @@ from restclients_core.exceptions import DataFailureException
 from notify.dao.term import get_open_registration_periods
 from notify.dao.person import get_person
 from notify.dao.channel import get_channel_by_id
-from notify.exceptions import InvalidUser
+from notify.exceptions import InvalidUser, InvalidUUID
 from userservice.user import UserService
 from persistent_message.models import Message
 import json
@@ -55,9 +55,9 @@ class NotifyView(TemplateView):
                     context['valid_endpoints'] = json.dumps(
                         person.has_valid_endpoints())
 
-                reg_periods = get_open_registration_periods()
-                context['has_reg_periods'] = len(reg_periods)
-                context['reg_periods'] = json.dumps(reg_periods)
+                    reg_periods = get_open_registration_periods()
+                    context['has_reg_periods'] = len(reg_periods)
+                    context['reg_periods'] = json.dumps(reg_periods)
 
             except InvalidUser:
                 pass
@@ -66,10 +66,8 @@ class NotifyView(TemplateView):
 
     def render_to_response(self, context, **response_kwargs):
         if not context.get('user_accepted_tos'):
-            full_path = self.request.get_full_path()
-            if full_path and full_path != '/':
-                return HttpResponseRedirect('{}?next={}'.format(
-                    reverse('tos'), full_path))
+            return HttpResponseRedirect('{}?next={}'.format(
+                reverse('tos'), self.request.get_full_path()))
 
         return super(NotifyView, self).render_to_response(
             context, **response_kwargs)
@@ -101,7 +99,7 @@ class DetailView(NotifyView):
             channel = get_channel_by_id(channel_id)
             context['class_name'] = channel.name
             context['description'] = channel.description
-        except DataFailureException as ex:
+        except (InvalidUUID, DataFailureException) as ex:
             context['class_name'] = 'No class found'
             context['description'] = 'Invalid channel ID {}'.format(channel_id)
         return self.render_to_response(context)
@@ -121,4 +119,4 @@ class ToSView(NotifyView):
     def get(self, request, *args, **kwargs):
         context = self.get_context_data(**kwargs)
         context['redirect_path'] = request.GET.get('next')
-        return self.render_to_response(context)
+        return super(NotifyView, self).render_to_response(context)
