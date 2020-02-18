@@ -8,7 +8,7 @@ from restclients_core.exceptions import DataFailureException
 from notify.dao.term import get_open_registration_periods
 from notify.dao.person import get_person
 from notify.dao.channel import get_channel_by_id
-from notify.exceptions import InvalidUser
+from notify.exceptions import InvalidUser, InvalidUUID
 from userservice.user import UserService
 from persistent_message.models import Message
 import json
@@ -99,7 +99,7 @@ class DetailView(NotifyView):
             channel = get_channel_by_id(channel_id)
             context['class_name'] = channel.name
             context['description'] = channel.description
-        except DataFailureException as ex:
+        except (InvalidUUID, DataFailureException) as ex:
             context['class_name'] = 'No class found'
             context['description'] = 'Invalid channel ID {}'.format(channel_id)
         return self.render_to_response(context)
