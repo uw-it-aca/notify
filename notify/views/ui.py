@@ -55,9 +55,9 @@ class NotifyView(TemplateView):
                     context['valid_endpoints'] = json.dumps(
                         person.has_valid_endpoints())
 
-                reg_periods = get_open_registration_periods()
-                context['has_reg_periods'] = len(reg_periods)
-                context['reg_periods'] = json.dumps(reg_periods)
+                    reg_periods = get_open_registration_periods()
+                    context['has_reg_periods'] = len(reg_periods)
+                    context['reg_periods'] = json.dumps(reg_periods)
 
             except InvalidUser:
                 pass
@@ -121,4 +121,6 @@ class ToSView(NotifyView):
     def get(self, request, *args, **kwargs):
         context = self.get_context_data(**kwargs)
         context['redirect_path'] = request.GET.get('next')
-        return self.render_to_response(context)
+
+        return super(NotifyView, self).render_to_response(
+            context, **response_kwargs)
