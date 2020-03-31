@@ -156,7 +156,8 @@ class ChannelSearch(RESTDispatch):
         except DataFailureException as ex:
             pass
 
-        verified_endpoints = person.get_verified_endpoints()
+        verified_endpoints = person.get_verified_endpoints() if (
+            person is not None) else []
         for protocol in ['email', 'sms']:
             if protocol not in verified_endpoints:
                 data['class_unverified_' + protocol] = ' disabled'
