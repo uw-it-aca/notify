@@ -30,7 +30,7 @@ setup(
         'django-prometheus>=1.0,<2.0',
         'psycopg2<3.0',
         'python-dateutil',
-        'UW-Django-SAML2>=1.4.1,<2.0',
+        'UW-Django-SAML2>=1.5.1,<2.0',
         'UW-RestClients-NWS>=1.2,<2.0',
         'UW-RestClients-SWS>=2.2.4,<3.0',
         'UW-RestClients-PWS>=2.1,<3.0',
