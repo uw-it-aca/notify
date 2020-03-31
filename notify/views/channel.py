@@ -13,7 +13,6 @@ from notify.dao.channel import get_channel_by_sln_year_quarter
 from notify.dao.person import get_person
 from notify.dao.subscription import (
     get_subscriptions_by_channel_id_and_subscriber_id, delete_subscription)
-from notify.dao.endpoint import get_endpoints_by_subscriber_id
 from userservice.user import UserService
 from datetime import datetime
 import logging
@@ -105,6 +104,7 @@ class ChannelSearch(RESTDispatch):
             return self.error_response(
                 status=401, message="No user is logged in")
 
+        person = get_person(subscriber_id)
         channel_id = None
         quarter_name = ' '.join([quarter, year])
         msg_no_class_by_sln = 'No class found with SLN {} for {}'.format(
@@ -150,18 +150,17 @@ class ChannelSearch(RESTDispatch):
 
         # check if user is already subscribed
         subs = []
-        endpoints = []
         try:
             subs = get_subscriptions_by_channel_id_and_subscriber_id(
                 channel_id, subscriber_id)
-            endpoints = get_endpoints_by_subscriber_id(subscriber_id)
         except DataFailureException as ex:
             pass
 
-        for endpoint in endpoints:
-            if not endpoint.is_verified():
-                param = 'class_unverified_{}'.format(endpoint.protocol.lower())
-                data[param] = ' disabled'
+        verified_endpoints = person.get_verified_endpoints() if (
+            person is not None) else []
+        for protocol in ['email', 'sms']:
+            if protocol not in verified_endpoints:
+                data['class_unverified_' + protocol] = ' disabled'
 
         for subscription in subs:
             protocol = subscription.endpoint.protocol.lower()

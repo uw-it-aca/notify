@@ -34,8 +34,8 @@ class SubscriptionSearch(RESTDispatch):
                 status=400, message="No subscriber ID provided")
 
         try:
+            person = get_person(subscriber_id)
             subscriptions = get_subscriptions_by_subscriber_id(subscriber_id)
-            endpoints = get_endpoints_by_subscriber_id(subscriber_id)
         except DataFailureException as ex:
             logger.warning(ex.msg)
             return self.error_response(
@@ -109,7 +109,7 @@ class SubscriptionSearch(RESTDispatch):
 
         data["MissingEndpoints"] = ["sms", "email"]
         data["Endpoints"] = {}
-        for endpoint in endpoints:
+        for endpoint in (person.endpoints if person is not None else []):
             protocol = endpoint.protocol.lower()
             if protocol in data["MissingEndpoints"]:
                 data["MissingEndpoints"].remove(protocol)
