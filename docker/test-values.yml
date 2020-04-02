@@ -3,16 +3,12 @@ ingress:
   type: nginx
   tls:
     notify-test:
-      secretName: notify-test.uw.edu
+      secretName: notify-test-tls
       hosts:
-        - notify-test.uw.edu
+        - test.notify.uw.edu
   hosts:
     notify-test:
-      host: notify-test.uw.edu
-      paths:
-        - '/'
-    notify-test-aca-aws:
-      host: notify-test.aca-aws.s.uw.edu
+      host: test.notify.uw.edu
       paths:
         - '/'
 database:
@@ -53,16 +49,12 @@ cronjob:
       args: '["-c", "(cd /app && source ./bin/activate && ./bin/python manage.py registration_consumer)"]'
 certs:
   mounted: true
-  certPath: /certs/notify-test.uw.edu-uwca.cert
-  keyPath: /certs/notify-test.uw.edu-uwca.key
+  certPath: /certs/test.notify.uw.edu-uwca.cert
+  keyPath: /certs/test.notify.uw.edu-uwca.key
   secretName: notify-test-uwca-certs
 environmentVariables:
   - name: ENV
     value: test
-  - name: CERT_PATH
-    value: /certs/notify-test.uw.edu-uwca.cert
-  - name: KEY_PATH
-    value: /certs/notify-test.uw.edu-uwca.key
   - name: GWS_ENV
     value: PROD
   - name: PWS_ENV
@@ -74,9 +66,9 @@ environmentVariables:
   - name: AUTH
     value: SAML
   - name: SAML_ENTITY_ID
-    value: https://notify-test.s.uw.edu/shibboleth
+    value: https://test.notify.s.uw.edu/saml2
   - name: CLUSTER_CNAME
-    value: notify-test.uw.edu
+    value: test.notify.uw.edu
   - name: SAML_USER_ATTRIBUTE
     value: eppn
   - name: SP_CERT
