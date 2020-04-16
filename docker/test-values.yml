@@ -85,14 +85,14 @@ environmentVariablesSecrets:
     secretName: notify-test-django-secret
     secretKey: django-secret
   enrollmentQueueArn:
-    name: ENROLLMENT_QUEUE_ARN
+    name: SQS_ENROLLMENT_QUEUE_ARN
     secretName: notify-test-enrollment-queue-arn
     secretKey: enrollment-queue-arn
   enrollmentKeyId:
-    name: ENROLLMENT_KEY_ID
+    name: SQS_ENROLLMENT_KEY_ID
     secretName: notify-test-enrollment-key-id
     secretKey: enrollment-key-id
   enrollmentKey:
-    name: ENROLLMENT_KEY
+    name: SQS_ENROLLMENT_KEY
     secretName: notify-test-enrollment-key
     secretKey: enrollment-key
