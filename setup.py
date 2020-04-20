@@ -27,7 +27,6 @@ setup(
         'django-user-agents',
         'django-userservice>=3.1.2',
         'django-aws-message>=1.5.1',
-        'django-prometheus>=1.0,<2.0',
         'psycopg2<3.0',
         'python-dateutil',
         'UW-Django-SAML2>=1.5.1,<2.0',

@@ -11,7 +11,6 @@ CACHES = {
 }
 
 INSTALLED_APPS += [
-    'django_prometheus',
     'django_user_agents',
     'userservice',
     'supporttools',
@@ -20,12 +19,10 @@ INSTALLED_APPS += [
     'notify.apps.NotifyUIConfig',
 ]
 
-MIDDLEWARE.insert(0, 'django_prometheus.middleware.PrometheusBeforeMiddleware')
-MIDDLEWARE.extend([
+MIDDLEWARE += [
     'userservice.user.UserServiceMiddleware',
     'django_user_agents.middleware.UserAgentMiddleware',
-    'django_prometheus.middleware.PrometheusAfterMiddleware',
-])
+]
 
 TEMPLATES[0]['OPTIONS']['context_processors'].extend([
     'supporttools.context_processors.supportools_globals',
@@ -38,7 +35,6 @@ if os.getenv('ENV') == 'localdev':
 else:
     NOTIFY_ADMIN_GROUP = os.getenv('ADMIN_GROUP', '')
     RESTCLIENTS_DAO_CACHE_CLASS = 'notify.cache_implementation.UICache'
-    DATABASES['default']['ENGINE'] = 'django_prometheus.db.backends.postgresql'
     if os.getenv('ENV') == 'prod':
         APP_SERVER_BASE = 'https://notify.uw.edu'
 
