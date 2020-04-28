@@ -1,7 +1,7 @@
 from aws_message.processor import MessageBodyProcessor, ProcessorException
 from aws_message.crypto import aes128cbc, Signature, CryptoException
 from restclients_core.exceptions import DataFailureException
-from notify.cache_implementation import UICache
+from notify.cache_implementation import NotifyMemcachedCache
 from uw_kws import KWS
 from logging import getLogger
 from base64 import b64decode
@@ -98,7 +98,7 @@ class NotifyEventProcessor(MessageBodyProcessor):
                     if not re.match(r'^\s*{.+}\s*$', body):
                         raise CryptoException()
                 except (ValueError, CryptoException):
-                    UICache().delete_cached_kws_current_key(
+                    NotifyMemcachedCache().delete_cached_kws_current_key(
                         header['MessageType'])
                     key = kws.get_current_key(header['MessageType'])
 

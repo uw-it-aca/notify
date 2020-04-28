@@ -34,7 +34,7 @@ if os.getenv('ENV') == 'localdev':
     RESTCLIENTS_DAO_CACHE_CLASS = None
 else:
     NOTIFY_ADMIN_GROUP = os.getenv('ADMIN_GROUP', '')
-    RESTCLIENTS_DAO_CACHE_CLASS = 'notify.cache_implementation.UICache'
+    RESTCLIENTS_DAO_CACHE_CLASS = 'notify.cache_implementation.NotifyMemcachedCache'
     if os.getenv('ENV') == 'prod':
         APP_SERVER_BASE = 'https://notify.uw.edu'
 

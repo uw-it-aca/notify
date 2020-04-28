@@ -2,40 +2,38 @@ ingress:
   enabled: true
   type: nginx
   tls:
-    notify-test:
-      secretName: notify-test-tls
+    notify:
+      secretName: test.notify.uw.edu-cert
       hosts:
         - test.notify.uw.edu
   hosts:
-    notify-test:
+    notify:
       host: test.notify.uw.edu
       paths:
-        - '/'
-database:
-  engine: postgres
-  name: notify
-  hostname: notify-db-test-service
-  secretName: notify-db-test
+        - "/"
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt
 externalService:
   enabled: true
-  name: notify-db-test-service
+  name: notify-db-service
   type: ClusterIP
-  serviceAddress: 172.18.2.3
+  serviceAddress: 172.18.1.34
   servicePort: 5432
+database:
+  engine: postgres
+  name: notify-test
+  hostname: notify-db-service
+  secretName: test.notify.uw.edu-db
 repo: notify
-instance: dev
-replicaCount: 2
-minReplicas: 2
-maxReplicas: 6
-targetAverageUtilization: 90
-resources:
-  limits:
-    cpu: 600m
-  requests:
-    cpu: 200m
+instance: test
 image:
   repository: registry.hub.docker.com/acait/notify
   tag: IMAGE_TAG
+memcached:
+  enabled: true
+  replicaCount: 2
+  updateStrategy:
+    type: RollingUpdate
 metrics:
   enabled: true
   serviceMonitor:
@@ -51,7 +49,7 @@ certs:
   mounted: true
   certPath: /certs/test.notify.uw.edu-uwca.cert
   keyPath: /certs/test.notify.uw.edu-uwca.key
-  secretName: notify-test-uwca-certs
+  secretName: test.notify.s.uw.edu-uwca-certs
 environmentVariables:
   - name: ENV
     value: test
@@ -77,22 +75,24 @@ environmentVariables:
     value: 'MIID/TCCAuWgAwIBAgIJAMoYJbDt9lKKMA0GCSqGSIb3DQEBBQUAMFwxCzAJBgNVBAYTAlVTMQswCQYDVQQIEwJXQTEhMB8GA1UEChMYVW5pdmVyc2l0eSBvZiBXYXNoaW5ndG9uMR0wGwYDVQQDExRpZHAudS53YXNoaW5ndG9uLmVkdTAeFw0xMTA0MjYxOTEwMzlaFw0yMTA0MjMxOTEwMzlaMFwxCzAJBgNVBAYTAlVTMQswCQYDVQQIEwJXQTEhMB8GA1UEChMYVW5pdmVyc2l0eSBvZiBXYXNoaW5ndG9uMR0wGwYDVQQDExRpZHAudS53YXNoaW5ndG9uLmVkdTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAMH9G8m68L0Hf9bmf4/7c+ERxgDQrbq50NfSi2YTQWc1veUIPYbZy1agSNuc4dwn3RtC0uOQbdNTYUAiVTcYgaYceJVB7syWf9QyGIrglZPMu98c5hWb7vqwvs6d3s2Sm7tBib2v6xQDDiZ4KJxpdAvsoPQlmGdgpFfmAsiYrnYFXLTHgbgCc/YhV8lubTakUdI3bMYWfh9dkj+DVGUmt2gLtQUzbuH8EU44vnXgrQYSXNQkmRcyoE3rj4Rhhbu/p5D3P+nuOukLYFOLRaNeiiGyTu3P7gtc/dy/UjUrf+pH75UUU7Lb369dGEfZwvVtITXsdyp0pBfun4CP808H9N0CAwEAAaOBwTCBvjAdBgNVHQ4EFgQUP5smx3ZYKODMkDglkTbduvLcGYAwgY4GA1UdIwSBhjCBg4AUP5smx3ZYKODMkDglkTbduvLcGYChYKReMFwxCzAJBgNVBAYTAlVTMQswCQYDVQQIEwJXQTEhMB8GA1UEChMYVW5pdmVyc2l0eSBvZiBXYXNoaW5ndG9uMR0wGwYDVQQDExRpZHAudS53YXNoaW5ndG9uLmVkdYIJAMoYJbDt9lKKMAwGA1UdEwQFMAMBAf8wDQYJKoZIhvcNAQEFBQADggEBAEo7c2CNHEI+Fvz5DhwumU+WHXqwSOK47MxXwNJVpFQ9GPR2ZGDAq6hzLJLAVWcY4kB3ECDkRtysAWSFHm1roOU7xsU9f0C17QokoXfLNC0d7KoivPM6ctl8aRftU5moyFJkkJX3qSExXrl053uxTOQVPms4ypkYv1A/FBZWgSC8eNoYnBnv1Mhy4m8bfeEN7qT9rFoxh4cVjMH1Ykq7JWyFXLEB4ifzH4KHyplt5Ryv61eh6J1YPFa2RurVTyGpHJZeOLUIBvJu15GzcexuDDXe0kg7sHD6PbK0xzEF/QeXP/hXzMxR9kQXB/IR/b2k4ien+EM3eY/ueBcTZ95dgVM='
   - name: ADMIN_GROUP
     value: 'u_acadev_notifydev-support'
-  - name: GOOGLE_ANALYTICS_KEY
-    value: ''
 environmentVariablesSecrets:
   djangoSecret:
     name: DJANGO_SECRET
-    secretName: notify-test-django-secret
+    secretName: test.notify.uw.edu-django-secret-key
     secretKey: django-secret
   enrollmentQueueArn:
     name: SQS_ENROLLMENT_QUEUE_ARN
-    secretName: notify-test-enrollment-queue-arn
-    secretKey: enrollment-queue-arn
+    secretName: test.notify.uw.edu-sqs-enrollment
+    secretKey: sqs-queue-arn
   enrollmentKeyId:
     name: SQS_ENROLLMENT_KEY_ID
-    secretName: notify-test-enrollment-key-id
-    secretKey: enrollment-key-id
+    secretName: test.notify.uw.edu-sqs-enrollment
+    secretKey: sqs-key-id
   enrollmentKey:
     name: SQS_ENROLLMENT_KEY
-    secretName: notify-test-enrollment-key
-    secretKey: enrollment-key
+    secretName: test.notify.uw.edu-sqs-enrollment
+    secretKey: sqs-key
+  googleAnalyticsKey:
+    name: GOOGLE_ANALYTICS_KEY
+    secretName: test.notify.uw.edu-google-analytics-key
+    secretKey: google-analytics-key
