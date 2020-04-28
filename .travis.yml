@@ -18,7 +18,7 @@ env:
   - secure: cKRnJG9gO9a74TKmyxB5hCkiadoH6Dk9G13tTRTe78XB9mlEdsVFvI+tHduV827/qm9Ozw28Pfus2kLNuIHwAxZP3o748Q2yVBxkshlwpAZodzaQvgV7Z9/Iw9acBCVgR88A8Qn8jqcwFI1P+MC6A9K7XTSKDcdcsDU8DC9nzHSH/t0zpM+90RGwRw1Y6fmO8SNxcZ+a4Eog3/6RHt+F3JdXtVOHZgNxRGqof72B5k8GYndx7e7tneMmoJoXqMc/rGgW7H/lLLXsjqObTbiVOjAdC22Tv33Kx5DJIm/cZDhG9eKkOOccjHTnEfnOyz3RYDokJMuEUPQG9j2aPacPG0YR5U0Zbo22XL9sxnZapGSkilx3hFuvo8R5pb1zdttuhLCIXow8anGvPhp42r5a6Rj1ssS0k+eYpR5MYNeMO7hgznpdvLZy4Pjms7YT3L+gXBtU49S1X6Uaplh0ZV1OgYiAvsGNiK+KBa9slet1VD/xFZyb37tivSvaZ0CldJpVNNn9hwQAXPZF7lm5iFk/xmonaL9XBugEijJhvms5vzN0HdyfE7Q8S6Y6oxRKHQMcJNn+BDDwHu7x9Hdc3pWVcxQkIwMgICCWJ0WhGkaG45IlwS5Fjx6yN62bU9jRIhqhrc5KUNj0IwHJvTq2VbGyx062QQhz4Kr8YK8eyqccfmI=
 install:
 - docker build --target notify-container -t "$IMAGE_TAG" .
-- docker build -t "$IMAGE_TAG" .
+- docker build -t "${IMAGE_TAG}-test" .
 before_script:
 - pip install coverage
 - pip install coveralls
