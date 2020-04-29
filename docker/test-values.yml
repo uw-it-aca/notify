@@ -26,6 +26,15 @@ database:
   secretName: test.notify.uw.edu-db
 repo: notify
 instance: test
+replicaCount: 2
+minReplicas: 2
+maxReplicas: 4
+targetAverageUtilization: 90
+resources:
+  limits:
+    cpu: 600m
+  requests:
+    cpu: 200m
 image:
   repository: registry.hub.docker.com/acait/notify
   tag: IMAGE_TAG
