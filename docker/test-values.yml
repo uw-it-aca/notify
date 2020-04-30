@@ -1,6 +1,5 @@
 ingress:
   enabled: true
-  type: nginx
   tls:
     notify:
       secretName: test.notify.uw.edu-cert
@@ -64,7 +63,7 @@ environmentVariables:
   - name: AUTH
     value: SAML
   - name: SAML_ENTITY_ID
-    value: https://test.notify.s.uw.edu/saml2
+    value: https://test.notify.uw.edu/saml2
   - name: CLUSTER_CNAME
     value: test.notify.uw.edu
   - name: SAML_USER_ATTRIBUTE
