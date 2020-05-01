@@ -29,7 +29,7 @@ TEMPLATES[0]['OPTIONS']['context_processors'].extend([
     'supporttools.context_processors.supportools_globals',
 ])
 
-COMPRESS_OFFLINE = True
+COMPRESS_OFFLINE = False
 COMPRESS_ROOT = '/static/'
 
 STATICFILES_FINDERS += (
