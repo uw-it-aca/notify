@@ -3,13 +3,6 @@ import os
 
 ALLOWED_HOSTS = ['*']
 
-CACHES = {
-    'default' : {
-        'BACKEND' : 'django.core.cache.backends.db.DatabaseCache',
-        'LOCATION' : 'notify_sessions'
-    }
-}
-
 INSTALLED_APPS += [
     'compressor',
     'django_user_agents',
