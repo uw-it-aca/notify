@@ -12,7 +12,7 @@ RUN . /app/bin/activate && pip install -r requirements.txt
 ADD --chown=acait:acait . /app/
 ADD --chown=acait:acait docker/ project/
 
-RUN . /app/bin/activate && python manage.py collectstatic
+RUN . /app/bin/activate && python manage.py collectstatic --noinput
 
 FROM acait/django-test-container:1.0.26 as app-test-container
 

@@ -24,6 +24,7 @@ setup(
     include_package_data=True,
     install_requires=[
         'Django>=2.0.13,<2.1',
+        'django-compressor',
         'django-user-agents',
         'django-userservice>=3.1.2',
         'django-aws-message>=1.5.1',

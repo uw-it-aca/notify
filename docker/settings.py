@@ -11,6 +11,7 @@ CACHES = {
 }
 
 INSTALLED_APPS += [
+    'compressor',
     'django_user_agents',
     'userservice',
     'supporttools',
@@ -27,6 +28,28 @@ MIDDLEWARE += [
 TEMPLATES[0]['OPTIONS']['context_processors'].extend([
     'supporttools.context_processors.supportools_globals',
 ])
+
+COMPRESS_OFFLINE = False
+COMPRESS_ROOT = '/static/'
+
+STATICFILES_FINDERS += (
+    'compressor.finders.CompressorFinder',
+)
+
+COMPRESS_PRECOMPILERS = (
+    ('text/less', 'lessc {infile} {outfile}'),
+    ('text/x-sass', 'pyscss {infile} > {outfile}'),
+    ('text/x-scss', 'pyscss {infile} > {outfile}'),
+)
+
+COMPRESS_CSS_FILTERS = [
+    'compressor.filters.css_default.CssAbsoluteFilter',
+    'compressor.filters.cssmin.CSSMinFilter'
+]
+
+COMPRESS_JS_FILTERS = [
+    'compressor.filters.jsmin.JSMinFilter',
+]
 
 if os.getenv('ENV') == 'localdev':
     DEBUG = True
