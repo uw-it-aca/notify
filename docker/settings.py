@@ -22,7 +22,6 @@ TEMPLATES[0]['OPTIONS']['context_processors'].extend([
     'supporttools.context_processors.supportools_globals',
 ])
 
-COMPRESS_OFFLINE = False
 COMPRESS_ROOT = '/static/'
 
 STATICFILES_FINDERS += (
@@ -43,6 +42,11 @@ COMPRESS_CSS_FILTERS = [
 COMPRESS_JS_FILTERS = [
     'compressor.filters.jsmin.JSMinFilter',
 ]
+
+COMPRESS_OFFLINE = True
+COMPRESS_OFFLINE_CONTEXT = {
+    'wrapper_template': 'persistent_message/manage_wrapper.html',
+}
 
 if os.getenv('ENV') == 'localdev':
     DEBUG = True
