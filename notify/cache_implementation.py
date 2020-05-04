@@ -1,6 +1,5 @@
 from rc_django.cache_implementation import TimedCache
 from rc_django.cache_implementation.memcache import MemcachedCache
-from rc_django.models import CacheEntryTimed
 from uw_kws import ENCRYPTION_KEY_URL, ENCRYPTION_CURRENT_KEY_URL
 import re
 
