@@ -52,7 +52,7 @@ certs:
 environmentVariables:
   - name: ENV
     value: prod
-  - name: GWS_ENV
+  - name: KWS_ENV
     value: PROD
   - name: PWS_ENV
     value: PROD
