@@ -72,7 +72,7 @@ environmentVariables:
   - name: AUTH
     value: SAML
   - name: SAML_ENTITY_ID
-    value: https://notify.uw.edu/shibboleth
+    value: https://prod.notify.uw.edu/saml2
   - name: CLUSTER_CNAME
     value: prod.notify.uw.edu
   - name: SAML_USER_ATTRIBUTE
