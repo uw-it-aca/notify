@@ -1,0 +1,97 @@
+ingress:
+  enabled: true
+  tls:
+    notify:
+      secretName: notify.uw.edu-cert
+      hosts:
+        - prod.notify.uw.edu
+  hosts:
+    notify:
+      host: prod.notify.uw.edu
+      paths:
+        - "/"
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt
+externalService:
+  enabled: true
+  name: notify-db-service
+  type: ClusterIP
+  serviceAddress: 172.18.1.34
+  servicePort: 5432
+database:
+  engine: postgres
+  name: notify-prod
+  hostname: notify-db-service
+  secretName: notify.uw.edu-db
+repo: notify
+instance: prod
+image:
+  repository: registry.hub.docker.com/acait/notify
+  tag: IMAGE_TAG
+memcached:
+  enabled: true
+  replicaCount: 2
+  updateStrategy:
+    type: RollingUpdate
+metrics:
+  enabled: true
+  serviceMonitor:
+    enabled: true
+cronjob:
+  enabled: true
+  jobs:
+    - name: unsubscribe-registered
+      schedule: '55 15-23 * * 1-5'
+      command: '["bash"]'
+      args: '["-c", "(cd /app && source ./bin/activate && ./bin/python manage.py registration_consumer)"]'
+certs:
+  mounted: true
+  certPath: /certs/notify.uw.edu-uwca.cert
+  keyPath: /certs/notify.uw.edu-uwca.key
+  secretName: notify.uw.edu-uwca-certs
+environmentVariables:
+  - name: ENV
+    value: prod
+  - name: KWS_ENV
+    value: PROD
+  - name: PWS_ENV
+    value: PROD
+  - name: SWS_ENV
+    value: PROD
+  - name: NWS_ENV
+    value: PROD
+  - name: AUTH
+    value: SAML
+  - name: SAML_ENTITY_ID
+    value: https://notify.uw.edu/shibboleth
+  - name: CLUSTER_CNAME
+    value: prod.notify.uw.edu
+  - name: SAML_USER_ATTRIBUTE
+    value: eppn
+  - name: SP_CERT
+    value: 'MIIC7jCCAdagAwIBAgIJALP4n21QfUmxMA0GCSqGSIb3DQEBBQUAMBgxFjAUBgNVBAMTDW5vdGlmeS51dy5lZHUwHhcNMTMwMTMxMjIxMzM1WhcNMjMwMTI5MjIxMzM1WjAYMRYwFAYDVQQDEw1ub3RpZnkudXcuZWR1MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEApdjUu6glKB5hDAL6Sgl3vKejkmKQjeSEcV9SC5E2EEReVcxvj0qlQ5UOz6ogbDPwrt4ylg8gI8jNjZjkyUOwH97g80PfXVFAui051UTGRNOxPCWIqoO6iah1nRoqE+zBc+86GwFlt8OZWRKfTbpUGQp+s3uCl4UGPFAjBgMTUUZ2vnfRLCXIor0WwRd3aAfxQWIdVGSZSooaSihvUUoJzLYMpBOA/jp0AAlxvSlwl63uHbHZk2/0JTez7tUY2QJYFF27yVcysNd6x3JowZYatgRoC9h5e7ezVfzlsZRNIepFwn0UdPOIiSy4HQdVsAU+v3HI5yoDw9svJW68XDyg/QIDAQABozswOTAYBgNVHREEETAPgg1ub3RpZnkudXcuZWR1MB0GA1UdDgQWBBQ1TXF8Q+HotMr7QTjp+dYHiHSvcTANBgkqhkiG9w0BAQUFAAOCAQEACud5x54eTJEplsoiLAPwNiBkFK1U4+qAVAIX8qlX6ezfyQ9MRAfStRXzpxqd5sDieI6YkZO/7vuBDQV8cy0Lk6WgvSG/ZwyDCitGzGwSpUMdKluxGQqRL3uBmdsvQdiUooQLu7vUpneQP84Oe0Z6Gr6iKECDNhfB2JFSRSHnwHwlz8Lv+lxjQpBxhpFyU4868vXTpZXMqiBJpe2/MhA1B3BSE+K3JSno4SN3UHz1D4F1kcNcYiXU3+FpMi2Q0w0MF/5JzlaKhYOzHOm1oYCQizgyiqGHUGk7bb44GG1ISIilRcgjYKKWEphbilE7A7vxPPha87XWU+n7nLJCtaV+fA=='
+  - name: IDP_CERT
+    value: 'MIID/TCCAuWgAwIBAgIJAMoYJbDt9lKKMA0GCSqGSIb3DQEBBQUAMFwxCzAJBgNVBAYTAlVTMQswCQYDVQQIEwJXQTEhMB8GA1UEChMYVW5pdmVyc2l0eSBvZiBXYXNoaW5ndG9uMR0wGwYDVQQDExRpZHAudS53YXNoaW5ndG9uLmVkdTAeFw0xMTA0MjYxOTEwMzlaFw0yMTA0MjMxOTEwMzlaMFwxCzAJBgNVBAYTAlVTMQswCQYDVQQIEwJXQTEhMB8GA1UEChMYVW5pdmVyc2l0eSBvZiBXYXNoaW5ndG9uMR0wGwYDVQQDExRpZHAudS53YXNoaW5ndG9uLmVkdTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAMH9G8m68L0Hf9bmf4/7c+ERxgDQrbq50NfSi2YTQWc1veUIPYbZy1agSNuc4dwn3RtC0uOQbdNTYUAiVTcYgaYceJVB7syWf9QyGIrglZPMu98c5hWb7vqwvs6d3s2Sm7tBib2v6xQDDiZ4KJxpdAvsoPQlmGdgpFfmAsiYrnYFXLTHgbgCc/YhV8lubTakUdI3bMYWfh9dkj+DVGUmt2gLtQUzbuH8EU44vnXgrQYSXNQkmRcyoE3rj4Rhhbu/p5D3P+nuOukLYFOLRaNeiiGyTu3P7gtc/dy/UjUrf+pH75UUU7Lb369dGEfZwvVtITXsdyp0pBfun4CP808H9N0CAwEAAaOBwTCBvjAdBgNVHQ4EFgQUP5smx3ZYKODMkDglkTbduvLcGYAwgY4GA1UdIwSBhjCBg4AUP5smx3ZYKODMkDglkTbduvLcGYChYKReMFwxCzAJBgNVBAYTAlVTMQswCQYDVQQIEwJXQTEhMB8GA1UEChMYVW5pdmVyc2l0eSBvZiBXYXNoaW5ndG9uMR0wGwYDVQQDExRpZHAudS53YXNoaW5ndG9uLmVkdYIJAMoYJbDt9lKKMAwGA1UdEwQFMAMBAf8wDQYJKoZIhvcNAQEFBQADggEBAEo7c2CNHEI+Fvz5DhwumU+WHXqwSOK47MxXwNJVpFQ9GPR2ZGDAq6hzLJLAVWcY4kB3ECDkRtysAWSFHm1roOU7xsU9f0C17QokoXfLNC0d7KoivPM6ctl8aRftU5moyFJkkJX3qSExXrl053uxTOQVPms4ypkYv1A/FBZWgSC8eNoYnBnv1Mhy4m8bfeEN7qT9rFoxh4cVjMH1Ykq7JWyFXLEB4ifzH4KHyplt5Ryv61eh6J1YPFa2RurVTyGpHJZeOLUIBvJu15GzcexuDDXe0kg7sHD6PbK0xzEF/QeXP/hXzMxR9kQXB/IR/b2k4ien+EM3eY/ueBcTZ95dgVM='
+  - name: ADMIN_GROUP
+    value: 'u_acadev_notify-production-support'
+environmentVariablesSecrets:
+  djangoSecret:
+    name: DJANGO_SECRET
+    secretName: notify.uw.edu-django-secret-key
+    secretKey: django-secret
+  enrollmentQueueArn:
+    name: SQS_ENROLLMENT_QUEUE_ARN
+    secretName: notify.uw.edu-sqs-enrollment
+    secretKey: sqs-queue-arn
+  enrollmentKeyId:
+    name: SQS_ENROLLMENT_KEY_ID
+    secretName: notify.uw.edu-sqs-enrollment
+    secretKey: sqs-key-id
+  enrollmentKey:
+    name: SQS_ENROLLMENT_KEY
+    secretName: notify.uw.edu-sqs-enrollment
+    secretKey: sqs-key
+  googleAnalyticsKey:
+    name: GOOGLE_ANALYTICS_KEY
+    secretName: notify.uw.edu-google-analytics-key
+    secretKey: google-analytics-key

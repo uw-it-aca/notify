@@ -1,2 +1,8 @@
 [run]
 source = notify
+parallel = True
+
+[paths]
+source =
+  notify/
+  /app/notify/
