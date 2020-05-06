@@ -9,7 +9,6 @@ INSTALLED_APPS += [
     'userservice',
     'persistent_message',
     'rc_django',
-    'compressor',
     'django_user_agents',
     'compressor',
 ]
