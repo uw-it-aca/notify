@@ -4,13 +4,14 @@ import os
 ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS += [
-    'compressor',
-    'django_user_agents',
-    'userservice',
+    'notify.apps.NotifyUIConfig',
     'supporttools',
+    'userservice',
     'persistent_message',
     'rc_django',
-    'notify.apps.NotifyUIConfig',
+    'compressor',
+    'django_user_agents',
+    'compressor',
 ]
 
 MIDDLEWARE += [
