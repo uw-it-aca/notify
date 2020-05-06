@@ -50,7 +50,7 @@ cronjob:
   enabled: true
   jobs:
     - name: unsubscribe-registered
-      schedule: '55 15-23 * * 1-5'
+      schedule: '*/5 15-23 * * 1-5'
       command: '["bash"]'
       args: '["-c", "(cd /app && source ./bin/activate && ./bin/python manage.py registration_consumer)"]'
 certs:
