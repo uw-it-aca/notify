@@ -30,7 +30,7 @@ image:
   tag: IMAGE_TAG
 replicaCount: 2
 minReplicas: 2
-maxReplicas: 6
+maxReplicas: 4
 targetAverageUtilization: 90
 resources:
   limits:
@@ -86,21 +86,25 @@ environmentVariables:
 environmentVariablesSecrets:
   djangoSecret:
     name: DJANGO_SECRET
-    secretName: notify.uw.edu-django-secret-key
+    secretName: notify.uw.edu-secrets
     secretKey: django-secret
   enrollmentQueueArn:
     name: SQS_ENROLLMENT_QUEUE_ARN
-    secretName: notify.uw.edu-sqs-enrollment
-    secretKey: sqs-queue-arn
+    secretName: notify.uw.edu-secrets
+    secretKey: sqs-enrollment-queue-arn
   enrollmentKeyId:
     name: SQS_ENROLLMENT_KEY_ID
-    secretName: notify.uw.edu-sqs-enrollment
-    secretKey: sqs-key-id
+    secretName: notify.uw.edu-secrets
+    secretKey: sqs-enrollment-key-id
   enrollmentKey:
     name: SQS_ENROLLMENT_KEY
-    secretName: notify.uw.edu-sqs-enrollment
-    secretKey: sqs-key
+    secretName: notify.uw.edu-secrets
+    secretKey: sqs-enrollment-key
   googleAnalyticsKey:
     name: GOOGLE_ANALYTICS_KEY
-    secretName: notify.uw.edu-google-analytics-key
+    secretName: notify.uw.edu-secrets
     secretKey: google-analytics-key
+  notificationAPIAuthToken:
+    name: NWS_AUTH_SECRET
+    secretName: test.notify.uw.edu-secrets
+    secretKey: nws-auth-secret

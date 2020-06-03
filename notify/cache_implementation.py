@@ -32,6 +32,9 @@ def get_cache_time(service, url):
             return ONE_DAY
         return ONE_MINUTE
 
+    if 'nwsauth' == service:
+        return ONE_MINUTE * 20
+
     return ONE_HOUR
 
 
