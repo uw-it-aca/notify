@@ -53,8 +53,7 @@ cronjob:
   jobs:
     - name: unsubscribe-registered
       schedule: '*/5 15-23 * * 1-5'
-      command: '["bash"]'
-      args: '["-c", "(cd /app && source ./bin/activate && ./bin/python manage.py registration_consumer)"]'
+      command: [/scripts/management_command.sh registration_consumer]
 certs:
   mounted: true
   certPath: /certs/notify.uw.edu-uwca.cert
