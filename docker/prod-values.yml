@@ -2,7 +2,7 @@ ingress:
   enabled: true
   tls:
     notify:
-      secretName: notify.uw.edu-cert
+      secretName: notify.uw.edu-ingress-cert
       hosts:
         - prod.notify.uw.edu
   hosts:
@@ -12,6 +12,8 @@ ingress:
         - "/"
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt
+readiness:
+  enabled: true
 externalService:
   enabled: true
   name: notify-db-service
