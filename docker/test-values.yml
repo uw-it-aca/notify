@@ -40,7 +40,7 @@ metrics:
   serviceMonitor:
     enabled: true
 cronjob:
-  enabled: true
+  enabled: false
   jobs:
     - name: unsubscribe-registered
       schedule: '55 15-23 * * 1-5'
