@@ -107,5 +107,5 @@ environmentVariablesSecrets:
     secretKey: google-analytics-key
   notificationAPIAuthToken:
     name: NWS_AUTH_SECRET
-    secretName: test.notify.uw.edu-secrets
+    secretName: notify.uw.edu-secrets
     secretKey: nws-auth-secret
