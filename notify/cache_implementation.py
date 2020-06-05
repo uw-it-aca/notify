@@ -30,12 +30,11 @@ def get_cache_time(service, url):
     if 'nws' == service:
         if re.match(r'^/notification/v\d/channel', url):
             return ONE_DAY
-        return ONE_MINUTE
 
     if 'nwsauth' == service:
         return ONE_MINUTE * 20
 
-    return ONE_HOUR
+    return 0
 
 
 class NotifyMemcachedCache(MemcachedCache):
