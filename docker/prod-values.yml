@@ -49,11 +49,12 @@ metrics:
   serviceMonitor:
     enabled: true
 cronjob:
-  enabled: false
+  enabled: true
   jobs:
     - name: unsubscribe-registered
-      schedule: '*/5 15-23 * * 1-5'
-      command: [/scripts/management_command.sh registration_consumer]
+      schedule: "*/5 15-23 * * 1-5"
+      command: ["/scripts/management_command.sh"]
+      args: ["registration_consumer"]
 certs:
   mounted: true
   certPath: /certs/notify.uw.edu-uwca.cert
