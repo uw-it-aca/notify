@@ -36,6 +36,7 @@ def get_cache_time(service, url):
 
     return 0
 
+
 class NotifyMemcachedCache(MemcachedCache):
     def get_cache_expiration_time(self, service, url):
         return get_cache_time(service, url)
