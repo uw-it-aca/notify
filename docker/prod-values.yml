@@ -49,7 +49,7 @@ metrics:
   serviceMonitor:
     enabled: true
 cronjob:
-  enabled: true
+  enabled: false
   jobs:
     - name: unsubscribe-registered
       schedule: '*/5 15-23 * * 1-5'
