@@ -43,8 +43,9 @@ cronjob:
   enabled: false
   jobs:
     - name: unsubscribe-registered
-      schedule: '55 15-23 * * 1-5'
-      command: [/scripts/management_command.sh registration_consumer]
+      schedule: "55 15-23 * * 1-5"
+      command: ["/scripts/management_command.sh"]
+      args: ["registration_consumer"]
 certs:
   mounted: true
   certPath: /certs/test.notify.uw.edu-uwca.cert
