@@ -34,8 +34,6 @@ def get_cache_time(service, url):
     if 'nwsauth' == service:
         return ONE_MINUTE * 20
 
-    return 0
-
 
 class NotifyMemcachedCache(MemcachedCache):
     def get_cache_expiration_time(self, service, url):
