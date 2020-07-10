@@ -1,3 +1,17 @@
+autoscaling:
+  enabled: true
+  minReplicas: 1
+  maxReplicas: 10
+targetAverageUtilization: 100
+resources:
+  limits:
+    cpu: 1.0
+    memory: 1280Mi
+  requests:
+    cpu: 256m
+    memory: 1024Mi
+affinity:
+   podsSpanNodes: true
 ingress:
   enabled: true
   tls:
@@ -12,6 +26,11 @@ ingress:
         - "/"
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt
+    nginx.ingress.kubernetes.io/ssl-ciphers: "ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES128-SHA256"
+lifecycle:
+  enabled: true
+  preStop:
+    enabled: true
 readiness:
   enabled: true
 externalService:
@@ -30,24 +49,16 @@ instance: prod
 image:
   repository: registry.hub.docker.com/acait/notify
   tag: IMAGE_TAG
-replicaCount: 2
-minReplicas: 2
-maxReplicas: 4
-targetAverageUtilization: 90
-resources:
-  limits:
-    cpu: 600m
-  requests:
-    cpu: 200m
 memcached:
   enabled: true
   replicaCount: 2
+  command:
+    - "memcached"
+    - "-o"
+    - "modern"
+    - "-v"
   updateStrategy:
     type: RollingUpdate
-metrics:
-  enabled: true
-  serviceMonitor:
-    enabled: true
 cronjob:
   enabled: true
   jobs:
@@ -63,14 +74,19 @@ certs:
 environmentVariables:
   - name: ENV
     value: prod
+
   - name: KWS_ENV
     value: PROD
+
   - name: PWS_ENV
     value: PROD
+
   - name: SWS_ENV
     value: PROD
+
   - name: NWS_ENV
     value: PROD
+
   - name: AUTH
     value: SAML
   - name: SAML_ENTITY_ID
@@ -79,12 +95,56 @@ environmentVariables:
     value: prod.notify.uw.edu
   - name: SAML_USER_ATTRIBUTE
     value: eppn
-  - name: SP_CERT
-    value: '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'
-  - name: IDP_CERT
-    value: 'MIID/TCCAuWgAwIBAgIJAMoYJbDt9lKKMA0GCSqGSIb3DQEBBQUAMFwxCzAJBgNVBAYTAlVTMQswCQYDVQQIEwJXQTEhMB8GA1UEChMYVW5pdmVyc2l0eSBvZiBXYXNoaW5ndG9uMR0wGwYDVQQDExRpZHAudS53YXNoaW5ndG9uLmVkdTAeFw0xMTA0MjYxOTEwMzlaFw0yMTA0MjMxOTEwMzlaMFwxCzAJBgNVBAYTAlVTMQswCQYDVQQIEwJXQTEhMB8GA1UEChMYVW5pdmVyc2l0eSBvZiBXYXNoaW5ndG9uMR0wGwYDVQQDExRpZHAudS53YXNoaW5ndG9uLmVkdTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAMH9G8m68L0Hf9bmf4/7c+ERxgDQrbq50NfSi2YTQWc1veUIPYbZy1agSNuc4dwn3RtC0uOQbdNTYUAiVTcYgaYceJVB7syWf9QyGIrglZPMu98c5hWb7vqwvs6d3s2Sm7tBib2v6xQDDiZ4KJxpdAvsoPQlmGdgpFfmAsiYrnYFXLTHgbgCc/YhV8lubTakUdI3bMYWfh9dkj+DVGUmt2gLtQUzbuH8EU44vnXgrQYSXNQkmRcyoE3rj4Rhhbu/p5D3P+nuOukLYFOLRaNeiiGyTu3P7gtc/dy/UjUrf+pH75UUU7Lb369dGEfZwvVtITXsdyp0pBfun4CP808H9N0CAwEAAaOBwTCBvjAdBgNVHQ4EFgQUP5smx3ZYKODMkDglkTbduvLcGYAwgY4GA1UdIwSBhjCBg4AUP5smx3ZYKODMkDglkTbduvLcGYChYKReMFwxCzAJBgNVBAYTAlVTMQswCQYDVQQIEwJXQTEhMB8GA1UEChMYVW5pdmVyc2l0eSBvZiBXYXNoaW5ndG9uMR0wGwYDVQQDExRpZHAudS53YXNoaW5ndG9uLmVkdYIJAMoYJbDt9lKKMAwGA1UdEwQFMAMBAf8wDQYJKoZIhvcNAQEFBQADggEBAEo7c2CNHEI+Fvz5DhwumU+WHXqwSOK47MxXwNJVpFQ9GPR2ZGDAq6hzLJLAVWcY4kB3ECDkRtysAWSFHm1roOU7xsU9f0C17QokoXfLNC0d7KoivPM6ctl8aRftU5moyFJkkJX3qSExXrl053uxTOQVPms4ypkYv1A/FBZWgSC8eNoYnBnv1Mhy4m8bfeEN7qT9rFoxh4cVjMH1Ykq7JWyFXLEB4ifzH4KHyplt5Ryv61eh6J1YPFa2RurVTyGpHJZeOLUIBvJu15GzcexuDDXe0kg7sHD6PbK0xzEF/QeXP/hXzMxR9kQXB/IR/b2k4ien+EM3eY/ueBcTZ95dgVM='
   - name: ADMIN_GROUP
     value: 'u_acadev_notify-production-support'
+
+externalSecrets:
+  enabled: true
+  secrets:
+    - name: notify.uw.edu-secrets
+      externalKey: axdd/kv/data/notify/prod/secrets
+      data:
+        - name: django-secret
+          property: django-secret
+        - name: sqs-enrollment-queue-arn
+          property: sqs-enrollment-queue-arn
+        - name: sqs-enrollment-key-id
+          property: sqs-enrollment-key-id
+        - name: sqs-enrollment-key
+          property: sqs-enrollment-key
+        - name: google-analytics-key
+          property: google-analytics-key
+        - name: nws-auth-secret
+          property: nws-auth-secret
+        - name: email-sender-address
+          property: email-sender-address
+        - name: support-email-address
+          property: support-email-address
+    - name: notify.uw.edu-sql-secrets
+      externalKey: axdd/kv/data/notify/prod/sql-secrets
+      data:
+        - name: username
+          property: username
+        - name: password
+          property: password
+    - name: notify.uw.edu-uwca-certs
+      externalKey: axdd/kv/data/notify/prod/uwca-certs
+      data:
+        - name: prod.notify.uw.edu-uwca.cert
+          property: prod.notify.uw.edu-uwca.cert
+        - name: prod.notify.uw.edu-uwca.key
+          property: prod.notify.uw.edu-uwca.key
+    - name: notify.uw.edu-ic-certs
+      externalKey: axdd/kv/data/notify/prod/ic-certs
+      data:
+        - name: prod.notify.uw.edu-ic.cert
+          property: prod.notify.uw.edu-ic.cert
+    - name: notify.uw.edu-uw-idp-cert
+      externalKey: axdd/kv/data/idp-cert
+      data:
+        - name: uw-idp-cert
+          property: cert
+
 environmentVariablesSecrets:
   djangoSecret:
     name: DJANGO_SECRET
@@ -110,3 +170,19 @@ environmentVariablesSecrets:
     name: NWS_AUTH_SECRET
     secretName: notify.uw.edu-secrets
     secretKey: nws-auth-secret
+  emailSenderAddress:
+    name: EMAIL_SENDER_ADDRESS
+    secretName: notify.uw.edu-secrets
+    secretKey: email-sender-address
+  supportEmailAddress:
+    name: SUPPORT_EMAIL_ADDRESS
+    secretName: notify.uw.edu-secrets
+    secretKey: support-email-address
+  samlSPCert:
+    name: SP_CERT
+    secretName: notify.uw.edu-ic-certs
+    secretKey: prod.notify.uw.edu-ic.cert
+  samlIDPCert:
+    name: IDP_CERT
+    secretName: notify.uw.edu-uw-idp-cert
+    secretKey: uw-idp-cert

@@ -48,6 +48,107 @@ COMPRESS_OFFLINE_CONTEXT = {
     'wrapper_template': 'persistent_message/manage_wrapper.html',
 }
 
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'filters': {
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse'
+        },
+        'add_user': {
+            '()': 'notify.log.UserFilter'
+        },
+        'stdout_stream': {
+            '()': 'django.utils.log.CallbackFilter',
+            'callback': lambda record: record.levelno <= logging.WARNING
+        },
+        'stderr_stream': {
+            '()': 'django.utils.log.CallbackFilter',
+            'callback': lambda record: record.levelno >= logging.ERROR
+        }
+    },
+    'formatters': {
+        'ui': {
+            'format': '%(levelname)-4s %(asctime)s %(user)s %(actas)s %(message)s [%(name)s]',
+            'datefmt': '[%Y-%m-%d %H:%M:%S]',
+        },
+        'restclients_timing': {
+            'format': '%(levelname)-4s restclients_timing %(module)s %(asctime)s %(message)s [%(name)s]',
+            'datefmt': '[%Y-%m-%d %H:%M:%S]',
+        },
+        'events': {
+            'format': '%(levelname)-4s event %(asctime)s %(message)s [%(name)s]',
+            'datefmt': '[%Y-%m-%d %H:%M:%S]',
+        },
+    },
+    'handlers': {
+        'stdout': {
+            'class': 'logging.StreamHandler',
+            'stream': sys.stdout,
+            'filters': ['add_user', 'stdout_stream'],
+            'formatter': 'ui',
+        },
+        'stderr': {
+            'class': 'logging.StreamHandler',
+            'stream': sys.stderr,
+            'filters': ['add_user', 'stderr_stream'],
+            'formatter': 'ui',
+        },
+        'event_log': {
+            'filters': ['stdout_stream'],
+            'formatter': 'events',
+            'class': 'logging.StreamHandler',
+            'stream': sys.stdout,
+        },
+        'ui_log': {
+            'filters': ['add_user', 'stdout_stream'],
+            'formatter': 'ui',
+            'class': 'logging.StreamHandler',
+            'stream': sys.stdout,
+        },
+        'restclients_timing': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
+            'stream': sys.stdout,
+            'filters': ['stdout_stream'],
+            'formatter': 'restclients_timing',
+        },
+        'null': {
+            'class': 'logging.NullHandler',
+        },
+    },
+    'loggers': {
+        'django.security.DisallowedHost': {
+            'handlers': ['null'],
+            'propagate': False,
+        },
+        'django.request': {
+            'handlers': ['stderr'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
+        'notify': {
+            'handlers': ['ui_log'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+        'notify.events': {
+            'handlers': ['event_log'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        'restclients_core': {
+            'handlers': ['restclients_timing'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        '': {
+            'handlers': ['stdout', 'stderr'],
+            'level': 'INFO' if os.getenv('ENV', 'localdev') == 'prod' else 'DEBUG'
+        }
+    }
+}
+
 if os.getenv('ENV') == 'localdev':
     DEBUG = True
     NOTIFY_ADMIN_GROUP = 'u_test_group'
@@ -55,28 +156,11 @@ if os.getenv('ENV') == 'localdev':
 else:
     NOTIFY_ADMIN_GROUP = os.getenv('ADMIN_GROUP', '')
     RESTCLIENTS_DAO_CACHE_CLASS = 'notify.cache_implementation.NotifyMemcachedCache'
-    if os.getenv('ENV') == 'prod':
-        APP_SERVER_BASE = 'https://notify.uw.edu'
 
 USERSERVICE_VALIDATION_MODULE = 'notify.utilities.validate_override_user'
 USERSERVICE_OVERRIDE_AUTH_MODULE = 'notify.views.can_override_user'
 RESTCLIENTS_ADMIN_AUTH_MODULE = 'notify.views.can_proxy_restclient'
 PERSISTENT_MESSAGE_AUTH_MODULE = 'notify.views.can_manage_persistent_messages'
-
-RESTCLIENTS_NWS_DAO_CLASS = 'Live'
-RESTCLIENTS_NWS_TIMEOUT = os.getenv('NWS_TIMEOUT', 2)
-RESTCLIENTS_NWS_POOL_SIZE = os.getenv('NWS_POOL_SIZE', 10)
-RESTCLIENTS_NWS_AUTH_DAO_CLASS = RESTCLIENTS_NWS_DAO_CLASS
-RESTCLIENTS_NWS_AUTH_TIMEOUT = RESTCLIENTS_NWS_TIMEOUT
-RESTCLIENTS_NWS_AUTH_POOL_SIZE = RESTCLIENTS_NWS_POOL_SIZE
-if os.getenv('NWS_ENV') == 'PROD':
-    RESTCLIENTS_NWS_CERT_FILE = APPLICATION_CERT_PATH
-    RESTCLIENTS_NWS_KEY_FILE = APPLICATION_KEY_PATH
-    RESTCLIENTS_NWS_HOST = 'https://api.concert.uw.edu'
-else:
-    RESTCLIENTS_NWS_AUTH_SECRET = os.getenv('NWS_AUTH_SECRET')
-    RESTCLIENTS_NWS_AUTH_HOST = 'https://auth.api.notify-dev.sis.uw.edu'
-    RESTCLIENTS_NWS_HOST = 'https://api.notify-dev.sis.uw.edu'
 
 AWS_CA_BUNDLE = RESTCLIENTS_CA_BUNDLE
 AWS_SQS = {
@@ -95,8 +179,8 @@ AWS_SQS = {
 GOOGLE_ANALYTICS_KEY = os.getenv('GOOGLE_ANALYTICS_KEY', '')
 SUPPORTTOOLS_PARENT_APP = 'Notify.UW'
 SUPPORTTOOLS_PARENT_APP_URL = '/'
-SUPPORT_EMAIL = 'help@uw.edu'
-SENDER_ADDRESS = 'notify@uw.edu'
+SUPPORT_EMAIL = os.getenv('SUPPORT_EMAIL_ADDRESS', '')
+SENDER_ADDRESS = os.getenv('EMAIL_SENDER_ADDRESS', '')
 
 INVALID_UUIDS = [
     '00000000-0000-0000-0000-000000000000'
