@@ -77,7 +77,7 @@ class ChannelUnsubscribe(RESTDispatch):
                 delete_subscription(subscription_id, act_as=orig_user)
                 logger.info("DELETE subscription {}".format(subscription_id))
             except DataFailureException as ex:
-                logger.warning(ex.msg)
+                logger.warning(ex)
                 failed_deletions.append(subscription_id)
 
         n_failed = len(failed_deletions)

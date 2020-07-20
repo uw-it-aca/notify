@@ -95,7 +95,7 @@ class EndpointView(RESTDispatch):
                 return self.error_response(
                     status=400, message="Invalid endpoint")
 
-            logger.warning(ex.msg)
+            logger.warning(ex)
             return self.error_response(
                 status=500, message="Error creating endpoint")
 
@@ -137,7 +137,7 @@ class EndpointView(RESTDispatch):
             if ex.status == 403:
                 return self.error_response(status=403, message=ex.msg)
 
-            logger.warning(ex.msg)
+            logger.warning(ex)
             return self.error_response(
                 status=500, message="Error creating endpoint")
 
@@ -166,7 +166,7 @@ class EndpointView(RESTDispatch):
 
         except DataFailureException as ex:
             if ex.status != 410:
-                logger.warning(ex.msg)
+                logger.warning(ex)
                 return self.error_response(
                     status=500, message="Delete endpoint failed: {}".format(
                         ex.msg))
@@ -210,7 +210,7 @@ class ResendSMSConfirmationView(RESTDispatch):
                 else:
                     msg = "unknown condition"
             except DataFailureException as ex:
-                logger.warning(ex.msg)
+                logger.warning(ex)
                 msg = "Failed to request verification resend: {}".format(
                     ex.msg)
                 status_code = 500
@@ -235,7 +235,7 @@ class ToSConfirmation(RESTDispatch):
                 logger.info("UPDATE person '{}', accepted ToS".format(user))
             except DataFailureException as ex:
                 logger.warning("UPDATE person '{}' failed: {}".format(
-                    user, ex.msg))
+                    user, ex))
                 return self.error_response(
                     status=500, message="Update person failed: {}".format(
                         ex.msg))
@@ -252,7 +252,7 @@ class ToSConfirmation(RESTDispatch):
                 logger.info("CREATE person '{}', accepted ToS".format(user))
             except DataFailureException as ex:
                 logger.warning("CREATE person '{}' failed: {}".format(
-                    user, ex.msg))
+                    user, ex))
                 return self.error_response(
                     status=500, message="Create person failed: {}".format(
                         ex.msg))
