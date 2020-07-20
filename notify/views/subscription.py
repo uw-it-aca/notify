@@ -37,7 +37,7 @@ class SubscriptionSearch(RESTDispatch):
             person = get_person(subscriber_id)
             subscriptions = get_subscriptions_by_subscriber_id(subscriber_id)
         except DataFailureException as ex:
-            logger.warning(ex.msg)
+            logger.warning(ex)
             return self.error_response(
                 status=500, message="Search error: {}".format(ex.msg))
 
@@ -193,7 +193,7 @@ class SubscribeSLN(RESTDispatch):
                     return self.error_response(
                         status=403, message="Channel expired", content=content)
                 else:
-                    logger.warning(ex.msg)
+                    logger.warning(ex)
                     return self.error_response(
                         status=500,
                         message="Error subscribing to channel: {}".format(
@@ -266,7 +266,7 @@ class SubscriptionProtocol(RESTDispatch):
             logger.info("CREATE subscription for channel {}".format(
                 channel.channel_id))
         except DataFailureException as ex:
-            logger.warning(ex.msg)
+            logger.warning(ex)
             return self.error_response(
                 status=500, message='Subscription creation failed')
 
