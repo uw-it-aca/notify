@@ -31,7 +31,7 @@ setup(
         'psycopg2<3.0',
         'python-dateutil',
         'UW-Django-SAML2>=1.5.1,<2.0',
-        'UW-RestClients-NWS>=1.3.3,<2.0',
+        'UW-RestClients-NWS>=1.3.4,<2.0',
         'UW-RestClients-SWS>=2.2.7,<3.0',
         'UW-RestClients-PWS>=2.1,<3.0',
         'UW-RestClients-KWS>=1.1,<2.0',
