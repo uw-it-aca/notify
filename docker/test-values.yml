@@ -46,7 +46,7 @@ cronjob:
   enabled: true
   jobs:
     - name: unsubscribe-registered
-      schedule: "55 15-23 * * 1-5"
+      schedule: "*/5 15-23 * * 1-5"
       command: ["/scripts/management_command.sh"]
       args: ["registration_consumer"]
 certs:
