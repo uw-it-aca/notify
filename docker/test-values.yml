@@ -43,7 +43,7 @@ memcached:
   updateStrategy:
     type: RollingUpdate
 cronjob:
-  enabled: false
+  enabled: true
   jobs:
     - name: unsubscribe-registered
       schedule: "55 15-23 * * 1-5"
