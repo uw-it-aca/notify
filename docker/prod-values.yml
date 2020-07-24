@@ -18,10 +18,10 @@ ingress:
     notify:
       secretName: notify.uw.edu-ingress-cert
       hosts:
-        - prod.notify.uw.edu
+        - notify.uw.edu
   hosts:
     notify:
-      host: prod.notify.uw.edu
+      host: notify.uw.edu
       paths:
         - "/"
   annotations:
@@ -90,9 +90,9 @@ environmentVariables:
   - name: AUTH
     value: SAML
   - name: SAML_ENTITY_ID
-    value: https://prod.notify.uw.edu/saml2
+    value: https://notify.uw.edu/shibboleth
   - name: CLUSTER_CNAME
-    value: prod.notify.uw.edu
+    value: notify.uw.edu
   - name: SAML_USER_ATTRIBUTE
     value: eppn
   - name: ADMIN_GROUP
@@ -130,15 +130,15 @@ externalSecrets:
     - name: notify.uw.edu-uwca-certs
       externalKey: axdd/kv/data/notify/prod/uwca-certs
       data:
-        - name: prod.notify.uw.edu-uwca.cert
-          property: prod.notify.uw.edu-uwca.cert
-        - name: prod.notify.uw.edu-uwca.key
-          property: prod.notify.uw.edu-uwca.key
+        - name: notify.uw.edu-uwca.cert
+          property: notify.uw.edu-uwca.cert
+        - name: notify.uw.edu-uwca.key
+          property: notify.uw.edu-uwca.key
     - name: notify.uw.edu-ic-certs
       externalKey: axdd/kv/data/notify/prod/ic-certs
       data:
-        - name: prod.notify.uw.edu-ic.cert
-          property: prod.notify.uw.edu-ic.cert
+        - name: notify.uw.edu-ic.cert
+          property: notify.uw.edu-ic.cert
     - name: notify.uw.edu-uw-idp-cert
       externalKey: axdd/kv/data/idp-cert
       data:
@@ -181,7 +181,7 @@ environmentVariablesSecrets:
   samlSPCert:
     name: SP_CERT
     secretName: notify.uw.edu-ic-certs
-    secretKey: prod.notify.uw.edu-ic.cert
+    secretKey: notify.uw.edu-ic.cert
   samlIDPCert:
     name: IDP_CERT
     secretName: notify.uw.edu-uw-idp-cert
