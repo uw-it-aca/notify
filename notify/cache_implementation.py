@@ -31,7 +31,7 @@ def get_cache_time(service, url):
         if re.match(r'^/notification/v\d/channel', url):
             return ONE_DAY
 
-    if 'nwsauth' == service:
+    if 'nws_auth' == service:
         return ONE_MINUTE * 20
 
 
