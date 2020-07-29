@@ -69,6 +69,8 @@ environmentVariables:
 
   - name: NWS_ENV
     value: EVAL
+  - name: NWS_TIMEOUT
+    value: "10"
 
   - name: AUTH
     value: SAML
