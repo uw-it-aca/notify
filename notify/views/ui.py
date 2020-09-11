@@ -10,7 +10,6 @@ from notify.dao.person import get_person
 from notify.dao.channel import get_channel_by_id
 from notify.exceptions import InvalidUser, InvalidUUID
 from userservice.user import UserService
-from persistent_message.models import Message
 import json
 
 
@@ -36,11 +35,6 @@ class NotifyView(TemplateView):
             'quarter': kwargs.get('quarter'),
             'sln': kwargs.get('sln'),
         }
-
-        for message in Message.objects.active_messages():
-            if 'message_level' not in context:
-                context['message_level'] = message.get_level_display().lower()
-            context['messages'].append(message.render())
 
         netid = user_service.get_user()
         if netid:

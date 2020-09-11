@@ -22,17 +22,8 @@ affinity:
    podsSpanNodes: true
 readiness:
   enabled: true
-externalService:
-  enabled: true
-  name: notify-db-service
-  type: ClusterIP
-  serviceAddress: 172.18.1.34
-  servicePort: 5432
 database:
-  engine: postgres
-  name: notify-test
-  hostname: notify-db-service
-  secretName: test.notify.uw.edu-sql-secrets
+  engine: null
 repo: notify
 instance: test
 image:
@@ -58,6 +49,9 @@ certs:
 environmentVariables:
   - name: ENV
     value: test
+
+  - name: SESSION_BACKEND
+    value: MEMCACHED
 
   - name: KWS_ENV
     value: PROD
@@ -106,13 +100,6 @@ externalSecrets:
           property: email-sender-address
         - name: support-email-address
           property: support-email-address
-    - name: test.notify.uw.edu-sql-secrets
-      externalKey: axdd/kv/data/notify/test/sql-secrets
-      data:
-        - name: username
-          property: username
-        - name: password
-          property: password
     - name: test.notify.uw.edu-uwca-certs
       externalKey: axdd/kv/data/notify/test/uwca-certs
       data:
