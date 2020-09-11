@@ -1,9 +1,5 @@
 FROM acait/django-container:1.1.3 as app-container
 
-USER root
-RUN apt-get update && apt-get install libpq-dev -y
-USER acait
-
 ADD --chown=acait:acait notify/VERSION /app/notify/
 ADD --chown=acait:acait setup.py /app/
 ADD --chown=acait:acait requirements.txt /app/
