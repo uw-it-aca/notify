@@ -5,6 +5,7 @@ INSTALLED_APPS += [
     'notify.apps.NotifyUIConfig',
     'supporttools',
     'userservice',
+    'persistent_message',
     'rc_django',
     'django_user_agents',
     'compressor',
