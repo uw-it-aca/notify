@@ -1,4 +1,4 @@
-FROM acait/django-container:1.1.3 as app-container
+FROM acait/django-container:1.1.4 as app-container
 
 USER root
 RUN apt-get update && apt-get install libpq-dev -y
