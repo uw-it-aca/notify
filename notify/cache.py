@@ -10,7 +10,7 @@ ONE_MONTH = 60 * 60 * 24 * 30
 
 
 class Client(RestclientPymemcacheClient):
-    def get_cache_expiry(self, service, url, status=None):
+    def get_cache_expiration_time(self, service, url, status=None):
         if 'sws' == service:
             if re.match(r'^/student/v\d/term/', url):
                 return ONE_DAY
