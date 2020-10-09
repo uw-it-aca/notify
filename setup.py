@@ -30,6 +30,7 @@ setup(
         'django-aws-message>=1.5.1',
         'psycopg2<3.0',
         'python-dateutil',
+        'uw-memcached-clients>=1.0.1,<2.0',
         'UW-Django-SAML2>=1.5.1,<2.0',
         'UW-RestClients-NWS>=1.3.4,<2.0',
         'UW-RestClients-SWS>=2.2.7,<3.0',
