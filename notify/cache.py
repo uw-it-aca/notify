@@ -33,3 +33,7 @@ class Client(RestclientPymemcacheClient):
 
         if 'nws_auth' == service:
             return ONE_MINUTE * 20
+
+    def delete_cached_kws_current_key(self, resource_type):
+        self.deleteCache('kws', ENCRYPTION_CURRENT_KEY_URL.format(
+            resource_type))
