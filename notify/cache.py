@@ -29,7 +29,7 @@ class Client(RestclientPymemcacheClient):
 
         if 'nws' == service:
             if re.match(r'^/notification/v\d/person', url):
-                return ONE_MINUTE / 10
+                return 5
             if re.match(r'^/notification/v\d/channel', url):
                 return ONE_DAY
 
