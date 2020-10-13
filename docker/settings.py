@@ -153,7 +153,7 @@ if os.getenv('ENV') == 'localdev':
     RESTCLIENTS_DAO_CACHE_CLASS = None
 else:
     NOTIFY_ADMIN_GROUP = os.getenv('ADMIN_GROUP', '')
-    RESTCLIENTS_DAO_CACHE_CLASS = 'notify.cache_implementation.NotifyMemcachedCache'
+    RESTCLIENTS_DAO_CACHE_CLASS = 'notify.cache.Client'
 
 USERSERVICE_VALIDATION_MODULE = 'notify.utilities.validate_override_user'
 USERSERVICE_OVERRIDE_AUTH_MODULE = 'notify.views.can_override_user'
