@@ -44,7 +44,7 @@ database:
   engine: postgres
   name: notify-prod
   hostname: notify-db-service
-  secretName: notify.uw.edu-db
+  secretName: notify.uw.edu-sql-secrets
 repo: notify
 instance: prod
 image:
