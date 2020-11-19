@@ -23,7 +23,7 @@ setup(
     author_email="aca-it@uw.edu",
     include_package_data=True,
     install_requires=[
-        'Django>=2.2,<3.0',
+        'Django>=2.2.13,<3.0',
         'django-compressor',
         'django-user-agents',
         'django-userservice>=3.1.2',
