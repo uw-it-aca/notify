@@ -8,7 +8,7 @@ resources:
     cpu: 1.0
     memory: 1280Mi
   requests:
-    cpu: 256m
+    cpu: 100m
     memory: 1024Mi
 affinity:
    podsSpanNodes: true
@@ -55,6 +55,8 @@ memcached:
   replicaCount: 2
   command:
     - "memcached"
+    - "-m"
+    - "256"
     - "-o"
     - "modern"
     - "-v"
