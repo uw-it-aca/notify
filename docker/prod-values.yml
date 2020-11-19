@@ -6,10 +6,10 @@ targetAverageUtilization: 100
 resources:
   limits:
     cpu: 1.0
-    memory: 768Mi
+    memory: 1280Mi
   requests:
     cpu: 100m
-    memory: 700Mi
+    memory: 1024Mi
 affinity:
    podsSpanNodes: true
 ingress:
