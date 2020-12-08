@@ -59,7 +59,7 @@ environmentVariables:
   - name: ENV
     value: test
 
-  - name: WS
+  - name: WEBSERVER
     value: nginx
 
   - name: KWS_ENV
