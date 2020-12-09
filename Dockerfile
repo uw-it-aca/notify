@@ -1,4 +1,4 @@
-FROM acait/django-container:nginx-0.0.7 as app-container
+FROM acait/django-container:nginx-0.0.8 as app-container
 
 USER root
 RUN apt-get update && apt-get install libpq-dev -y
@@ -18,7 +18,7 @@ RUN . /app/bin/activate && pip install nodeenv && nodeenv -p &&\
 RUN . /app/bin/activate && python manage.py collectstatic --noinput &&\
     python manage.py compress -f
 
-FROM acait/django-test-container:nginx-0.0.7 as app-test-container
+FROM acait/django-test-container:nginx-0.0.8 as app-test-container
 
 COPY --from=app-container /app/ /app/
 COPY --from=app-container /static/ /static/
