@@ -60,7 +60,7 @@ environmentVariables:
     value: test
 
   - name: WEBSERVER
-    value: nginx
+    value: gunicorn
 
   - name: KWS_ENV
     value: PROD
