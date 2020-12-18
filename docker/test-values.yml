@@ -61,8 +61,6 @@ environmentVariables:
 
   - name: WEBSERVER
     value: nginx
-  - name: GUNICORN_WORKERS
-    value: "2"
 
   - name: KWS_ENV
     value: PROD
