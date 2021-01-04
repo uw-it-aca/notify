@@ -1,7 +1,9 @@
-FROM acait/django-container:1.1.19 as app-container
+FROM acait/django-container:1.2.5 as app-container
 
 USER root
+
 RUN apt-get update && apt-get install libpq-dev -y
+
 USER acait
 
 ADD --chown=acait:acait notify/VERSION /app/notify/
@@ -13,12 +15,12 @@ ADD --chown=acait:acait . /app/
 ADD --chown=acait:acait docker/ project/
 
 RUN . /app/bin/activate && pip install nodeenv && nodeenv -p &&\
-    npm install -g npm && ./bin/npm install less -g
+    npm install -g npm && ./bin/npm install less@3.13.1 -g
 
 RUN . /app/bin/activate && python manage.py collectstatic --noinput &&\
     python manage.py compress -f
 
-FROM acait/django-test-container:1.1.19 as app-test-container
+FROM acait/django-test-container:1.2.5 as app-test-container
 
 COPY --from=app-container /app/ /app/
 COPY --from=app-container /static/ /static/

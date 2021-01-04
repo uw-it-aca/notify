@@ -48,7 +48,7 @@ database:
 repo: notify
 instance: prod
 image:
-  repository: registry.hub.docker.com/acait/notify
+  repository: gcr.io/uwit-mci-axdd/notify
   tag: IMAGE_TAG
 memcached:
   enabled: true
@@ -77,6 +77,9 @@ certs:
 environmentVariables:
   - name: ENV
     value: prod
+
+  - name: WEBSERVER
+    value: nginx
 
   - name: KWS_ENV
     value: PROD
