@@ -48,7 +48,7 @@ database:
 repo: notify
 instance: prod
 image:
-  repository: registry.hub.docker.com/acait/notify
+  repository: gcr.io/uwit-mci-axdd/notify
   tag: IMAGE_TAG
 memcached:
   enabled: true
