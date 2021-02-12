@@ -6,7 +6,6 @@ See the README on `GitHub
 <https://github.com/uw-it-aca/notify>`_.
 """
 
-# The VERSION file is created by travis-ci, based on the tag name
 version_path = 'notify/VERSION'
 VERSION = open(os.path.join(os.path.dirname(__file__), version_path)).read()
 VERSION = VERSION.replace("\n", "")
@@ -23,23 +22,23 @@ setup(
     author_email="aca-it@uw.edu",
     include_package_data=True,
     install_requires=[
-        'Django>=2.2.13,<3.0',
+        'Django~=2.2',
         'django-compressor',
         'django-user-agents',
-        'django-userservice>=3.1.2',
-        'django-aws-message>=1.5.1',
+        'django-userservice>~=3.1',
+        'django-aws-message~=1.5',
         'psycopg2<3.0',
         'python-dateutil',
-        'uw-memcached-clients>=1.0.5,<2.0',
-        'UW-Django-SAML2>=1.5.1,<2.0',
-        'UW-RestClients-NWS>=1.3.4,<2.0',
-        'UW-RestClients-SWS>=2.3.3,<3.0',
-        'UW-RestClients-PWS>=2.1.2,<3.0',
-        'UW-RestClients-KWS>=1.1,<2.0',
-        'UW-RestClients-Core>=1.3.3,<2.0',
-        'UW-RestClients-Django-Utils>=2.1.8,<3.0',
-        'Django-Persistent-Message>=1.0.0,<2.0',
-        'Django-SupportTools>=3.4,<4.0',
+        'uw-memcached-clients~=1.0',
+        'UW-Django-SAML2~=1.5',
+        'UW-RestClients-NWS~=1.3',
+        'UW-RestClients-SWS~=2.3',
+        'UW-RestClients-PWS~=2.1',
+        'UW-RestClients-KWS~=1.1',
+        'UW-RestClients-Core~=1.3',
+        'UW-RestClients-Django-Utils~=2.3',
+        'Django-Persistent-Message',
+        'Django-SupportTools~=3.5',
     ],
     license='Apache License, Version 2.0',
     description=('Notify.UW'),
