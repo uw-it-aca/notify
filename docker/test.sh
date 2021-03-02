@@ -1,7 +1,7 @@
 trap 'exit 1' ERR
 
 #
-# PRECONDITION: inherited env vars MUST include:
+# PRECONDITION: inherited env vars from application MUST include:
 #      DJANGO_APP: django application directory name
 
 # start virtualenv
