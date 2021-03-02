@@ -1,11 +1,16 @@
 trap 'exit 1' ERR
 
 #
-# PRECONDITION: inherited env vars MUST include:
+# PRECONDITION: inherited env vars from application MUST include:
 #      DJANGO_APP: django application directory name
 
 # start virtualenv
 source bin/activate
+
+# install test tooling
+pip install pycodestyle coverage
+apt-get install -y nodejs npm
+npm install -g jshint
 
 function run_test {
     echo "##########################"
