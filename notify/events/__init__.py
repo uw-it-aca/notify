@@ -1,3 +1,6 @@
+# Copyright 2021 UW-IT, University of Washington
+# SPDX-License-Identifier: Apache-2.0
+
 from aws_message.processor import MessageBodyProcessor, ProcessorException
 from aws_message.crypto import aes128cbc, Signature, CryptoException
 from restclients_core.exceptions import DataFailureException
