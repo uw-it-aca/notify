@@ -1,3 +1,6 @@
+# Copyright 2021 UW-IT, University of Washington
+# SPDX-License-Identifier: Apache-2.0
+
 """
 This command reads UW registration events, and removes CAN subscriptions for
 users who have signed up for a course.

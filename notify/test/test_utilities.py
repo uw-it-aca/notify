@@ -1,3 +1,6 @@
+# Copyright 2021 UW-IT, University of Washington
+# SPDX-License-Identifier: Apache-2.0
+
 from django.test import TestCase
 from notify.dao.person import netid_from_eppn
 from notify.dao.term import get_quarter_index
